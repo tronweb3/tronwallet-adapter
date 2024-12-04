@@ -21,14 +21,25 @@ import type {
     AccountsChangedEventData,
     TronLinkMessageEvent,
     TronLinkWallet,
+    ReqestAccountsResponse,
 } from '@tronweb3/tronwallet-adapter-tronlink';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import { openGateWallet, supportGateWallet } from './utils.js';
+import { openGateWallet, supportGateWallet, isGateApp } from './utils.js';
 
+interface GateReqestAccountsResponse extends ReqestAccountsResponse {
+    rpcUrl?: string;
+    accountAddress?: string;
+    hex?: string;
+}
+
+interface GateWallet extends TronLinkWallet {
+    request(config: Record<string, unknown>): Promise<GateReqestAccountsResponse | null>;
+}
 declare global {
     interface Window {
         gatewallet?: {
-            tronLink: TronLinkWallet;
+            tronLink: GateWallet;
+            request(config: Record<string, unknown>): Promise<GateReqestAccountsResponse | null>;
         };
     }
 }
@@ -57,7 +68,7 @@ export class GateWalletAdapter extends Adapter {
     private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
     private _state: AdapterState = AdapterState.Loading;
     private _connecting: boolean;
-    private _wallet: TronLinkWallet | null;
+    private _wallet: GateWallet | TronLinkWallet | null;
     private _address: string | null;
 
     constructor(config: GateWalletAdapterConfig = {}) {
@@ -142,8 +153,10 @@ export class GateWalletAdapter extends Adapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TronLinkWallet;
+            let res: GateReqestAccountsResponse | undefined | null;
             try {
-                const res = await wallet.request({ method: 'tron_requestAccounts' });
+                const requester = isGateApp ? wallet : window.gatewallet!;
+                res = await requester.request({ method: 'tron_requestAccounts' });
                 if (!res) {
                     throw new WalletConnectionError('Request connect error.');
                 }
@@ -159,7 +172,7 @@ export class GateWalletAdapter extends Adapter {
                 throw new WalletConnectionError(error?.message, error);
             }
 
-            const address = wallet.tronWeb.defaultAddress?.base58 || '';
+            const address = (isGateApp ? wallet.tronWeb.defaultAddress?.base58 : res.accountAddress) || '';
             this.setAddress(address);
             this.setState(AdapterState.Connected);
             this._listenEvent();

@@ -220,7 +220,7 @@ function MultiSignDemo(props: { address: string; adapter: Adapter }) {
         activePermission.keys.push({ address: ownerAddress, weight: 1 });
         activePermission.keys.push({ address: tronWeb.address.toHex(address1), weight: 1 });
 
-        const updateTransaction = await tronWeb.transactionBuilder.updateAccountPermissions(ownerAddress, ownerPermission, null, [activePermission]);
+        const updateTransaction = await tronWeb.transactionBuilder.updateAccountPermissions(ownerAddress, ownerPermission, undefined, [activePermission]);
         const signed = await props.adapter.signTransaction(updateTransaction);
         const res = await tronWeb.trx.sendRawTransaction(signed);
         alert('update successfully.');
@@ -231,7 +231,7 @@ function MultiSignDemo(props: { address: string; adapter: Adapter }) {
 
     const multiSignWithAddress1 = useCallback(
         async function () {
-            const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001), props.address, { permissionId: 2 });
+            const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, props.address, { permissionId: 2 });
             const signedTransaction = await props.adapter.multiSign(transaction, null, 2);
             setTransferTransaction(signedTransaction);
         },
@@ -252,7 +252,7 @@ function MultiSignDemo(props: { address: string; adapter: Adapter }) {
         [transferTransaction, setTransferTransaction, setCanSend, props.adapter]
     );
     async function broadcast() {
-        const res = await tronWeb.trx.broadcast(transferTransaction);
+        const res = await tronWeb.trx.broadcast(transferTransaction!);
         setOpen(true);
     }
     return (
