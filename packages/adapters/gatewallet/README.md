@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-gatewallet`
 
-This package provides an adapter to enable TRON DApps to connect to the [Gate Wallet App](https://www.gate.io/mobileapp).
+This package provides an adapter to enable DApps to connect to the [Gate Wallet extension](https://chromewebstore.google.com/detail/gate-wallet/cpmkedoipcpimgecpmgpldfpohjplkpp) and [Gate Wallet App](https://www.gate.io/mobileapp).
 
 ## Demo
 

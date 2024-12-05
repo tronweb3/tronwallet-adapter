@@ -25,7 +25,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 |  |Browser Extension | Not Support |
 | [gate.io](https://www.gate.io/web3) | Android | >= 6.30.10 |
 | | IOS | >= 6.20.1 |
-|  |Browser Extension | Not Support |
+|  |Browser Extension | >= 2.35.2 |
 | [FoxWallet](https://foxwallet.com/) | Android | >= 5.3.1 |
 | | IOS | >= 5.3.1 |
 |  |Browser Extension | Not Support |
