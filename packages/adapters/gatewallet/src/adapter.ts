@@ -170,7 +170,8 @@ export class GateWalletAdapter extends Adapter {
             const wallet = this._wallet;
             let res: GateReqestAccountsResponse | undefined | null;
             try {
-                res = await wallet.request({ method: 'eth_requestAccounts' });
+                const method = isGateApp ? 'tron_requestAccounts' : 'eth_requestAccounts';
+                res = await wallet.request({ method });
                 if (!res) {
                     throw new WalletConnectionError('Request connect error.');
                 }
