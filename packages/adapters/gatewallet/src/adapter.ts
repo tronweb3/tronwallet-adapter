@@ -18,13 +18,7 @@ import type {
     Network,
     EventEmitter,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import type {
-    AccountsChangedEventData,
-    TronWeb,
-    TronLinkMessageEvent,
-    TronLinkWallet,
-    ReqestAccountsResponse,
-} from '@tronweb3/tronwallet-adapter-tronlink';
+import type { TronWeb, TronLinkWallet, ReqestAccountsResponse } from '@tronweb3/tronwallet-adapter-tronlink';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
 import { openGateWallet, supportGateWallet, isGateApp } from './utils.js';
 
@@ -281,13 +275,11 @@ export class GateWalletAdapter extends Adapter {
 
     private _listenEvent() {
         this._stopListenEvent();
-        window.addEventListener('message', this.messageHandler);
         if (isGateApp) return;
         (this._wallet as TronWallet).on('accountsChanged', this.onGateAccountChange);
     }
 
     private _stopListenEvent() {
-        window.removeEventListener('message', this.messageHandler);
         if (isGateApp) return;
         (this._wallet as TronWallet).off('accountsChanged', this.onGateAccountChange);
     }
@@ -313,50 +305,6 @@ export class GateWalletAdapter extends Adapter {
                 this.emit('disconnect');
             }
         }, 200);
-    };
-
-    private messageHandler = (e: TronLinkMessageEvent) => {
-        const message = e.data?.message;
-        if (!message) {
-            return;
-        }
-        if (message.action === 'accountsChanged') {
-            setTimeout(() => {
-                const preAddr = this.address || '';
-                if ((this._wallet as TronLinkWallet)?.ready) {
-                    const address = (message.data as AccountsChangedEventData).address;
-                    this.setAddress(address);
-                    this.setState(AdapterState.Connected);
-                } else {
-                    this.setAddress(null);
-                    this.setState(AdapterState.Disconnect);
-                }
-                const address = this.address || '';
-                if (address !== preAddr) {
-                    this.emit('accountsChanged', this.address || '', preAddr);
-                }
-                if (!preAddr && this.address) {
-                    this.emit('connect', this.address);
-                } else if (preAddr && !this.address) {
-                    this.emit('disconnect');
-                }
-            }, 200);
-        } else if (message.action === 'connect') {
-            const isCurConnected = this.connected;
-            const preAddress = this.address || '';
-            const address = (this._wallet as TronLinkWallet).tronWeb?.defaultAddress?.base58 || '';
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            if (!isCurConnected) {
-                this.emit('connect', address);
-            } else if (address !== preAddress) {
-                this.emit('accountsChanged', this.address || '', preAddress);
-            }
-        } else if (message.action === 'disconnect') {
-            this.setAddress(null);
-            this.setState(AdapterState.Disconnect);
-            this.emit('disconnect');
-        }
     };
 
     private checkIfOpenGateWallet() {
