@@ -1,7 +1,7 @@
 {
     "name": "@tronweb3/tronwallet-adapter-gatewallet",
     "version": "1.0.2",
-    "description": "Wallet adapter for Gate Wallet app.",
+    "description": "Wallet adapter for Gate Wallet app and extension.",
     "keywords": [
         "TRON",
         "TronWeb",
