@@ -11,9 +11,9 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/web3-geek/tronwallet-adapter"
+        "url": "https://github.com/tronweb3/tronwallet-adapter"
     },
-    "author": "web3-geek",
+    "author": "tronweb3",
     "license": "MIT",
     "scripts": {
         "nuke": "shx rm -rf packages/*/*/node_modules demos/**/node_modules node_modules || true",

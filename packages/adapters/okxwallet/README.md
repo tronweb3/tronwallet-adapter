@@ -81,4 +81,4 @@ interface OkxWalletAdapterConfig {
 -   OkxWallet App does not support any events.
 -   Deeplink only works for OKX App **version 6.1.38 or later** on Android.
 
-For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/web3-geek/tronwallet-adapter/tree/main/packages/adapters/adapters)
+For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

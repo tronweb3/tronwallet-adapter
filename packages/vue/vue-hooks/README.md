@@ -16,7 +16,7 @@ npm install @tronweb3/tronwallet-adapter-vue-hooks @tronweb3/tronwallet-abstract
 
 You can provide a `onError` callback to handle various errors such as `WalletConnectionError`, `WalletNotFoundError`.
 
-Here is a [Demo project](https://github.com/web3-geek/tronwallet-adapter/tree/main/demos/vue-ui/vite-app);
+Here is a [Demo project](https://github.com/tronweb3/tronwallet-adapter/tree/main/demos/vue-ui/vite-app);
 
 ```html
 <script setup>
@@ -210,7 +210,7 @@ enum AdapterState {
 #### select
 
 -   Type: `(walletAdapterName: AdapterName) => void`
-    Select a wallet by walletAdapterName. Valid adapters can be found [here](https://github.com/web3-geek/tronwallet-adapter/tree/main/packages/adapters/adapters)
+    Select a wallet by walletAdapterName. Valid adapters can be found [here](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
 
 #### connect
 

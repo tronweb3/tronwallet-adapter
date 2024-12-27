@@ -1,3 +1,3 @@
 # `@tronweb3/tronwallet-abstract-adapter`
 
-This is the abstract interface definition of Tron Wallet Adapters. All wallet adapters implement abstract interface to provide unified interface. Please refer to the introduction [here](https://github.com/web3-geek/tronwallet-adapter/blob/main/packages/adapters/adapters/README.md) for detailed properties and methods.
+This is the abstract interface definition of Tron Wallet Adapters. All wallet adapters implement abstract interface to provide unified interface. Please refer to the introduction [here](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/adapters/README.md) for detailed properties and methods.

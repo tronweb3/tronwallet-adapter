@@ -8,10 +8,10 @@
         "Gate Wallet",
         "Gate.io"
     ],
-    "author": "web3-geek",
+    "author": "tronweb3",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/web3-geek/tronwallet-adapter.git"
+        "url": "git+https://github.com/tronweb3/tronwallet-adapter.git"
     },
     "license": "MIT",
     "type": "module",
@@ -53,9 +53,9 @@
         "shx": "^0.3.4"
     },
     "bugs": {
-        "url": "https://github.com/web3-geek/tronwallet-adapter/issues"
+        "url": "https://github.com/tronweb3/tronwallet-adapter/issues"
     },
-    "homepage": "https://github.com/web3-geek/tronwallet-adapter#readme",
+    "homepage": "https://github.com/tronweb3/tronwallet-adapter#readme",
     "directories": {
         "lib": "lib",
         "test": "tests"

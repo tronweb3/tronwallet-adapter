@@ -84,4 +84,4 @@ interface FoxWalletAdapterConfig {
     const balance = tronWeb.trx.getBalance(address);
     ```
 
-For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/web3-geek/tronwallet-adapter/tree/main/packages/adapters/adapters)
+For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

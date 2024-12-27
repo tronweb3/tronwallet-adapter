@@ -35,7 +35,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Ledger](https://www.ledger.com/) | - | All versions |
 | [WalletConnect](https://walletconnect.org) | - | >= v2.0 |
 
-> **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/web3-geek/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
+> **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
 ### Add support for new wallet
 Follow these steps to support new wallets:
@@ -453,7 +453,7 @@ Welcome to contribute your idea!
 
 1. Fork the repo and clone to your device.
     ```bash
-    git clone https://github.com/web3-geek/tronwallet-adapter.git
+    git clone https://github.com/tronweb3/tronwallet-adapter.git
     ```
 2. Install Nodejs@18.x and pnpm@9.x
 3. Install dependencies
