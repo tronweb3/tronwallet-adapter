@@ -75,7 +75,8 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 
 ### Caveats
 
--   BitKeep App and Extension doesn't implement `signMessage()`, `multiSign()` and `switchChain()`.
+-   `signMessage()` is not supported in IOS APP currently (v8.26.1).
+-   `multiSign()` and `switchChain()` are not supported in BitKeep App and Extension.
 -   BitKeep App and Extension will reload current page so there is no need to listen `accountsChanged` event.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
