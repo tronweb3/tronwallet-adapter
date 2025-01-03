@@ -1,5 +1,5 @@
 import type { SelectChangeEvent } from '@mui/material';
-import { Alert, Box, Button, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import type { Adapter, Network } from '@tronweb3/tronwallet-abstract-adapter';
 import { AdapterState, WalletReadyState } from '@tronweb3/tronwallet-abstract-adapter';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
@@ -117,7 +117,10 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         () =>
             adapters.map((adapter) => (
                 <MenuItem value={adapter.name} key={adapter.name}>
-                    {adapter.name}
+                    <Stack direction="row" spacing={2}>
+                        <img src={adapter.icon} alt={adapter.name} style={{ width: 20, height: 20, marginRight: 8 }} />
+                        {adapter.name}
+                    </Stack>
                 </MenuItem>
             )),
         [adapters]
