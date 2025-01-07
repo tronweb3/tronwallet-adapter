@@ -129,7 +129,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         <Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Typography gutterBottom>Select the Adapter:</Typography>
-                <Select style={{ marginLeft: 15 }} size="small" value={selectedName} label="Select Adapter" onChange={handleChange}>
+                <Select style={{ marginLeft: 15 }} size="small" value={selectedName} onChange={handleChange}>
                     {Items}
                 </Select>
             </Box>
@@ -249,7 +249,6 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={selectedChainId}
-                label="Chain"
                 size="small"
                 onChange={(e) => setSelectedChainId(e.target.value)}
             >
