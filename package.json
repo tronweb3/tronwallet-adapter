@@ -15,6 +15,13 @@
     },
     "author": "tronweb3",
     "license": "MIT",
+    "files": [
+        "./packages/*/*/lib/**",
+        "./packages/*/*/src/**",
+        "./packages/*/*/LICENSE",
+        "./packages/*/*/README.md",
+        "./packages/*/*/package.json"
+    ],
     "scripts": {
         "nuke": "shx rm -rf packages/*/*/node_modules demos/**/node_modules node_modules || true",
         "reinstall": "pnpm run nuke && pnpm install",
