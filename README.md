@@ -25,7 +25,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 |  |Browser Extension | Not Support |
 | [gate.io](https://www.gate.io/web3) | Android | >= 6.30.10 |
 | | IOS | >= 6.20.1 |
-|  |Browser Extension | Not Support |
+|  |Browser Extension | >= 2.35.2 |
 | [FoxWallet](https://foxwallet.com/) | Android | >= 5.3.1 |
 | | IOS | >= 5.3.1 |
 |  |Browser Extension | Not Support |
@@ -35,7 +35,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Ledger](https://www.ledger.com/) | - | All versions |
 | [WalletConnect](https://walletconnect.org) | - | >= v2.0 |
 
-> **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/web3-geek/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
+> **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
 ### Add support for new wallet
 Follow these steps to support new wallets:
@@ -222,7 +222,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [bitkeep](https://bitkeep.com/)             | Adapter for BitKeep extension and BitKeep App(IOS and Android)   | [`@tronweb3/tronwallet-adapter-bitkeep`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)             |
 | [okxwallet](https://www.okx.com/)           | Adapter for Okx Wallet extension and App(Android)                | [`@tronweb3/tronwallet-adapter-okxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         |
 | [imtoken](https://token.im/)                | Adapter for imToken Wallet App(IOS and Android)                  | [`@tronweb3/tronwallet-adapter-imtoken`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             |
-| [gatewallet](https://www.gate.io/web3)                | Adapter for gate.io Wallet App(IOS and Android)                  | [`@tronweb3/tronwallet-adapter-gatewallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)             |
+| [gatewallet](https://www.gate.io/web3)                | Adapter for gate.io Wallet App(IOS and Android) and Extension                  | [`@tronweb3/tronwallet-adapter-gatewallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)             |
 | [foxwallet](https://foxwallet.com/)                | Adapter for Fox Wallet App(IOS and Android)                  | [`@tronweb3/tronwallet-adapter-foxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)             |
 | [bybit](https://www.bybit.com/en/web3/home)                | Adapter for Bybit Wallet App(IOS and Android) and Extension                 | [`@tronweb3/tronwallet-adapter-bybit`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)             |
 
@@ -453,7 +453,7 @@ Welcome to contribute your idea!
 
 1. Fork the repo and clone to your device.
     ```bash
-    git clone https://github.com/web3-geek/tronwallet-adapter.git
+    git clone https://github.com/tronweb3/tronwallet-adapter.git
     ```
 2. Install Nodejs@18.x and pnpm@9.x
 3. Install dependencies

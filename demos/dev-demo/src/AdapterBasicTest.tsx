@@ -129,7 +129,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         <Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Typography gutterBottom>Select the Adapter:</Typography>
-                <Select style={{ marginLeft: 15 }} size="small" value={selectedName} label="Select Adapter" onChange={handleChange}>
+                <Select style={{ marginLeft: 15 }} size="small" value={selectedName} onChange={handleChange}>
                     {Items}
                 </Select>
             </Box>
@@ -179,7 +179,7 @@ const SectionSign = memo(function SectionSign({ adapter, connectState }: { adapt
     const [signedMessage, setSignedMessage] = useState('');
 
     async function onSignTransaction() {
-        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001), adapter.address);
+        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address!);
         const signedTransaction = await adapter.signTransaction(transaction);
         // const signedTransaction = await tronWeb.trx.sign(transaction);
         const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
@@ -249,7 +249,6 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={selectedChainId}
-                label="Chain"
                 size="small"
                 onChange={(e) => setSelectedChainId(e.target.value)}
             >
