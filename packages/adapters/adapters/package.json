@@ -1,16 +1,16 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.6",
+    "version": "1.2.7",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
         "TronWeb",
         "adapters"
     ],
-    "author": "web3-geek",
+    "author": "tronweb3",
     "repository": {
         "type": "git",
-        "url": "https://github.com/web3-geek/tronwallet-adapter"
+        "url": "https://github.com/tronweb3/tronwallet-adapter"
     },
     "license": "MIT",
     "type": "module",

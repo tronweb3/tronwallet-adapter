@@ -92,7 +92,7 @@ Used to specify what wallet adapters are supported. All wallet adapters can be i
 -   Type: `(error: WalletError): void`
 -   Default: `function(error) { console.error(error); }`
 
-Used to handle errors occured when use wallet. Developers can use the callback to tell users what happened according to the `error` type. All error types can be found [here](https://github.com/web3-geek/tronwallet-adapter/blob/main/packages/adapters/abstract-adapter/src/errors.ts).
+Used to handle errors occured when use wallet. Developers can use the callback to tell users what happened according to the `error` type. All error types can be found [here](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/abstract-adapter/src/errors.ts).
 
 -   Example
     ```jsx
@@ -229,7 +229,7 @@ enum AdapterState {
 #### select
 
 -   Type: `(walletAdapterName: AdapterName) => void`
-    Select a wallet by walletAdapterName. Valid adapters can be found [here](https://github.com/web3-geek/tronwallet-adapter/tree/main/packages/adapters/adapters)
+    Select a wallet by walletAdapterName. Valid adapters can be found [here](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
 
 #### connect
 

@@ -107,4 +107,4 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 
 -   `multiSign()` and `switchChain(chainId: string)` are not supported.
 
-For more information about wallet adapter, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/web3-geek/tronwallet-adapter/tree/main/packages/adapters/adapters).
+For more information about wallet adapter, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters).
