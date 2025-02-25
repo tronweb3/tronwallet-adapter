@@ -117,7 +117,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         () =>
             adapters.map((adapter) => (
                 <MenuItem value={adapter.name} key={adapter.name}>
-                    <Stack direction="row" spacing={2}>
+                    <Stack spacing={2}>
                         <img src={adapter.icon} alt={adapter.name} style={{ width: 20, height: 20, marginRight: 8 }} />
                         {adapter.name}
                     </Stack>
