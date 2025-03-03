@@ -1,4 +1,4 @@
-import { WalletProvider as _WalletProvider } from "@tronweb3/tronwallet-adapter-react-hooks";
+import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
 import { ContextType, createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 import {
   BitKeepAdapter,
@@ -15,7 +15,6 @@ import {
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import { Adapter, AdapterName, WalletReadyState } from "@tronweb3/tronwallet-abstract-adapter";
-import { read } from "fs";
 
 export interface WalletContextType {
   selectedAdapterName: AdapterName;
@@ -61,7 +60,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     ];
   }, []);
 
-  const [selectedAdapterName, setSelectedAdapterName] = useState<AdapterName>(TronLinkAdapterName);
+  const [selectedAdapterName, setSelectedAdapterName] = useLocalStorage<AdapterName>('TronWalletAdapterUsage', TronLinkAdapterName);
 
   const adapter = useMemo(() => adapters.find((adapter) => adapter.name === selectedAdapterName), [selectedAdapterName, adapters]);
   const [connectionState, setConnectionState] = useState({
@@ -72,7 +71,6 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     chainId: '',
   })
   function onReadyStateChanged(readyState: WalletReadyState) {
-    console.log('onready state change: ', readyState)
     setConnectionState(preState => ({
       ...preState,
       connected: adapter?.connected || false,
@@ -87,6 +85,12 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
+    (adapter as TronLinkAdapter)?.network().then((network) => {
+      setConnectionState(preState => ({
+        ...preState,
+        chainId: network.chainId,
+      }))
+    });
   }
 
   function onAccountsChanged(account: string) {
@@ -110,7 +114,6 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     }));
   }
   useEffect(() => {
-    console.log('readystate when first loaded: ', adapter?.readyState)
     setConnectionState(preState => ({ 
       ...preState,
       connected: adapter?.connected || false,

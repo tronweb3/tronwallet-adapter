@@ -1,7 +1,7 @@
 {
     "name": "dev-demo",
     "private": true,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "scripts": {
         "dev": "vite --force",
@@ -15,7 +15,7 @@
         "@ethersproject/properties": "^5.7.0",
         "@ethersproject/strings": "^5.7.0",
         "@metamask/eth-sig-util": "^6.0.0",
-        "@mui/icons-material": "^6.4.5",
+        "@mui/icons-material": "^6.4.6",
         "@mui/material": "^5.10.10",
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/abstract-adapter-evm": "latest",
