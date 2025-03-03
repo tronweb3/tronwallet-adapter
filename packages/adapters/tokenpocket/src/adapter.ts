@@ -8,6 +8,7 @@ import {
     WalletDisconnectedError,
     WalletSignTransactionError,
     WalletGetNetworkError,
+    WalletConnectionError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -18,7 +19,11 @@ import type {
     TronWeb,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import type { Tron } from '@tronweb3/tronwallet-adapter-tronlink';
+import type {
+    Tron,
+    TronAccountsChangedCallback,
+    TronChainChangedCallback,
+} from '@tronweb3/tronwallet-adapter-tronlink';
 import { openTokenPocket, supportTokenPocket } from './utils.js';
 
 export interface TokenPocketAdapterConfig extends BaseAdapterConfig {
@@ -140,10 +145,14 @@ export class TokenPocketAdapter extends Adapter {
             const wallet = this._wallet as TokenPocketWallet;
 
             const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+            if (!res?.[0]) {
+                throw new WalletConnectionError('Request connect error.');
+            }
             const address = res[0];
 
             this.setAddress(address);
             this.setState(AdapterState.Connected);
+            this.listenTronEvent();
             this.emit('connect', this.address || '');
         } catch (error: any) {
             this.emit('error', error);
@@ -218,6 +227,42 @@ export class TokenPocketAdapter extends Adapter {
             this.emit('error', error);
             throw error;
         }
+    }
+
+    private onChainChanged: TronChainChangedCallback = (data) => {
+        this.emit('chainChanged', data);
+    };
+    private onAccountsChanged: TronAccountsChangedCallback = () => {
+        const preAddr = this.address || '';
+        const curAddr = (this._wallet?.tronWeb && this._wallet?.tronWeb.defaultAddress?.base58) || '';
+        if (!curAddr) {
+            this.setAddress(null);
+            this.setState(AdapterState.Disconnect);
+        } else {
+            const address = curAddr as string;
+            this.setAddress(address);
+            this.setState(AdapterState.Connected);
+        }
+        this.emit('accountsChanged', this.address || '', preAddr);
+        if (!preAddr && this.address) {
+            this.emit('connect', this.address);
+        } else if (preAddr && !this.address) {
+            this.emit('disconnect');
+        }
+    };
+    private listenTronEvent() {
+        this.stopListenTronEvent();
+        const wallet = this._wallet;
+        if (!wallet || !wallet.tron) return;
+        wallet.tron.on('chainChanged', this.onChainChanged);
+        wallet.tron.on('accountsChanged', this.onAccountsChanged);
+    }
+
+    private stopListenTronEvent() {
+        const wallet = this._wallet;
+        if (!wallet || !wallet.tron) return;
+        wallet.tron.removeListener('chainChanged', this.onChainChanged);
+        wallet.tron.removeListener('accountsChanged', this.onAccountsChanged);
     }
 
     private async checkAndGetWallet() {
@@ -306,6 +351,7 @@ export class TokenPocketAdapter extends Adapter {
             } as TokenPocketWallet;
             address = this._wallet.tronWeb.defaultAddress?.base58 || null;
             state = window.tronWeb?.ready ? AdapterState.Connected : AdapterState.Disconnect;
+            this.listenTronEvent();
             if (!window.tronWeb?.ready) {
                 this.checkForWalletReady();
             }
