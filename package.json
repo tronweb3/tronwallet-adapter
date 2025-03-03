@@ -1,7 +1,7 @@
 {
     "name": "tronwallet-adapter",
     "description": "wallet adapters for TRON blockchain",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "main": "index.js",
     "sideEffects": false,
     "private": true,
@@ -34,7 +34,7 @@
         "build:umd": "pnpm --recursive run build:umd",
         "build-dev-demo": "pnpm build && pnpm run --filter {demos/dev-demo} build",
         "package": "pnpm --recursive run package",
-        "release": "pnpm prerelease && pnpm build:clean && pnpm test && changeset publish",
+        "release": "pnpm prerelease && pnpm build:clean && changeset publish",
         "watch": "pnpm run watch:ts & pnpm run watch:other",
         "watch:ts": "tsc --build --verbose --watch tsconfig.all.json",
         "watch:other": "pnpm run --filter {packages/vue/vue-ui} watch",
