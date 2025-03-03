@@ -70,6 +70,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     readyState: WalletReadyState.NotFound,
     chainId: '',
   })
+ 
   function onReadyStateChanged(readyState: WalletReadyState) {
     setConnectionState(preState => ({
       ...preState,
@@ -128,8 +129,6 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('accountsChanged', onAccountsChanged);
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
-      
-
       if (adapter?.connected) {
         (adapter as TronLinkAdapter)?.network().then((network) => {
           setConnectionState(preState => ({
