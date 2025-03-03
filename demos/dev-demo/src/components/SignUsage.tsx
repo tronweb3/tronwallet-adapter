@@ -18,6 +18,12 @@ export const UsageBox = styled(Box)(({ background } : { background: string }) =>
   flex: '1 0 auto',
   display: 'flex',
   flexDirection: 'column',
+
+  "@media (max-width: 780px)": {
+    width: '100%',
+    marginLeft: '0px',
+    marginTop: '20px'
+  }
 }));
 
 export const UsageTitle = styled('h2')({

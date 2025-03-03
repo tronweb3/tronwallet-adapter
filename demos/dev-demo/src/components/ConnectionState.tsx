@@ -46,8 +46,8 @@ export default function ConnectionState() {
       </Stack>
     </Stack>
     <Stack direction="row" justifyContent={'space-between'}>
-      <StateLabel>Connected account address</StateLabel>
-      <StateText>{connectionState.address || '-'}</StateText>
+      <StateLabel>Connected account </StateLabel>
+      <StateText>{connectionState.address ? `${connectionState.address.slice(0, 10)}...${connectionState.address.slice(-10)}` : '-'}</StateText>
     </Stack>
     <Stack direction="row" justifyContent={'space-between'}>
       <StateLabel>Current network you choose</StateLabel>

@@ -37,6 +37,10 @@ const ChainSelect = styled(Select)({
   },
   '& .MuiSelect-icon': {
     color: 'white',
+  },
+
+  "@media (max-width: 780px)": {
+    margin: '50px 0 0'
   }
 });
 const menuProps = {

@@ -15,6 +15,9 @@ const Container = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
+  '@media (max-width: 780px)': {
+    paddingTop: '50px',
+  }
 });
 const Title = styled(Typography)({
   fontSize: '40px',
@@ -29,6 +32,11 @@ const MainContent = styled('div')({
   maxWidth: '1200px',
   margin: '20px auto',
   display: 'flex',
+
+  "@media (max-width: 780px)": {
+    flexDirection: 'column',
+    alignItems: 'center',
+  }
 });
 
 const BasicInfoWrap = styled('div')(({ width = '610px', marginLeft = '0px' }: {
@@ -38,6 +46,9 @@ const BasicInfoWrap = styled('div')(({ width = '610px', marginLeft = '0px' }: {
   width,
   marginLeft,
   flex: '1 0 auto',
+  "@media (max-width: 780px)": {
+    width: '100%',
+  }
 }));
 
 const ConnectButton = styled(Button)({
