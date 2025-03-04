@@ -1,7 +1,7 @@
 import { Box, Stack, styled, Typography } from "@mui/material";
 import { useWallet } from "./WalletProvider";
-import LinkOffIcon from '@mui/icons-material/LinkOff';
-import LinkIcon from '@mui/icons-material/Link';
+import LinkOffIcon from './DisconnectedIcon';
+import LinkIcon from './ConnectedIcon';
 import { useMemo } from "react";
 
 const StateBox = styled(Box)({
@@ -41,7 +41,7 @@ export default function ConnectionState() {
     <Stack direction="row" justifyContent={'space-between'}>
       <StateLabel>Current connection status</StateLabel>
       <Stack direction="row" spacing={1} alignItems={'center'}>
-        { connectionState.connected ? <LinkIcon color="success"/> : <LinkOffIcon color="error" />}
+        { connectionState.connected ? <LinkIcon/> : <LinkOffIcon/>}
         <StateText>{adapter ? connectionState.connected ? 'Connected' : 'Disconnected' : '-'}</StateText>
       </Stack>
     </Stack>

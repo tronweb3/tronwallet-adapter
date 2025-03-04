@@ -27,7 +27,7 @@ export const UsageBox = styled(Box)(({ background } : { background: string }) =>
 }));
 
 export const UsageTitle = styled('h2')({
-  fontFamily: 'Roboto',
+  fontFamily: 'Wix Madefor Display, sans-serif',
   fontWeight: 700,
   fontSize: '20px',
   lineHeight: '25px',
@@ -55,6 +55,7 @@ const MessageInput = styled(Input)({
 
   '& .MuiInput-input::placeholder': {
     color: 'rgba(255, 255, 255, 0.5)',
+    opacity: 1
   }
 });
 
@@ -136,7 +137,7 @@ export default function SignUsage() {
         {success ? 'Success! The signature is valid' : 'Failed to verify the signature'}
       </InformAlertText>
     }
-  }, [title, success, signature]);
+  }, [title, success, signature, connectionState.chainId, connectionState.address]);
   return (
     <UsageBox background='linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)'>
       <UsageTitle>Sign Usage</UsageTitle>

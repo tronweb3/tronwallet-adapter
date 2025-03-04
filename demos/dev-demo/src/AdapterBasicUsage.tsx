@@ -1,25 +1,28 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import AdapterSelect from './components/AdapterSelect';
 import ConnectionState from './components/ConnectionState';
 import { Button, Typography } from '@mui/material';
-import LinkIcon from '@mui/icons-material/Link';
-import LinkOffIcon from '@mui/icons-material/LinkOff';
+import LinkIcon from './components/ConnectedIcon';
+import LinkOffIcon from './components/DisconnectedIcon';
 import { useWallet } from './components/WalletProvider';
 import SignUsage from './components/SignUsage';
 import SwitchChain from './components/SwitchChain';
+import BgImg from './images/bg.png';
 
 const Container = styled('div')({
-  paddingTop: '150px',
-  margin: '20px auto',
+  height: '100vh',
+  margin: '0',
+  paddingTop: '100px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'center',
+  background: `url(${BgImg}) no-repeat center bottom/auto 100%`,
   '@media (max-width: 780px)': {
     paddingTop: '50px',
   }
 });
 const Title = styled(Typography)({
+  fontFamily: 'Wix Madefor Display, sans-serif',
   fontSize: '40px',
   fontWeight: 800,
   marginBottom: '20px',
@@ -86,7 +89,7 @@ const AdapterBasicUsage: React.FC = () => {
           <AdapterSelect />
           <ConnectionState />
           <ConnectButton onClick={connectionState.connected ? disconnect : connect} disabled={connectionState.connecting}>
-            {connectionState.connected ? <LinkOffIcon color='error' /> : <LinkIcon color='success' /> }
+            {connectionState.connected ? <LinkOffIcon /> : <LinkIcon /> }
             <span style={{ marginLeft: '10px' }}>{connectionState.connected ? 'Disconnect' : 'Connect'}</span>
           </ConnectButton>
         </BasicInfoWrap>

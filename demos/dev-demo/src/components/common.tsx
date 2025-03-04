@@ -14,5 +14,8 @@ export const Button = styled(MuiButton)({
   '&:hover': {
     backgroundColor: '#fff',
     color: '#000',
+  },
+  '&.Mui-disabled': {
+    color: '#fff',
   }
 });

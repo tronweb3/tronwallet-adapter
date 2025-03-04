@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
-import { Box, Divider, MenuItem, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
+import type { SelectChangeEvent} from "@mui/material";
+import { Box, Divider, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { useWallet } from "./WalletProvider";
-import { AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
+import type { AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
 
 const SelectBox = styled(Box)({
   width: '100%',
@@ -20,8 +21,8 @@ const SelectBox = styled(Box)({
 });
 
 const MySelect = styled(Select)({
+  width: '200px',
   border: 'none',
-  marginLeft: 20,
 });
 export default function AdapterSelect() {
   const { adapters, setSelectedAdapterName, selectedAdapterName } = useWallet();
@@ -45,6 +46,7 @@ export default function AdapterSelect() {
     PaperProps: {
       style: {
         backgroundColor: '#e8e8ef',
+        borderRadius: '10px',
       },
     },
     MenuListProps: {
@@ -52,7 +54,7 @@ export default function AdapterSelect() {
         '& .MuiMenuItem-root': {
           backgroundColor: '#e8e8ef',
           margin: '0 5px',
-          borderRadius: '6px',
+          borderRadius: '10px',
           lineHeight: '40px',
           transition: 'all 0.5s ease',
           '&:hover': {

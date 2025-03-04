@@ -2,7 +2,6 @@ import { Box } from '@mui/material';
 
 import AdapterBasicUsage from './AdapterBasicUsage.js';
 import WalletProvider from './components/WalletProvider.js';
-import { AdapterBasicTest } from './AdapterBasicTest.js';
 
 function App() {
     return (

@@ -1,4 +1,5 @@
-import { Button, colors, MenuItem, Select, SelectChangeEvent, styled, Typography } from "@mui/material";
+import type { SelectChangeEvent} from "@mui/material";
+import { Button, colors, MenuItem, Select, styled, Typography } from "@mui/material";
 import { UsageBox, UsageTitle } from "./SignUsage";
 import { useState } from "react";
 import { CHAIN_ID } from "../config";
@@ -47,6 +48,7 @@ const menuProps = {
   PaperProps: {
     style: {
       backgroundColor: 'rgba(255, 255, 255, 1)',
+      borderRadius: '10px',
     },
   },
   MenuListProps: {
