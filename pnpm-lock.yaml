@@ -51,7 +51,7 @@ overrides:
   http-proxy-middleware@<2.0.7: '>=2.0.7'
   cross-spawn@<6.0.6: '>=6.0.6'
   cross-spawn@>=7.0.0 <7.0.5: '>=7.0.5'
-  elliptic@<6.6.0: '>=6.6.0'
+  elliptic@<6.6.1: '>=6.6.1'
   next@>=14.0.0 <14.2.21: '>=14.2.21'
   serialize-javascript@<6.0.2: '>=6.0.2'
   esbuild@<=0.24.2: '>=0.25.0'
@@ -3772,6 +3772,7 @@ packages:
 
   '@tronweb3/google-protobuf@3.21.2':
     resolution: {integrity: sha512-IVcT2GfWX3K6tHUVhs14NP5uzKhQt4KeDya1g9ACxuZsUzsaoGUIGzceK2Ltu7xp1YV94AaHOf4yxLAivlvEkQ==}
+    deprecated: This package is deprecated. Please use the official package google-protobuf instead.
 
   '@tronweb3/tronwallet-abstract-adapter@1.1.6':
     resolution: {integrity: sha512-3T2ojxzSKIAw4ucEcg4p5Nwr4lN1g1Om8s1ty77DOHIa0oS1YDvZmlRQekptWEppKOoRDYFWST1ERCvt2Xxm0A==}
