@@ -32,7 +32,7 @@ jobs:
         run: pnpm run build
 
       - name: Build subproject
-        run: pnpm --filter dev-demo run build
+        run: pnpm --filter dev-demo run build-pages
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

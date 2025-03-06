@@ -7,7 +7,8 @@
         "dev": "vite --force",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "ganache": "node scripts/ganache.cjs"
+        "ganache": "node scripts/ganache.cjs",
+        "build-pages": "vite build --base=/tronwallet-adapter"
     },
     "dependencies": {
         "@emotion/react": "^11.10.4",
