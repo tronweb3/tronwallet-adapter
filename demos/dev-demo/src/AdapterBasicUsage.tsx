@@ -12,11 +12,12 @@ import BgImg from './images/bg.png';
 
 const Container = styled('div')({
   height: '100vh',
+  boxSizing: 'border-box',
   margin: '0',
   paddingTop: '100px',
   display: 'flex',
   flexDirection: 'column',
-  background: `url(${BgImg}) no-repeat center bottom/auto 100%`,
+  background: `url(${BgImg}) no-repeat center bottom/100% 100%`,
   '@media (max-width: 780px)': {
     paddingTop: '50px',
   }
