@@ -51,7 +51,7 @@ export default function ConnectionState() {
     </Stack>
     <Stack direction="row" justifyContent={'space-between'}>
       <StateLabel>Current network you choose</StateLabel>
-      <StateText>{connectionState.chainId || '-'}</StateText>
+      <StateText>{connectionState.address ? connectionState.chainId || '-' : '-'}</StateText>
     </Stack>
   </StateBox>
 }
