@@ -42,6 +42,8 @@ Follow these steps to support new wallets:
 1. List your wallet to [Tron Wallet](https://tron.network/wallet) .
 2. Open an issue in this repository or fork the repository and implement the according adapter.
 
+### Tron Wallets Features Report
+Please refer to [this document](https://github.com/tronweb3/tronwallet-adapter-docs/blob/main/wallet-feature.md) to see the features of Tron wallets.
 ## Introduction
 
 ### Adapters

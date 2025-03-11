@@ -1,5 +1,6 @@
 import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
-import { ContextType, createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import type { PropsWithChildren} from "react";
+import { ContextType, createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   BitKeepAdapter,
   GateWalletAdapter,
@@ -14,7 +15,8 @@ import {
   TronLinkAdapterName
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
-import { Adapter, AdapterName, WalletReadyState } from "@tronweb3/tronwallet-abstract-adapter";
+import type { Adapter, AdapterName} from "@tronweb3/tronwallet-abstract-adapter";
+import { WalletReadyState } from "@tronweb3/tronwallet-abstract-adapter";
 
 export interface WalletContextType {
   selectedAdapterName: AdapterName;
@@ -33,7 +35,9 @@ export interface WalletContextType {
 }
 const Context = createContext<WalletContextType>({
   selectedAdapterName: TronLinkAdapterName,
-  setSelectedAdapterName: () => { },
+  setSelectedAdapterName: () => {
+    //
+  },
   adapter: undefined,
   connectionState: {
     connected: false,
@@ -86,7 +90,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
-    (adapter as TronLinkAdapter)?.network().then((network) => {
+    (adapter as TronLinkAdapter)?.network?.().then((network) => {
       setConnectionState(preState => ({
         ...preState,
         chainId: network.chainId,
@@ -130,7 +134,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
-        (adapter as TronLinkAdapter)?.network().then((network) => {
+        (adapter as TronLinkAdapter)?.network?.().then((network) => {
           setConnectionState(preState => ({
             ...preState,
             chainId: network.chainId,
@@ -151,13 +155,21 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: false,
       connecting: true,
     }));
-    await adapter?.connect();
-    setConnectionState(preState => ({
-      ...preState,
-      connected: adapter?.connected || false,
-      connecting: false,
-      address: adapter?.address || '',
-    }));
+    try {
+      await adapter?.connect();
+      setConnectionState(preState => ({
+        ...preState,
+        connected: adapter?.connected || false,
+        connecting: false,
+        address: adapter?.address || '',
+      }));
+    } catch (e: unknown) {
+      setConnectionState(preState => ({
+        ...preState,
+        connecting: false,
+      }));
+    }
+    
   }
 
   async function disconnect() {
