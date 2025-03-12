@@ -1,6 +1,6 @@
 import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
 import type { PropsWithChildren} from "react";
-import { ContextType, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   BitKeepAdapter,
   GateWalletAdapter,
@@ -63,9 +63,15 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new WalletConnectAdapter(walletconnectConfig),
     ];
   }, []);
+  const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
+  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TronLinkAdapterName);
 
-  const [selectedAdapterName, setSelectedAdapterName] = useLocalStorage<AdapterName>('TronWalletAdapterUsage', TronLinkAdapterName);
-
+  const setSelectedAdapterName = useCallback((selectedAdapterName: AdapterName) => {
+    _setSelectedAdapterName(selectedAdapterName);
+    setTimeout(() => {
+      window.history.replaceState({}, '', `/?wallet=${encodeURIComponent(selectedAdapterName)}`);
+    }, 200);
+  }, [_setSelectedAdapterName])
   const adapter = useMemo(() => adapters.find((adapter) => adapter.name === selectedAdapterName), [selectedAdapterName, adapters]);
   const [connectionState, setConnectionState] = useState({
     connected: false,

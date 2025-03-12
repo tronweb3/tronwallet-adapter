@@ -64,7 +64,7 @@ const InformAlert = styled(Snackbar)({
   marginTop: '20px',
   border: '1px solid rgba(214, 217, 224, 1)',
   borderRadius: '10px',
-  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+  backgroundColor: 'rgba(255, 255, 255, 1)',
   minWidth: '320px',
   justifyContent: 'flex-start',
 });
