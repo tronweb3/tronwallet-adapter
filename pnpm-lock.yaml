@@ -30,7 +30,6 @@ overrides:
   ws@>=8.0.0 <8.17.1: '>=8.17.1'
   ws@>=7.0.0 <7.5.10: '>=7.5.10'
   minimatch@<3.0.5: '>=3.0.5'
-  axios@>=1.3.2 <=1.7.3: '>=1.7.4'
   elliptic@>=4.0.0 <=6.5.6: '>=6.5.7'
   elliptic@>=2.0.0 <=6.5.6: '>=6.5.7'
   elliptic@>=5.2.1 <=6.5.6: '>=6.5.7'
@@ -59,6 +58,7 @@ overrides:
   vitest@>=1.0.0 <1.6.1: '>=1.6.1'
   '@vitest/browser@>=2.0.4 <2.1.9': '>=2.1.9'
   vite@>=5.0.0 <=5.4.11: '>=5.4.12'
+  axios@<1.8.2: '>=1.8.2'
 
 importers:
 
@@ -4915,8 +4915,8 @@ packages:
     resolution: {integrity: sha512-QbUdXJVTpvUTHU7871ppZkdOLBeGUKBQWHkHrvN2V9IQWGMt61zf3B45BtzjxEJzYuj0JBjBZP/hmYS/R9pmAw==}
     engines: {node: '>=4'}
 
-  axios@1.7.5:
-    resolution: {integrity: sha512-fZu86yCo+svH3uqJ/yTdQ0QHpQu5oL+/QE+QPSv6BZSkDAoky9vytxp7u5qk83OJFS3kEBcesWni9WTZAv3tSw==}
+  axios@1.8.2:
+    resolution: {integrity: sha512-ls4GYBm5aig9vWx8AWDSGLpnpDQRtWAfrjU+EuytuODrFBkqesN2RkOQCBzrA1RQNHw1SmRMSDDDSwzNAYQ6Rg==}
 
   axobject-query@3.1.1:
     resolution: {integrity: sha512-goKlv8DZrK9hUh975fnHzhNIO4jUnFCfv/dszV5VwUGDFjI6vQ2VwoyjYjYNEbBE8AH87TduWP5uyDR1D+Iteg==}
@@ -17660,7 +17660,7 @@ snapshots:
 
   axe-core@4.9.1: {}
 
-  axios@1.7.5:
+  axios@1.8.2:
     dependencies:
       follow-redirects: 1.15.6(debug@4.3.7)
       form-data: 4.0.0
@@ -25052,7 +25052,7 @@ snapshots:
       '@babel/runtime': 7.24.8
       '@ethersproject/abi': 5.7.0
       '@tronweb3/google-protobuf': 3.21.2
-      axios: 1.7.5
+      axios: 1.8.2
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.2.1
       ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -25071,7 +25071,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.8
       '@tronweb3/google-protobuf': 3.21.2
-      axios: 1.7.5
+      axios: 1.8.2
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.2.1
       ethers: 6.13.2(bufferutil@4.0.7)(utf-8-validate@6.0.3)
@@ -25087,7 +25087,7 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.24.8
       '@tronweb3/google-protobuf': 3.21.2
-      axios: 1.7.5
+      axios: 1.8.2
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.2.1
       ethers: 6.13.2(bufferutil@4.0.8)(utf-8-validate@6.0.3)
