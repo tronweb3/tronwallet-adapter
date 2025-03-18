@@ -115,7 +115,7 @@ export default function SignUsage() {
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
     const signedTransaction = await adapter.signTransaction(transaction);
     const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-    setSuccess(true);
+    setSuccess(res.result);
     setOpen(true);
     setTitle('Transfer');
   }
