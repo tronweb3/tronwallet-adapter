@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import legacy from '@vitejs/plugin-legacy';
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
@@ -13,10 +12,6 @@ export default defineConfig({
             },
         }),
         react(),
-        legacy({
-            targets: ['IE 11'],
-        }),
-        
     ],
     resolve: {
         alias: {
@@ -24,7 +19,7 @@ export default defineConfig({
         },
     },
     server: {
-        host: '',
+        host: '0.0.0.0',
         port: 3003,
     },
     build: {

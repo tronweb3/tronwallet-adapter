@@ -17,7 +17,7 @@
         "@ethersproject/strings": "^5.7.0",
         "@metamask/eth-sig-util": "^6.0.0",
         "@mui/icons-material": "^6.4.6",
-        "@mui/material": "^5.10.10",
+        "@mui/material": "^6.4.8",
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/abstract-adapter-evm": "latest",
         "@tronweb3/tronwallet-abstract-adapter": "latest",
@@ -47,7 +47,7 @@
         "@vitejs/plugin-react": "^4.2.1",
         "dotenv": "^16.3.1",
         "typescript": "^5.5.4",
-        "vite": "^5.2.11",
+        "vite": "latest",
         "vite-plugin-node-polyfills": "0.17.0"
     },
     "overrides": {
