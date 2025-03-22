@@ -29,6 +29,9 @@
             "path": "./packages/adapters/okxwallet/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/trust/tsconfig.all.json"
+        },
+        {
             "path": "./packages/adapters/gatewallet/tsconfig.all.json"
         },
         {
