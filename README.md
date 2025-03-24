@@ -19,7 +19,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 |  |Browser Extension | >= 3.0.0 |
 | [TokenPocket](https://www.tokenpocket.pro/) | Android | >= 1.1.2 |
 | | IOS | >= 3.1.3 |
-|  |Browser Extension | Not Support |
+|  |Browser Extension | >= 2.0.3 |
 | [imToken](https://token.im/) | Android | >= 2.5.0 |
 | | IOS | >= 2.5.0 |
 |  |Browser Extension | Not Support |
