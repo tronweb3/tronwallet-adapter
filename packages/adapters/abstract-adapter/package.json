@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-abstract-adapter",
-    "version": "1.1.8",
+    "version": "1.1.9",
     "description": "Abstract interface definition of Tron Wallet Adapters.",
     "author": "tronweb3",
     "repository": {
@@ -36,10 +36,10 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "eventemitter3": "^4.0.0"
+        "eventemitter3": "^4.0.0",
+        "tronweb": "6"
     },
     "devDependencies": {
-        "shx": "^0.3.4",
-        "tronweb": "^6.0.0"
+        "shx": "^0.3.4"
     }
 }

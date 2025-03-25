@@ -258,7 +258,7 @@ export class FoxWalletAdapter extends Adapter {
         let times = 0;
         const maxTimes = Math.floor(this.config.checkTimeout / 200);
         const check = async () => {
-            if (this._wallet && this._wallet.ready) {
+            if (this._wallet?.tronWeb?.defaultAddress?.base58) {
                 this.checkReadyInterval && clearInterval(this.checkReadyInterval);
                 this.checkReadyInterval = null;
                 await this._updateWallet();

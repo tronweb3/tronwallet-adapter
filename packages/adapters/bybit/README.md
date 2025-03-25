@@ -77,7 +77,7 @@ interface BybitWalletAdapterConfig {
 ### Caveats
 
 -   Bybit Wallet App and Extension doesn't implement `multiSign()` and `switchChain()`.
--   Bybit Wallet Extension only support these: `accountsChanged`,`connect`,`disconnect`.
+-   Bybit Wallet Extension only support these events: `accountsChanged`,`connect`,`disconnect`.
 -   Bybit Wallet App does not support any events.
 -   Currently deeplink can only open the app but not dapp browser.
 -   Keyless Wallet doesn't support Dapp connection.
