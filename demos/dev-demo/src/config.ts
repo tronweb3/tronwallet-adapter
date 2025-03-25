@@ -27,3 +27,15 @@ export const walletconnectConfig: WalletConnectAdapterConfig = {
         ],
     },
 };
+
+export const CHAIN_ID = {
+    Mainnet: '0x2b6653dc',
+    Shasta: '0x94a9059e',
+    Nile: '0xcd8690dc',
+};
+
+export const TRONSCAN_URL = {
+    [CHAIN_ID.Mainnet]: 'https://tronscan.org/',
+    [CHAIN_ID.Shasta]: 'https://shasta.tronscan.org/',
+    [CHAIN_ID.Nile]: 'https://nile.tronscan.org/',
+}

@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-foxwallet",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Wallet adapter for FoxWallet app.",
     "keywords": [
         "TRON",

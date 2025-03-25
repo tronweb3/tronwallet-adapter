@@ -1,12 +1,12 @@
 import type { NetworkNodeConfig } from '@tronweb3/tronwallet-abstract-adapter';
-import { TronWeb } from '@tronweb3/tronwallet-abstract-adapter';
+import type { TronWeb } from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface TronLinkWalletEvents {
     connect(...args: unknown[]): unknown;
     disconnect(...args: unknown[]): unknown;
 }
 
-export { TronWeb };
+export type { TronWeb };
 export interface ReqestAccountsResponse {
     code: 200 | 4000 | 4001;
     message: string;

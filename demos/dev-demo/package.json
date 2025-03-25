@@ -1,13 +1,14 @@
 {
     "name": "dev-demo",
     "private": true,
-    "version": "0.0.2",
+    "version": "0.0.3",
     "type": "module",
     "scripts": {
         "dev": "vite --force",
         "build": "tsc && vite build",
         "preview": "vite preview",
-        "ganache": "node scripts/ganache.cjs"
+        "ganache": "node scripts/ganache.cjs",
+        "build-pages": "vite build --base=/tronwallet-adapter"
     },
     "dependencies": {
         "@emotion/react": "^11.10.4",
@@ -15,7 +16,8 @@
         "@ethersproject/properties": "^5.7.0",
         "@ethersproject/strings": "^5.7.0",
         "@metamask/eth-sig-util": "^6.0.0",
-        "@mui/material": "^5.10.10",
+        "@mui/icons-material": "^6.4.6",
+        "@mui/material": "^6.4.8",
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/abstract-adapter-evm": "latest",
         "@tronweb3/tronwallet-abstract-adapter": "latest",
@@ -45,7 +47,7 @@
         "@vitejs/plugin-react": "^4.2.1",
         "dotenv": "^16.3.1",
         "typescript": "^5.5.4",
-        "vite": "^5.2.11",
+        "vite": "latest",
         "vite-plugin-node-polyfills": "0.17.0"
     },
     "overrides": {
