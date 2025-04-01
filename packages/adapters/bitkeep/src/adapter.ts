@@ -20,6 +20,7 @@ import type {
     AdapterName,
     BaseAdapterConfig,
     Network,
+    TronWeb,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { openBitgetWallet, supportBitgetWallet } from './utils.js';
 
@@ -51,7 +52,10 @@ export class BitKeepAdapter extends Adapter {
     private _readyState: WalletReadyState = WalletReadyState.Loading;
     private _state: AdapterState = AdapterState.Loading;
     private _connecting: boolean;
-    private _wallet: TronLinkWallet | null;
+    private _wallet: {
+        tronWeb: TronWeb;
+        tron: TronLinkWallet;
+    } | null;
     private _address: string | null;
 
     constructor(config: BitKeepAdapterConfig = {}) {
@@ -133,18 +137,18 @@ export class BitKeepAdapter extends Adapter {
                 }
                 throw new WalletNotFoundError();
             }
-            const wallet = this._wallet as TronLinkWallet;
+            const wallet = this._wallet;
             if (!isInMobileBrowser()) {
                 if (!wallet) return;
                 this._connecting = true;
                 try {
-                    await wallet.request({ method: 'tron_requestAccounts' });
+                    await wallet.tron.request({ method: 'tron_requestAccounts' });
                 } catch (e: any) {
                     throw new WalletConnectionError(e.message);
                 }
             }
             const address =
-                wallet.tronWeb.defaultAddress?.base58 || window.bitkeep?.tronWeb?.defaultAddress?.base58 || '';
+                wallet?.tronWeb.defaultAddress?.base58 || window.bitkeep?.tronWeb?.defaultAddress?.base58 || '';
             this.setAddress(address);
             this.setState(AdapterState.Connected);
             this.emit('connect', this.address || '');
@@ -230,7 +234,7 @@ export class BitKeepAdapter extends Adapter {
         if (!this.connected) throw new WalletDisconnectedError();
         const wallet = this._wallet;
         if (!wallet || !wallet.tronWeb) throw new WalletDisconnectedError();
-        return wallet as TronLinkWallet;
+        return wallet;
     }
 
     private checkReadyInterval: ReturnType<typeof setInterval> | null = null;
@@ -241,7 +245,7 @@ export class BitKeepAdapter extends Adapter {
         let times = 0;
         const maxTimes = Math.floor(this.config.checkTimeout / 200);
         const check = async () => {
-            if (this._wallet && this._wallet.ready) {
+            if (this._wallet && this._wallet?.tron.ready) {
                 this.checkReadyInterval && clearInterval(this.checkReadyInterval);
                 this.checkReadyInterval = null;
                 await this._updateWallet();
@@ -303,13 +307,26 @@ export class BitKeepAdapter extends Adapter {
         let state = this.state;
         let address = this.address;
         if (supportBitgetWallet()) {
-            const adapter = new TronLinkAdapter();
-            this._wallet =
-                ((await adapter?.getProvider().tronLink) as unknown as TronLinkWallet) ||
-                (window.bitkeep?.tronLink as unknown as TronLinkWallet);
+            if (isInMobileBrowser()) {
+                const adapter = new TronLinkAdapter();
+                const tron =
+                    ((await adapter?.getProvider().tronLink) as unknown as TronLinkWallet) ||
+                    (window.bitkeep?.tronLink as unknown as TronLinkWallet);
+                this._wallet = {
+                    tron,
+                    tronWeb: tron?.tronWeb,
+                };
+            } else {
+                const tronWeb = window.bitkeep?.tronWeb as unknown as TronWeb;
+                this._wallet = {
+                    tron: window.bitkeep.tronLink as unknown as TronLinkWallet,
+                    tronWeb,
+                };
+            }
+
             address = this._wallet.tronWeb.defaultAddress?.base58 || null;
-            state = this._wallet.ready ? AdapterState.Connected : AdapterState.Disconnect;
-            if (!this._wallet.ready) {
+            state = this._wallet.tron?.ready ? AdapterState.Connected : AdapterState.Disconnect;
+            if (!this._wallet.tron?.ready) {
                 this.checkForWalletReady();
             }
         } else {

@@ -6,37 +6,35 @@ This repository contains wallet adapters and components for Tron DApps. With out
 
 ### Supported
 
-| Wallet Name                                 | platform          | version      |
-| ------------------------------------------- | ----------------- | ------------ |
-| [TronLink](https://www.tronlink.org/)       | Android           | >= 1.0.0     |
-|                                             | IOS               | >= 1.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
-| [BitGet](https://web3.bitget.com/en)        | Android           | >= 4.0.0     |
-|                                             | IOS               | >= 4.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
-| [OkxWallet](https://okx.com/)               | Android           | >= 6.0.0     |
-|                                             | IOS               | >= 6.0.0     |
-|                                             | Browser Extension | >= 3.0.0     |
-| [TokenPocket](https://www.tokenpocket.pro/) | Android           | >= 1.1.2     |
-|                                             | IOS               | >= 3.1.3     |
-|                                             | Browser Extension | Not Support  |
-| [imToken](https://token.im/)                | Android           | >= 2.5.0     |
-|                                             | IOS               | >= 2.5.0     |
-|                                             | Browser Extension | Not Support  |
-| [gate.io](https://www.gate.io/web3)         | Android           | >= 6.30.10   |
-|                                             | IOS               | >= 6.20.1    |
-|                                             | Browser Extension | >= 2.35.2    |
-| [FoxWallet](https://foxwallet.com/)         | Android           | >= 5.3.1     |
-|                                             | IOS               | >= 5.3.1     |
-|                                             | Browser Extension | Not Support  |
-| [Bybit](https://bybit.com/web3)             | Android           | >= 4.51.1    |
-|                                             | IOS               | >= 4.51.1    |
-|                                             | Browser Extension | >= 3.16.3    |
-| [Ledger](https://www.ledger.com/)           | -                 | All versions |
-| [WalletConnect](https://walletconnect.org)  | -                 | >= v2.0      |
-| [Trust](https://trustwallet.com)            | Android           | >= 1.0.0     |
-|                                             | IOS               | >= 1.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
+| Wallet Name |  platform | version |
+| ------------- | ---------- | ----- |
+| [TronLink](https://www.tronlink.org/)| Android | >= 1.0.0 |
+| | IOS | >= 1.0.0 |
+|  |Browser Extension | >= 1.0.0|
+| [BitGet](https://web3.bitget.com/en) | Android | >= 4.0.0 |
+| | IOS | >= 4.0.0 |
+|  |Browser Extension | >= 1.0.0 |
+| [OkxWallet](https://okx.com/) | Android | >= 6.0.0 |
+| | IOS | >= 6.0.0 |
+|  |Browser Extension | >= 3.0.0 |
+| [TokenPocket](https://www.tokenpocket.pro/) | Android | >= 1.1.2 |
+| | IOS | >= 3.1.3 |
+|  |Browser Extension | >= 2.0.3 |
+| [imToken](https://token.im/) | Android | >= 2.5.0 |
+| | IOS | >= 2.5.0 |
+|  |Browser Extension | Not Support |
+| [gate.io](https://www.gate.io/web3) | Android | >= 6.30.10 |
+| | IOS | >= 6.20.1 |
+|  |Browser Extension | >= 2.35.2 |
+| [FoxWallet](https://foxwallet.com/) | Android | >= 5.3.1 |
+| | IOS | >= 5.3.1 |
+|  |Browser Extension | Not Support |
+| [Bybit](https://bybit.com/web3) | Android | >= 4.51.1 |
+| | IOS | >= 4.51.1 |
+|  |Browser Extension | >= 3.16.3 |
+| [Ledger](https://www.ledger.com/) | - | All versions |
+| [WalletConnect](https://walletconnect.org) | - | >= v2.0 |
+| [Trust](https://trustwallet.com)            | Browser Extension | >= 1.0.0     |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
@@ -47,6 +45,8 @@ Follow these steps to support new wallets:
 1. List your wallet to [Tron Wallet](https://tron.network/wallet) .
 2. Open an issue in this repository or fork the repository and implement the according adapter.
 
+### Tron Wallets Features Report
+Please refer to [this document](https://github.com/tronweb3/tronwallet-adapter-docs/blob/main/wallet-feature.md) to see the features of Tron wallets.
 ## Introduction
 
 ### Adapters

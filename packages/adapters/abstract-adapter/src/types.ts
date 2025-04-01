@@ -1,4 +1,4 @@
-import { TronWeb } from 'tronweb';
+export type { TronWeb } from 'tronweb';
 export enum NetworkType {
     Mainnet = 'Mainnet',
     Shasta = 'Shasta',
@@ -33,5 +33,4 @@ export type NetworkNodeConfig = {
     eventServer: string;
 };
 
-export { TronWeb };
 export type { Transaction, SignedTransaction } from 'tronweb/lib/esm/types/Transaction';

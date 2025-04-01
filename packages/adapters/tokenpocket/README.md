@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-tokenpocket`
 
-This package provides an adapter to enable TRON DApps to connect to the [TokenPocket Wallet App](https://tokenpocket.pro/).
+This package provides an adapter to enable TRON DApps to connect to the [TokenPocket App and Extension Wallet](https://tokenpocket.pro/).
 
 ## Demo
 
@@ -78,7 +78,7 @@ interface TokenPocketConfig {
 
 ### Caveats
 
--   TokenPocket App doesn't implement `signMessage()`, `multiSign()` and `switchChain()`.
+-   TokenPocket Wallet doesn't implement `multiSign()` and `switchChain()`.
 -   TokenPocket App will be connected automatically and when user change accounts, the page will reload. So there is no need to to listen to `accountsChanged` event.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
