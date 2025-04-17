@@ -19,6 +19,7 @@ import type {
     Network,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { openImTokenApp, supportImToken } from './utils.js';
+import { openQrModal } from './Modal/openQrModal.js';
 
 export interface ImTokenAdapterConfig extends BaseAdapterConfig {
     /**
@@ -116,11 +117,21 @@ export class ImTokenAdapter extends Adapter {
     }
 
     async connect(): Promise<void> {
+        console.log('imtoken::connect');
         try {
             this.checkIfOpenApp();
             if (this.connected || this.connecting) return;
             await this._checkWallet();
             if (this.readyState === WalletReadyState.NotFound) {
+                console.log('imtoken::connect::not found111');
+                // Desktop fallback: show QR code for mobile imToken
+                if (isInBrowser() && !supportImToken()) {
+                    const { origin, pathname, search, hash } = window.location;
+                    const dappUrl = origin + pathname + search + hash;
+                    const link = `https://connect.token.im/link/navigate/DappView?url=${encodeURIComponent(dappUrl)}`;
+                    openQrModal(link);
+                    return;
+                }
                 if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
                     window.open(this.url, '_blank');
                 }
@@ -245,6 +256,7 @@ export class ImTokenAdapter extends Adapter {
      * @returns if wallet exists
      */
     private _checkWallet(): Promise<boolean> {
+        console.log('imtoken::checkWallet');
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }

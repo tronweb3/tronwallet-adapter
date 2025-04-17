@@ -43,7 +43,9 @@
     },
     "dependencies": {
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
+        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
+        "preact": "^10.11.3",
+        "qrcode": "^1.4.4"
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
