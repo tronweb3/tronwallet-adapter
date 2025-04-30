@@ -98,7 +98,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
-    (adapter as TronLinkAdapter)?.network?.().then((network) => {
+    (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
       setConnectionState(preState => ({
         ...preState,
         chainId: network.chainId,
@@ -142,7 +142,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
-        (adapter as TronLinkAdapter)?.network?.().then((network) => {
+        (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
           setConnectionState(preState => ({
             ...preState,
             chainId: network.chainId,
