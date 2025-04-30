@@ -95,8 +95,11 @@ export class TomoWalletAdapter extends Adapter {
         }
         if (isInMobileBrowser() && window.tomo_wallet?.tron) {
             this._readyState = WalletReadyState.Found;
+            console.log('Tomo wallet found');
             this._updateWallet();
         } else {
+            console.log('Tomo wallet not found');
+
             this._checkWallet().then(() => {
                 if (this.connected) {
                     this.emit('connect', this.address || '');
@@ -428,7 +431,7 @@ export class TomoWalletAdapter extends Adapter {
         this._checkPromise = new Promise((resolve) => {
             const check = () => {
                 times++;
-                const isSupport = times < checkTronTimes && !isInMobileBrowser() && supportTomowallet();
+                const isSupport = times < checkTronTimes && !!isInMobileBrowser() && supportTomowallet();
                 if (isSupport || times > maxTimes) {
                     timer && clearInterval(timer);
                     this._readyState = isSupport ? WalletReadyState.Found : WalletReadyState.NotFound;
