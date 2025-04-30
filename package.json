@@ -22,6 +22,7 @@
         "./packages/*/*/README.md",
         "./packages/*/*/package.json"
     ],
+    "packageManager": "pnpm@9.0.0",
     "scripts": {
         "nuke": "shx rm -rf packages/*/*/node_modules demos/**/node_modules node_modules || true",
         "reinstall": "pnpm run nuke && pnpm install",
