@@ -53,7 +53,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
     return [
       new TomoWalletAdapter(),
-      new TronLinkAdapter(),
+      // new TronLinkAdapter(),
       new TokenPocketAdapter(),
       new OkxWalletAdapter(),
       new BitKeepAdapter(),
