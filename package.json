@@ -44,7 +44,7 @@
         "lint:fix": "pnpm run fmt && eslint --fix .",
         "test": "pnpm --recursive --filter \"@tronweb3/*\" run test",
         "example": "pnpm run --filter {demos/react-ui/vite-app} dev",
-        "prepare": "husky install",
+        "prepare": "husky install && pnpm build",
         "update-version": "pnpm changeset add && pnpm changeset version",
         "prerelease": "node ./scripts/check-dep-version.js"
     },
