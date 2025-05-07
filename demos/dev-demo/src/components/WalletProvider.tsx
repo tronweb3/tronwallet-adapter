@@ -1,7 +1,7 @@
 import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
 import type { PropsWithChildren} from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import type {
+import {
   TronLinkAdapter} from '@tronweb3/tronwallet-adapters';
 import {
   BitKeepAdapter,
@@ -54,7 +54,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
     return [
       new TomoWalletAdapter(),
-      // new TronLinkAdapter(),
+      new TronLinkAdapter(),
       new TokenPocketAdapter(),
       new OkxWalletAdapter(),
       new BitKeepAdapter(),
