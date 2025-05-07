@@ -80,7 +80,7 @@ const InformAlertText = styled(Typography)({
 });
 
 // Replace with another address. Don't transfer any assets to this address.
-const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
+const receiver = 'TM6nL4t3PVeFHcYgePusVX3dhk4zSCEd1s';
 
 export default function SignUsage() {
   const { connectionState, adapter } = useWallet();
