@@ -1,6 +1,8 @@
 import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
 import type { PropsWithChildren} from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import type {
+  TronLinkAdapter} from '@tronweb3/tronwallet-adapters';
 import {
   BitKeepAdapter,
   GateWalletAdapter,
@@ -8,11 +10,10 @@ import {
   LedgerAdapter,
   OkxWalletAdapter,
   TokenPocketAdapter,
-  TronLinkAdapter,
   WalletConnectAdapter,
   FoxWalletAdapter,
   BybitWalletAdapter,
-  TronLinkAdapterName,
+  TomoWalletAdapterName,
   TomoWalletAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
@@ -35,7 +36,7 @@ export interface WalletContextType {
   disconnect?: () => Promise<void>;
 }
 const Context = createContext<WalletContextType>({
-  selectedAdapterName: TronLinkAdapterName,
+  selectedAdapterName: TomoWalletAdapterName,
   setSelectedAdapterName: () => {
     //
   },
@@ -53,7 +54,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
     return [
       new TomoWalletAdapter(),
-      new TronLinkAdapter(),
+      // new TronLinkAdapter(),
       new TokenPocketAdapter(),
       new OkxWalletAdapter(),
       new BitKeepAdapter(),
@@ -66,7 +67,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
-  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TronLinkAdapterName);
+  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TomoWalletAdapterName);
 
   const setSelectedAdapterName = useCallback((selectedAdapterName: AdapterName) => {
     _setSelectedAdapterName(selectedAdapterName);
@@ -98,7 +99,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
-    (adapter as TronLinkAdapter)?.network?.().then((network) => {
+    (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
       setConnectionState(preState => ({
         ...preState,
         chainId: network.chainId,
@@ -142,7 +143,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
-        (adapter as TronLinkAdapter)?.network?.().then((network) => {
+        (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
           setConnectionState(preState => ({
             ...preState,
             chainId: network.chainId,
