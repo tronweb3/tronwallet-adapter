@@ -69,7 +69,7 @@ export class TomoWalletAdapter extends Adapter {
     private _wallet: TronLinkWallet | null;
     private _address: string | null;
     // https://github.com/tronprotocol/tips/blob/master/tip-1193.md
-    private _supportNewTronProtocol = false;
+    // private _supportNewTronProtocol = false;
     // record if first connect event has emitted or not
 
     constructor(config: TomoWalletAdapterConfig = {}) {
@@ -182,7 +182,7 @@ export class TomoWalletAdapter extends Adapter {
                 const address = wallet.tronWeb.defaultAddress?.base58 || '';
                 this.setAddress(address);
                 this.setState(AdapterState.Connected);
-                this._listenTronLinkEvent();
+                // this._listenTronLinkEvent();
             } else {
                 throw new WalletConnectionError('Cannot connect wallet.');
             }
@@ -196,11 +196,6 @@ export class TomoWalletAdapter extends Adapter {
     }
 
     async disconnect(): Promise<void> {
-        if (this._supportNewTronProtocol) {
-            this._stopListenTronEvent();
-        } else {
-            this._stopListenTronLinkEvent();
-        }
         if (this.state !== AdapterState.Connected) {
             return;
         }
@@ -286,11 +281,6 @@ export class TomoWalletAdapter extends Adapter {
                 }
                 throw new WalletNotFoundError();
             }
-            if (!this._supportNewTronProtocol) {
-                throw new WalletSwitchChainError(
-                    "Current version of Tomo Wallet doesn't support switch chain operation."
-                );
-            }
             const wallet = this._wallet as TronLinkWallet;
             try {
                 await wallet.request({
@@ -314,102 +304,6 @@ export class TomoWalletAdapter extends Adapter {
         if (!wallet || !wallet.tronWeb) throw new WalletDisconnectedError();
         return wallet as TronLinkWallet;
     }
-
-    private _listenTronLinkEvent() {
-        this._stopListenTronLinkEvent();
-        window.addEventListener('message', this._tronLinkMessageHandler);
-    }
-
-    private _stopListenTronLinkEvent() {
-        window.removeEventListener('message', this._tronLinkMessageHandler);
-    }
-
-    private _tronLinkMessageHandler = (e: TronLinkMessageEvent) => {
-        const message = e.data?.message;
-        if (!message) {
-            return;
-        }
-        if (message.action === 'accountsChanged') {
-            setTimeout(() => {
-                const preAddr = this.address || '';
-                if ((this._wallet as TronLinkWallet)?.ready) {
-                    const address = (message.data as AccountsChangedEventData).address;
-                    this.setAddress(address);
-                    this.setState(AdapterState.Connected);
-                } else {
-                    this.setAddress(null);
-                    this.setState(AdapterState.Disconnect);
-                }
-                this.emit('accountsChanged', this.address || '', preAddr);
-                if (!preAddr && this.address) {
-                    this.emit('connect', this.address);
-                } else if (preAddr && !this.address) {
-                    this.emit('disconnect');
-                }
-            }, 200);
-        } else if (message.action === 'setNode') {
-            this.emit('chainChanged', { chainId: (message.data as NetworkChangedEventData)?.node?.chainId || '' });
-        } else if (message.action === 'connect') {
-            const address = (this._wallet as TronLinkWallet).tronWeb?.defaultAddress?.base58 || '';
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this.emit('connect', address);
-        } else if (message.action === 'disconnect') {
-            this.setAddress(null);
-            this.setState(AdapterState.Disconnect);
-            this.emit('disconnect');
-        }
-    };
-
-    // private checkIfOpenTronLink() {
-    //     const { dappName = '', dappIcon = '' } = this.config;
-    //     // if (this.config.openTronLinkAppOnMobile === false) {
-    //     //     return;
-    //     // }
-    //     if (openTronLink({ dappIcon, dappName })) {
-    //         throw new WalletNotFoundError();
-    //     }
-    // }
-
-    // following code is for TIP-1193
-    private _listenTronEvent() {
-        this._stopListenTronEvent();
-        this._stopListenTronLinkEvent();
-        const wallet = this._wallet as TronLinkWallet;
-        // wallet.on('chainChanged', this._onChainChanged);
-        // wallet.on('accountsChanged', this._onAccountsChanged);
-    }
-
-    private _stopListenTronEvent() {
-        const wallet = this._wallet as TronLinkWallet;
-        // wallet.removeListener('chainChanged', this._onChainChanged);
-        // wallet.removeListener('accountsChanged', this._onAccountsChanged);
-    }
-
-    private _onChainChanged: TronChainChangedCallback = (data) => {
-        this.emit('chainChanged', data);
-    };
-
-    private _onAccountsChanged: TronAccountsChangedCallback = () => {
-        const preAddr = this.address || '';
-        const curAddr = (this._wallet?.tronWeb && this._wallet?.tronWeb.defaultAddress?.base58) || '';
-        if (!curAddr) {
-            // change to a new address and if it's disconnected, data will be empty
-            // tronlink(not tomo) will emit accountsChanged many times, only process when connected
-            this.setAddress(null);
-            this.setState(AdapterState.Disconnect);
-        } else {
-            const address = curAddr as string;
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-        }
-        this.emit('accountsChanged', this.address || '', preAddr);
-        if (!preAddr && this.address) {
-            this.emit('connect', this.address);
-        } else if (preAddr && !this.address) {
-            this.emit('disconnect');
-        }
-    };
 
     private _checkPromise: Promise<boolean> | null = null;
     /**
