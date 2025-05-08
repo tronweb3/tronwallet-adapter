@@ -90,15 +90,11 @@ export default function SignUsage() {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Verify Message'>('Transfer');
   const onSignMessage = async () => {
-    console.log('onSignMessage', 1);
     if (!adapter) {
-      console.log('onSignMessage', 2);
       return;
     }
-    console.log('onSignMessage', 3);
 
     const res = await adapter.signMessage(message);
-    console.log('onSignMessage', 4);
 
     setSignature(res);
     setSuccess(true);
