@@ -22,6 +22,7 @@
         "./packages/*/*/README.md",
         "./packages/*/*/package.json"
     ],
+    "packageManager": "pnpm@9.12.0",
     "scripts": {
         "nuke": "shx rm -rf packages/*/*/node_modules demos/**/node_modules node_modules || true",
         "reinstall": "pnpm run nuke && pnpm install",
@@ -44,7 +45,7 @@
         "lint:fix": "pnpm run fmt && eslint --fix .",
         "test": "pnpm --recursive --filter \"@tronweb3/*\" run test",
         "example": "pnpm run --filter {demos/react-ui/vite-app} dev",
-        "prepare": "husky install",
+        "prepare": "husky install && pnpm build",
         "update-version": "pnpm changeset add && pnpm changeset version",
         "prerelease": "node ./scripts/check-dep-version.js"
     },
