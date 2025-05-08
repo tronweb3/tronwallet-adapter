@@ -19,22 +19,17 @@ import type {
     AdapterName,
     BaseAdapterConfig,
     Network,
+    EventEmitter,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import type {
-    AccountsChangedEventData,
-    NetworkChangedEventData,
-    TronAccountsChangedCallback,
-    TronChainChangedCallback,
-    TronLinkMessageEvent,
-    TronLinkWallet,
-} from '@tronweb3/tronwallet-adapter-tronlink';
+import type { TronLinkWallet } from '@tronweb3/tronwallet-adapter-tronlink';
 import { supportTomowallet } from './utils.js';
 
+type TomoWallet = TronLinkWallet & EventEmitter;
 declare global {
     interface Window {
         tomo_wallet?: {
-            tron?: TronLinkWallet;
+            tron?: TomoWallet | undefined;
         };
     }
 }
@@ -66,7 +61,7 @@ export class TomoWalletAdapter extends Adapter {
     private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
     private _state: AdapterState = AdapterState.Loading;
     private _connecting: boolean;
-    private _wallet: TronLinkWallet | null;
+    private _wallet: TomoWallet | null;
     private _address: string | null;
     // https://github.com/tronprotocol/tips/blob/master/tip-1193.md
     // private _supportNewTronProtocol = false;
@@ -340,12 +335,37 @@ export class TomoWalletAdapter extends Adapter {
         return this._checkPromise;
     }
 
+    private listenToEvents() {
+        this.stopEventListening();
+        this._wallet?.on('accountsChanged', this.onAccountsChanged);
+    }
+
+    private stopEventListening() {
+        if (this._wallet) {
+            this._wallet.removeListener('accountsChanged', this.onAccountsChanged);
+        }
+    }
+
+    private onAccountsChanged = (account: string) => {
+        const preAddr = this.address || '';
+        if (account !== preAddr) {
+            this.setAddress(account);
+            this.emit('accountsChanged', this.address || '', preAddr);
+        }
+        if (!preAddr && this.address) {
+            this.emit('connect', this.address);
+        } else if (preAddr && !this.address) {
+            this.emit('disconnect');
+        }
+    };
+
     private _updateWallet = () => {
         let state = this.state;
         let address = this.address;
         if (isInMobileBrowser()) {
-            if (window.tomo_wallet) {
-                this._wallet = window.tomo_wallet.tron || null;
+            if (window.tomo_wallet?.tron) {
+                this._wallet = window.tomo_wallet.tron;
+                this.listenToEvents();
             }
             address = this._wallet?.tronWeb?.defaultAddress?.base58 || null;
             state = address ? AdapterState.Connected : AdapterState.Disconnect;
