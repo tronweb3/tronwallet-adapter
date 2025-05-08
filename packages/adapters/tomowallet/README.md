@@ -1,11 +1,11 @@
-# `@tronweb3/tronwallet-adapter-tronlink`
+# `@tronweb3/tronwallet-adapter-tomowallet`
 
-This package provides an adapter to enable TRON DApps to connect to the [TronLink Wallet extension](https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec) and [TronLink Wallet App](https://www.tronlink.org/).
+This package provides an adapter to enable TRON DApps to connect wallet inside the [Tomo Wallet App](https://tomo.inc/)
 
 ## Demo
 
 ```typescript
-import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
+import { TomoWalletAdapter } from '@tronweb3/tronwallet-adapter-tomowallet';
 import TronWeb from 'tronweb';
 
 const tronWeb = new TronWeb({
@@ -13,7 +13,7 @@ const tronWeb = new TronWeb({
     headers: { 'TRON-PRO-API-KEY': 'your api key' },
 });
 
-const adapter = new TronLinkAdapter();
+const adapter = new TomoWalletAdapter();
 // connect
 await adapter.connect();
 
@@ -32,37 +32,27 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 
 ### API
 
--   `Constructor(config: TronLinkAdapterConfig)`
+-   `Constructor(config: TomoWalletAdapterConfig)`
     ```typescript
-    interface TronLinkAdapterConfig {
+    interface TomoWalletAdapterConfig extends BaseAdapterConfig {
         /**
-         * Set if open Wallet's website url when wallet is not installed.
-         * Default is true.
-         */
-        openUrlWhenWalletNotFound?: boolean;
-        /**
-         * Timeout in millisecond for checking if TronLink wallet exists.
-         * Default is 30 * 1000ms
-         */
+         * Timeout in millisecond for checking if Tomo wallet exists.
+        * Default is 30 * 1000ms
+        */
         checkTimeout?: number;
         /**
-         * Set if open TronLink app using DeepLink on mobile device.
-         * Default is true.
-         */
-        openTronLinkAppOnMobile?: boolean;
-        /**
-         * The icon of your dapp. Used when open TronLink app in mobile device browsers.
-         * Default is current website icon.
-         */
+         * The icon of your dapp. Used when open Tomo app in mobile device browsers.
+        */
         dappIcon?: string;
         /**
-         * The name of your dapp. Used when open TronLink app in mobile device browsers.
-         * Default is `document.title`.
-         */
+         * The name of your dapp. Used when open Tomo app in mobile device browsers.
+        */
         dappName?: string;
     }
     ```
--   `network()` method is supported to get current network information. The type of returned value is `Network` as follows:
+-   `network()` method is supported to get current network information. 
+    Currently Tomo Wallet only supports TRON mainnet.  
+    The type of returned value is `Network` as follows:
 
     ```typescript
     export enum NetworkType {
@@ -84,8 +74,3 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     };
     ```
 
-### Caveats
-
--   **TronLink Doesn't support `disconnect` by DApp**. As TronLinkAdapter doesn't support disconnect by DApp website, call `adapter.disconnect()` won't disconnect from TronLink extension really.
-
-For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
