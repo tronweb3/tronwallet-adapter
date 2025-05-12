@@ -21,10 +21,10 @@
     "vue": "^3.3.8"
   },
   "devDependencies": {
-    "@vitejs/plugin-legacy": "^5.4.0",
-    "@vitejs/plugin-vue": "^5.0.4",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitejs/plugin-legacy": "^6.1.1",
     "typescript": "^5.2.2",
-    "vite": "^5.2.11",
+    "vite": "^6.3.5",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue-tsc": "^2.0.21"
   },

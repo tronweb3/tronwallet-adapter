@@ -15,7 +15,7 @@
         "@tronweb3/tronwallet-adapter-react-hooks": "^1.0.0",
         "@tronweb3/tronwallet-adapter-react-ui": "^1.1.0",
         "@tronweb3/tronwallet-adapter-walletconnect": "^2.0.0",
-        "@tronweb3/tronwallet-adapters": "^1.2.2",
+        "@tronweb3/tronwallet-adapters": "latest",
         "@types/jest": "^27.5.2",
         "@types/node": "^16.18.3",
         "@types/react": "^18.3.3",
