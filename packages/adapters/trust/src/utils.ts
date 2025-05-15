@@ -4,10 +4,14 @@ export function supportTrust() {
     return !!(window.trustwallet && window.trustwallet.tronLink);
 }
 
-export const isTrustApp = /Trust/i.test(navigator.userAgent);
-
+export const isTrustApp = function () {
+    if (typeof window !== 'undefined' && typeof window.navigator !== 'undefined') {
+        return /Trust/i.test(window.navigator.userAgent);
+    }
+    return false;
+};
 export function openTrustWallet() {
-    if (!isTrustApp && isInMobileBrowser()) {
+    if (!isTrustApp() && isInMobileBrowser()) {
         window.location.href = 'https://link.trustwallet.com?source=' + encodeURIComponent(window.location.href);
         return true;
     }

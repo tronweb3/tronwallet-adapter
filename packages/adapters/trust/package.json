@@ -1,7 +1,7 @@
 {
     "name": "@tronweb3/tronwallet-adapter-trust",
     "version": "1.0.0",
-    "description": "Wallet adapter for Trust Extension and Trust app.",
+    "description": "Wallet adapter for Trust Extension.",
     "keywords": [
         "TRON",
         "TronWeb",
