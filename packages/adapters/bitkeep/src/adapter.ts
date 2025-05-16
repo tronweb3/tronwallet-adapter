@@ -333,7 +333,7 @@ export class BitKeepAdapter extends Adapter {
                 };
             }
 
-            address = this._wallet.tronWeb.defaultAddress?.base58 || null;
+            address = this._wallet.tron?.ready ? this._wallet.tronWeb.defaultAddress?.base58 || null : '';
             state = this._wallet.tron?.ready ? AdapterState.Connected : AdapterState.Disconnect;
             if (!this._wallet.tron?.ready) {
                 this.checkForWalletReady();
