@@ -1,3 +1,4 @@
+'use client';
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
 import type { Adapter, WalletError } from '@tronweb3/tronwallet-abstract-adapter';
