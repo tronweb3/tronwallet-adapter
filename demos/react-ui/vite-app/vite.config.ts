@@ -10,12 +10,6 @@ export default defineConfig({
         legacy({
             targets: ['>0.3%', 'defaults'],
         }),
-        nodePolyfills({
-            include: ['crypto', 'buffer', 'stream'],
-            globals: {
-                Buffer: true,
-            }
-        })
     ],
     define: {
         global: 'window',

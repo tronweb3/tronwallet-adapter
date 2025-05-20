@@ -23,7 +23,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [imToken](https://token.im/)                | Android           | >= 2.5.0     |
 |                                             | IOS               | >= 2.5.0     |
 |                                             | Browser Extension | Not Support  |
-| [gate.io](https://www.gate.io/web3)         | Android           | >= 6.30.10   |
+| [GateWallet](https://www.gate.io/web3)      | Android           | >= 6.30.10   |
 |                                             | IOS               | >= 6.20.1    |
 |                                             | Browser Extension | >= 2.35.2    |
 | [FoxWallet](https://foxwallet.com/)         | Android           | >= 5.3.1     |
@@ -34,7 +34,9 @@ This repository contains wallet adapters and components for Tron DApps. With out
 |                                             | Browser Extension | >= 3.16.3    |
 | [Ledger](https://www.ledger.com/)           | -                 | All versions |
 | [WalletConnect](https://walletconnect.org)  | -                 | >= v2.0      |
-| [Trust](https://trustwallet.com)            | Browser Extension | >= 1.0.0     |
+| [Trust](https://trustwallet.com)            | Android           | Not Support  |
+|                                             | IOS               | Not Support  |
+|                                             | Browser Extension | >= 1.0.0     |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
@@ -264,7 +266,7 @@ This package contains all wallet adapters for Tron including:
 -   [WalletConnect](https://walletconnect.org)
 -   [TokenPocket](https://tokenpocket.pro/)
 -   [Bitget](https://bitkeep.com)
--   [OKE Wallet](https://okx.com)
+-   [OKX Wallet](https://okx.com)
 -   [imToken Wallet](https://token.im/)
 -   [Gate Wallet](https://www.gate.io/web3)
 -   [Fox Wallet](https://foxwallet.com/)

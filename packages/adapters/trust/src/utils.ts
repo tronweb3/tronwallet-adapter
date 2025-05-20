@@ -1,7 +1,7 @@
 import { isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 export function supportTrust() {
-    return !!(window.trustwallet && window.trustwallet.tronLink);
+    return typeof window !== 'undefined' && !!(window.trustwallet && window.trustwallet.tronLink);
 }
 
 export const isTrustApp = function () {

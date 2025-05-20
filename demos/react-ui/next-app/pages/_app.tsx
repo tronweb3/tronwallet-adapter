@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui';
 import '@tronweb3/tronwallet-adapter-react-ui/style.css';
-import { LedgerAdapter } from '@tronweb3/tronwallet-adapter-ledger';
+import { LedgerAdapter } from '@tronweb3/tronwallet-adapters';
 export default function App({ Component, pageProps }: AppProps) {
     function onError(e: WalletError) {
         if (e instanceof WalletNotFoundError) {

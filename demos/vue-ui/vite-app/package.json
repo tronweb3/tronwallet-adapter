@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --force",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -21,12 +21,12 @@
     "vue": "^3.3.8"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.4",
     "@vitejs/plugin-legacy": "^6.1.1",
+    "@vitejs/plugin-vue": "^5.2.4",
     "typescript": "^5.2.2",
     "vite": "^6.3.5",
     "vite-plugin-node-polyfills": "^0.22.0",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.2.10"
   },
   "overrides": {
     "@ledgerhq/errors": "6.10.0",
