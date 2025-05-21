@@ -1,11 +1,11 @@
 {
-    "name": "@tronweb3/tronwallet-adapter-bybit",
-    "version": "1.0.1",
-    "description": "Wallet adapter for Bybit Wallet extension and Bybit Wallet app.",
+    "name": "@tronweb3/tronwallet-adapter-ctrlwallet",
+    "version": "1.0.0",
+    "description": "Wallet adapter for Ctrl Wallet extension and app.",
     "keywords": [
         "TRON",
         "TronWeb",
-        "Bybit Wallet"
+        "Ctrl Wallet"
     ],
     "author": "tronweb3",
     "repository": {
@@ -43,8 +43,7 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
+        "@tronweb3/tronwallet-abstract-adapter": "workspace:^"
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
