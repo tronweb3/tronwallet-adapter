@@ -568,6 +568,9 @@ importers:
       '@tronweb3/tronwallet-adapter-bybit':
         specifier: workspace:^
         version: link:../bybit
+      '@tronweb3/tronwallet-adapter-ctrlwallet':
+        specifier: workspace:^
+        version: link:../ctrlwallet
       '@tronweb3/tronwallet-adapter-foxwallet':
         specifier: workspace:^
         version: link:../foxwallet
@@ -635,6 +638,25 @@ importers:
         version: 0.3.4
 
   packages/adapters/bybit:
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+      '@tronweb3/tronwallet-adapter-tronlink':
+        specifier: workspace:^
+        version: link:../tronlink
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      jest-environment-jsdom:
+        specifier: ^29.3.1
+        version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+
+  packages/adapters/ctrlwallet:
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: workspace:^
@@ -9317,7 +9339,7 @@ snapshots:
   '@babel/code-frame@7.24.7':
     dependencies:
       '@babel/highlight': 7.24.7
-      picocolors: 1.0.1
+      picocolors: 1.1.1
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -12685,7 +12707,7 @@ snapshots:
 
   '@testing-library/dom@10.4.0':
     dependencies:
-      '@babel/code-frame': 7.24.7
+      '@babel/code-frame': 7.26.2
       '@babel/runtime': 7.26.10
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -12696,7 +12718,7 @@ snapshots:
 
   '@testing-library/dom@8.20.1':
     dependencies:
-      '@babel/code-frame': 7.24.7
+      '@babel/code-frame': 7.26.2
       '@babel/runtime': 7.26.10
       '@types/aria-query': 5.0.4
       aria-query: 5.1.3
@@ -12903,7 +12925,7 @@ snapshots:
 
   '@trufflesuite/uws-js-unofficial@20.30.0-unofficial.0':
     dependencies:
-      ws: 8.18.0(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+      ws: 8.18.1(bufferutil@4.0.7)(utf-8-validate@6.0.3)
     optionalDependencies:
       bufferutil: 4.0.7
       utf-8-validate: 6.0.3
@@ -17710,7 +17732,7 @@ snapshots:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.18.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      ws: 8.18.1(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -18578,7 +18600,7 @@ snapshots:
   postcss@8.4.40:
     dependencies:
       nanoid: 3.3.8
-      picocolors: 1.0.1
+      picocolors: 1.1.1
       source-map-js: 1.2.0
 
   preact@10.23.0: {}
@@ -20248,6 +20270,16 @@ snapshots:
     optionalDependencies:
       bufferutil: 4.0.8
       utf-8-validate: 6.0.3
+
+  ws@8.18.1(bufferutil@4.0.7)(utf-8-validate@6.0.3):
+    optionalDependencies:
+      bufferutil: 4.0.7
+      utf-8-validate: 6.0.3
+
+  ws@8.18.1(bufferutil@4.0.8)(utf-8-validate@5.0.10):
+    optionalDependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 5.0.10
 
   ws@8.18.1(bufferutil@4.0.8)(utf-8-validate@6.0.3):
     optionalDependencies:
