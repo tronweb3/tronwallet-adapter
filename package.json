@@ -16,7 +16,9 @@
     "author": "tronweb3",
     "license": "MIT",
     "files": [
-        "./packages/*/*/lib/**",
+        "./packages/*/*/lib/esm/**",
+        "./packages/*/*/lib/cjs/**/*.js",
+        "./packages/*/*/lib/types/**",
         "./packages/*/*/src/**",
         "./packages/*/*/LICENSE",
         "./packages/*/*/README.md",
