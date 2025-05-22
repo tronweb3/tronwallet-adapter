@@ -14,11 +14,6 @@ export default defineConfig({
     define: {
         global: 'window',
     },
-    resolve: {
-        alias: {
-            eventemitter3: 'eventemitter3/umd/eventemitter3.js',
-        },
-    },
     build: {
         // Set false to speed up build process, should change to `true` for production mode.
         minify: false,
