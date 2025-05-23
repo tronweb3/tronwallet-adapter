@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-trust`
 
-This package provides an adapter to enable TRON DApps to connect to the [Trust extension](https://chrome.google.com/webstore/detail/trust-wallet/egjidjbpglichdcondbcbdnbeeppgdph) and [Trust App](https://trustwallet.com/download).
+This package provides an adapter to enable TRON DApps to connect to the [Trust extension](https://chrome.google.com/webstore/detail/trust-wallet/egjidjbpglichdcondbcbdnbeeppgdph).
 
 ## Demo
 
@@ -81,7 +81,8 @@ interface TrustAdapterConfig {
 
 ### Caveats
 
--   Trust App and Extension doesn't implement `multiSign()` and `switchChain()`.
--   Trust Extension only support: `accountsChanged`,`connect`,`disconnect`.
+-   Only wallet that imported by mnemonic can be used on TRON network.
+-   Trust Extension doesn't implement `multiSign()` and `switchChain()`.
+-   Trust Extension only support: `accountsChanged`,`connect`,`disconnect` events.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

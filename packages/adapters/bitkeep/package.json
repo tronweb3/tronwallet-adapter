@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-bitkeep",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "Wallet adapter for Bitget(BitKeep) Wallet extension and app.",
     "keywords": [
         "TRON",
@@ -43,7 +43,6 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@bitget-wallet/web3-sdk": "0.0.8",
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
