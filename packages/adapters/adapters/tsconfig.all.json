@@ -32,6 +32,9 @@
             "path": "../bybit/tsconfig.all.json"
         },
         {
+            "path": "../abwallet/tsconfig.all.json"
+        },
+        {
             "path": "./tsconfig.cjs.json"
         },
         {

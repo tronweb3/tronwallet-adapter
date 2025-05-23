@@ -250,8 +250,8 @@ This package contains all wallet adapters for Tron including:
 -   [BitKeep](https://bitkeep.com).
 -   [Okx Wallet](https://okx.com).
 -   [imToken Wallet](https://token.im/).
--   [gate.io Wallet](https://www.gate.io/web3) 
--   [Fox Wallet](https://foxwallet.com/) 
+-   [gate.io Wallet](https://www.gate.io/web3)
+-   [Fox Wallet](https://foxwallet.com/)
 -   [Bybit Wallet](https://www.bybit.com/web3)
 
 Code example：

@@ -11,7 +11,7 @@ import {
 } from '@tronweb3/tronwallet-adapter-react-ui';
 import toast from 'react-hot-toast';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Alert } from '@mui/material';
-import { TronLinkAdapter, TokenPocketAdapter, BitKeepAdapter, OkxWalletAdapter, GateWalletAdapter, BybitWalletAdapter } from '@tronweb3/tronwallet-adapters';
+import { TronLinkAdapter, TokenPocketAdapter, BitKeepAdapter, OkxWalletAdapter, GateWalletAdapter, BybitWalletAdapter, ABWalletAdapter } from '@tronweb3/tronwallet-adapters';
 import { WalletConnectAdapter } from '@tronweb3/tronwallet-adapter-walletconnect';
 import { LedgerAdapter } from '@tronweb3/tronwallet-adapter-ledger';
 import { tronWeb } from './tronweb';
@@ -87,7 +87,8 @@ export function App() {
         const okxWalletAdapter = new OkxWalletAdapter();
         const gateAdapter = new GateWalletAdapter();
         const bybitAdapter = new BybitWalletAdapter();
-        return [tronLink1, walletConnect1, ledger, tokenPocket, bitKeep, okxWalletAdapter, gateAdapter, bybitAdapter];
+        const abWalletAdapter = new ABWalletAdapter();
+        return [tronLink1, walletConnect1, ledger, tokenPocket, bitKeep, okxWalletAdapter, gateAdapter, bybitAdapter, abWalletAdapter];
     }, []);
     function onConnect() {
         console.log('onConnect');
@@ -172,9 +173,16 @@ function SignDemo() {
     async function onSignTransaction() {
         const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.001), address);
         const signedTransaction = await signTransaction(transaction);
+        console.log('signed tx is: ', JSON.stringify(signedTransaction))
         // const signedTransaction = await tronWeb.trx.sign(transaction);
+        try {
         const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+        console.log('send tx is', JSON.stringify(res));
         setOpen(true);
+        } catch(e) {
+            console.log('error: ', e);
+        }
+
     }
     return (
         <div style={{ marginBottom: 200 }}>

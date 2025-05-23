@@ -51,7 +51,8 @@
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
         "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
-        "@tronweb3/tronwallet-adapter-bybit": "workspace:^"
+        "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
+        "@tronweb3/tronwallet-adapter-abwallet": "workspace:^"
     },
     "devDependencies": {
         "@vitest/browser": "^2.0.4",

@@ -26,6 +26,7 @@
         "@tronweb3/tronwallet-adapter-ledger": "latest",
         "@tronweb3/tronwallet-adapter-metamask": "latest",
         "@tronweb3/tronwallet-adapter-okxwallet": "latest",
+        "@tronweb3/tronwallet-adapter-abwallet": "latest",
         "@tronweb3/tronwallet-adapter-react-hooks": "latest",
         "@tronweb3/tronwallet-adapter-react-ui": "latest",
         "@tronweb3/tronwallet-adapter-tokenpocket": "latest",
