@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-vue-ui",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A set of out-of-the-box components to make it easy to interact with Tron wallets.",
     "keywords": [
         "TRON",
@@ -25,8 +25,7 @@
     "exports": {
         ".": {
             "import": "./lib/esm/index.js",
-            "require": "./lib/cjs/index.js",
-            "types": "./lib/types/index.d.ts"
+            "require": "./lib/cjs/index.js"
         },
         "./style.css": "./style.css"
     },
@@ -54,17 +53,18 @@
         "@tronweb3/tronwallet-adapter-vue-hooks": "workspace:^"
     },
     "devDependencies": {
-        "@babel/cli": "^7.23.4",
-        "@babel/core": "^7.23.6",
-        "@babel/preset-typescript": "^7.23.3",
+        "@babel/cli": "^7.27.1",
+        "@babel/core": "^7.27.1",
+        "@babel/preset-typescript": "^7.27.1",
+        "@babel/traverse": "7.27.1",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
-        "@vitejs/plugin-vue": "^4.5.2",
-        "@vitejs/plugin-vue-jsx": "^3.1.0",
-        "@vue/babel-plugin-jsx": "^1.1.5",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "@vitejs/plugin-vue-jsx": "^4.1.0",
+        "@vue/babel-plugin-jsx": "^1.4.0",
         "@vue/test-utils": "^2.4.3",
         "jsdom": "^23.0.1",
         "shx": "^0.3.4",
-        "vite": "^5.0.10",
+        "vite": "^6.3.5",
         "vitest": "^1.0.2",
         "vue": "3.4.15"
     }

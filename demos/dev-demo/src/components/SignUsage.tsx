@@ -8,7 +8,7 @@ import { CHAIN_ID, TRONSCAN_URL } from "../config";
 import { tronWeb } from "../tronweb";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-export const UsageBox = styled(Box)(({ background } : { background: string }) => ({
+export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
   borderRadius: 10,
   background,
@@ -123,12 +123,12 @@ export default function SignUsage() {
   const InformAlertContent = useMemo(() => {
     if (title === 'Transfer') {
       return <InformAlertText>
-        { success ? <>Success! You can confirm your transaction on <Link href={`${TRONSCAN_URL[connectionState.chainId] || TRONSCAN_URL[CHAIN_ID.Nile]}#/address/${connectionState.address}`} target="_blank" rel="noreferrer">TronScan</Link></> : 'Transfer failed'}
+        {success ? <>Success! You can confirm your transaction on <Link href={`${TRONSCAN_URL[connectionState.chainId] || TRONSCAN_URL[CHAIN_ID.Nile]}#/address/${connectionState.address}`} target="_blank" rel="noreferrer">TronScan</Link></> : 'Transfer failed'}
       </InformAlertText>
     }
     if (title === 'Sign Message') {
       return <InformAlertText>
-        { success
+        {success
           ? <>Success! The signature is <i>{signature.slice(0, 6)}...{signature.slice(-6)}</i></> : 'Failed to sign the message'}
       </InformAlertText>
     }

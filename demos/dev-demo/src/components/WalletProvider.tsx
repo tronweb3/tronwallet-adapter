@@ -1,5 +1,5 @@
 import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
-import type { PropsWithChildren} from "react";
+import type { PropsWithChildren } from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
   BitKeepAdapter,
@@ -12,10 +12,11 @@ import {
   WalletConnectAdapter,
   FoxWalletAdapter,
   BybitWalletAdapter,
-  TronLinkAdapterName
+  TronLinkAdapterName,
+  TrustAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
-import type { Adapter, AdapterName} from "@tronweb3/tronwallet-abstract-adapter";
+import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
 import { WalletReadyState } from "@tronweb3/tronwallet-abstract-adapter";
 
 export interface WalletContextType {
@@ -55,6 +56,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new TokenPocketAdapter(),
       new OkxWalletAdapter(),
       new BitKeepAdapter(),
+      new TrustAdapter(),
       new GateWalletAdapter(),
       new ImTokenAdapter(),
       new FoxWalletAdapter(),
@@ -80,7 +82,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     readyState: WalletReadyState.NotFound,
     chainId: '',
   })
- 
+
   function onReadyStateChanged(readyState: WalletReadyState) {
     setConnectionState(preState => ({
       ...preState,
@@ -125,14 +127,14 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     }));
   }
   useEffect(() => {
-    setConnectionState(preState => ({ 
+    setConnectionState(preState => ({
       ...preState,
       connected: adapter?.connected || false,
       connecting: adapter?.connecting || false,
       address: adapter?.address || '',
       readyState: adapter?.readyState || WalletReadyState.NotFound,
     }));
-    
+
     if (adapter) {
       adapter.on('readyStateChanged', onReadyStateChanged);
       adapter.on('connect', onConnect);
@@ -152,7 +154,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     return () => {
       adapter?.removeAllListeners();
     };
-    
+
   }, [adapter]);
 
   async function connect() {
@@ -175,7 +177,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
         connecting: false,
       }));
     }
-    
+
   }
 
   async function disconnect() {

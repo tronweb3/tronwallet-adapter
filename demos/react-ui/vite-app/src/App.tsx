@@ -11,9 +11,7 @@ import {
 } from '@tronweb3/tronwallet-adapter-react-ui';
 import toast from 'react-hot-toast';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Alert } from '@mui/material';
-import { TronLinkAdapter, TokenPocketAdapter, BitKeepAdapter, OkxWalletAdapter, GateWalletAdapter, BybitWalletAdapter } from '@tronweb3/tronwallet-adapters';
-import { WalletConnectAdapter } from '@tronweb3/tronwallet-adapter-walletconnect';
-import { LedgerAdapter } from '@tronweb3/tronwallet-adapter-ledger';
+import { TronLinkAdapter, TokenPocketAdapter, BitKeepAdapter, OkxWalletAdapter, GateWalletAdapter, BybitWalletAdapter, LedgerAdapter, WalletConnectAdapter } from '@tronweb3/tronwallet-adapters';
 import { tronWeb } from './tronweb';
 import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
 const rows = [
@@ -61,9 +59,9 @@ export function App() {
                 // explorerRecommendedWalletIds: 'NONE',
                 enableExplorer: true,
                 explorerRecommendedWalletIds: [
-                  '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
-                  '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
-                  '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
+                    '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
+                    '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
+                    '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0'
                 ]
                 // mobileWallets: [],
                 // desktopWallets: []
@@ -116,14 +114,14 @@ function UIComponent() {
             <TableContainer style={{ overflow: 'visible' }} component="div">
                 <Table sx={{}} aria-label="simple table">
                     <TableHead>
-                        <TableRow sx={{'th': {padding: '5px'}}}>
+                        <TableRow sx={{ 'th': { padding: '5px' } }}>
                             <TableCell>Component</TableCell>
                             <TableCell align="left">React UI</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.map((row) => (
-                            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 }, 'td, th': {padding: '5px'} }}>
+                            <TableRow key={row.name} sx={{ '&:last-child td, &:last-child th': { border: 0 }, 'td, th': { padding: '5px' } }}>
                                 <TableCell component="th" scope="row">
                                     {row.name}
                                 </TableCell>
@@ -170,7 +168,7 @@ function SignDemo() {
     }
 
     async function onSignTransaction() {
-        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.001), address);
+        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, +tronWeb.toSun(0.001), address || '');
         const signedTransaction = await signTransaction(transaction);
         // const signedTransaction = await tronWeb.trx.sign(transaction);
         const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
@@ -190,7 +188,7 @@ function SignDemo() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="input message to signed"
             ></TextField>
-            { !!signedMessage && <p><span>Your sigedMessage is:</span> <span>{signedMessage}</span>  </p> }
+            {!!signedMessage && <p><span>Your sigedMessage is:</span> <span>{signedMessage}</span>  </p>}
             <h2>Sign a Transaction</h2>
             <p style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', wordBreak: 'break-all' }}>
                 You can transfer 0.001 Trx to &nbsp;{receiver}&nbsp;by click the button.

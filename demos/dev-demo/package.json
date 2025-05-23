@@ -30,6 +30,7 @@
         "@tronweb3/tronwallet-adapter-react-ui": "latest",
         "@tronweb3/tronwallet-adapter-tokenpocket": "latest",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "latest",
+        "@tronweb3/tronwallet-adapter-trust": "latest",
         "@tronweb3/tronwallet-adapters": "latest",
         "events": "^3.3.0",
         "ganache": "^7.9.0",
