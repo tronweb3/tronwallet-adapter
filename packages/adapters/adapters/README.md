@@ -6,7 +6,6 @@
 
 As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use this package, or use the individual wallet adapter you want.
 
-<<<<<<< HEAD
 | NPM package                                                                                                          | Description                                                    | Source Code                                                                                      |
 | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all the wallet adapters                               | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
@@ -21,24 +20,7 @@ As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use 
 | [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | adapter for [FoxWallet](https://foxwallet.com/)                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)     |
 | [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)         |
 | [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
-| [`@tronweb3/tronwallet-adapter-ctrlwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ctrlwallet)               | adapter for [Ctrl Wallet](https://ctrl.xyz/)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ctrlwallet)        |
-=======
-| NPM package                                                                                                          | Description                                             | Source Code                                                                                       |
-| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all the wallet adapters                        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
-| [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | adapter for [TronLink](https://www.tronlink.org/)       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink)      |
-| [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | adapter for [WalletConnect](https://walletconnect.com/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
-| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | adapter for [TokenPocket](https://tokenpocket.pro/)     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket)   |
-| [`@tronweb3/tronwallet-adapter-bitget`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)              | adapter for [BitGet](https://bitget.com/)               | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep)       |
-| [`@tronweb3/tronwallet-adapter-okxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | adapter for [Okx Wallet](https://okx.com/)              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet)     |
-| [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | adapter for [Ledger](https://www.ledger.com/)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)        |
-| [`@tronweb3/tronwallet-adapter-imtoken`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)               | adapter for [imToken](https://token.im/)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/imtoken)        |
-| [`@tronweb3/tronwallet-adapter-gatewallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)               | adapter for [gate.io](https://www.gate.io/web3)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)        |
-| [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)               | adapter for [FoxWallet](https://foxwallet.com/)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)        |
-| [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)               | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)        |
-
-
->>>>>>> 7275138 (feat: add ctrl wallet adapter)
+| [`@tronweb3/tronwallet-adapter-ctrlwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ctrlwallet)       | adapter for [Ctrl Wallet](https://ctrl.xyz/)                   | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ctrlwallet)    |
 
 ## Usage
 
@@ -362,8 +344,5 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [GateWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)
 -   [FoxWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)
 -   [BybitWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)
-<<<<<<< HEAD
 -   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)
-=======
 -   [CtrlWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ctrlwallet)
->>>>>>> 7275138 (feat: add ctrl wallet adapter)

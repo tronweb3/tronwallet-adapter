@@ -37,7 +37,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |
 |                                             | IOS               | Not Support  |
 |                                             | Browser Extension | >= 1.0.0     |
-| [CtrlWallet](https://ctrl.xyz//) | - | >= 1.0.0 |
+| [CtrlWallet](https://ctrl.xyz//)            | Browser Extension | >= 1.0.0     |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
@@ -238,7 +238,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-foxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | Adapter for FoxWallet App(IOS and Android)                       |
 | [`@tronweb3/tronwallet-adapter-bybit`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | Adapter for Bybit Wallet App(IOS and Android) and Extension      |
 | [`@tronweb3/tronwallet-adapter-trust`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | Adapter for TrustWallet Extension                                |
-| [ctrlwallet](https://ctrl.xyz/)                | Adapter for Ctrl Wallet                 | [`@tronweb3/tronwallet-adapter-ctrlwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-ctrlwallet)             |
+| [`@tronweb3/tronwallet-adapter-ctrlwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-ctrlwallet)       | Adapter for CtrlWallet Extension                                 |
 
 ### React Components
 
