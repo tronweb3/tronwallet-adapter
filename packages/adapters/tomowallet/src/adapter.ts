@@ -155,7 +155,7 @@ export class TomoWalletAdapter extends Adapter {
             if (window.tomo_wallet?.tron) {
                 const wallet = this._wallet as TronLinkWallet;
                 try {
-                    const res = await wallet.request({ method: 'tron_requestAccounts' });
+                    const res = await wallet.request({ method: 'eth_requestAccounts' });
                     if (!res) {
                         // 1. wallet is locked
                         throw new WalletConnectionError('Tomo wallet is locked or no wallet account is avaliable.');
