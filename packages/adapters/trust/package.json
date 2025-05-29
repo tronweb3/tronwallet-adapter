@@ -1,12 +1,11 @@
 {
-    "name": "@tronweb3/tronwallet-adapter-bitkeep",
-    "version": "1.1.5",
-    "description": "Wallet adapter for Bitget(BitKeep) Wallet extension and app.",
+    "name": "@tronweb3/tronwallet-adapter-trust",
+    "version": "1.0.0",
+    "description": "Wallet adapter for Trust Extension.",
     "keywords": [
         "TRON",
         "TronWeb",
-        "BitKeep",
-        "Bitget"
+        "Trust Wallet"
     ],
     "author": "tronweb3",
     "repository": {
@@ -40,6 +39,7 @@
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
         "test": "jest",
+        "test:coverage": "jest  --coverage",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {

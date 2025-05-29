@@ -81,20 +81,20 @@ const ConnectButton = styled(Button)({
 const AdapterBasicUsage: React.FC = () => {
   const { connectionState, connect, disconnect } = useWallet();
 
-  
+
   return (
     <Container>
-      <Title>Adapter Basic Usage</Title>
+      <Title>Adapter Basic Use Case</Title>
       <MainContent>
         <BasicInfoWrap>
           <AdapterSelect />
           <ConnectionState />
           <ConnectButton onClick={connectionState.connected ? disconnect : connect} disabled={connectionState.connecting}>
-            {connectionState.connected ? <LinkOffIcon /> : <LinkIcon /> }
+            {connectionState.connected ? <LinkOffIcon /> : <LinkIcon />}
             <span style={{ marginLeft: '10px' }}>{connectionState.connected ? 'Disconnect' : 'Connect'}</span>
           </ConnectButton>
         </BasicInfoWrap>
-        <SignUsage/>
+        <SignUsage />
         <SwitchChain />
       </MainContent>
     </Container>

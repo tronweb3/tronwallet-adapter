@@ -13,11 +13,6 @@ export default defineConfig({
         }),
         react(),
     ],
-    // resolve: {
-    //     alias: {
-    //         eventemitter3: 'eventemitter3/umd/eventemitter3.js',
-    //     },
-    // },
     server: {
         host: '0.0.0.0',
         port: 3003,
