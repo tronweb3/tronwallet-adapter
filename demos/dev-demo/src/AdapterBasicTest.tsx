@@ -14,6 +14,7 @@ import {
     WalletConnectAdapter,
     FoxWalletAdapter,
     BybitWalletAdapter,
+    TomoWalletAdapter,
     TrustAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -24,6 +25,7 @@ const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
     const adapters = useMemo(
         () => [
+            new TomoWalletAdapter(),
             new TronLinkAdapter(),
             new TokenPocketAdapter(),
             new OkxWalletAdapter(),
