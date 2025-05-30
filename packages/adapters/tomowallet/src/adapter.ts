@@ -347,9 +347,9 @@ export class TomoWalletAdapter extends Adapter {
     }
 
     private onAccountsChanged = (account: string) => {
-        // if (this._state === AdapterState.Disconnect) {
-        //     return;
-        // }
+        if (this._state === AdapterState.Disconnect) {
+            return;
+        }
         const preAddr = this.address || '';
         if (account !== preAddr) {
             this.setAddress(account);
