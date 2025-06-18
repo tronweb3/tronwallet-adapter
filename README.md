@@ -34,7 +34,6 @@ This repository contains wallet adapters and components for Tron DApps. With out
 |                                             | Browser Extension | >= 3.16.3    |
 | [Binance](https://www.binance.com/en/binancewallet) | Android           | >= 1.0.0     |
 |                                             | IOS               | >= 1.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
 | [Ledger](https://www.ledger.com/)           | -                 | All versions |
 | [WalletConnect](https://walletconnect.org)  | -                 | >= v2.0      |
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |

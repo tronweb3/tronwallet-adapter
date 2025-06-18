@@ -40,6 +40,9 @@
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
         "test": "jest",
         "test:coverage": "jest  --coverage",
+        "build": "pnpm run build:cjs && pnpm run build:esm",
+        "build:cjs": "tsc -p tsconfig.cjs.json",
+        "build:esm": "tsc -p tsconfig.esm.json",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
