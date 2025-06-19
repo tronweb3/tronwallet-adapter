@@ -12,7 +12,7 @@ export const isTrustApp = function () {
 };
 export function openTrustWallet() {
     if (!isTrustApp() && isInMobileBrowser()) {
-        window.location.href = 'https://link.trustwallet.com?source=' + encodeURIComponent(window.location.href);
+        window.location.href = 'https://link.trustwallet.com/open_url?url=' + encodeURIComponent(window.location.href);
         return true;
     }
 
