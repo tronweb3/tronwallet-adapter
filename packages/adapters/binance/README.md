@@ -14,8 +14,12 @@ await adapter.connect();
 // then you can get address
 console.log(adapter.address);
 
+const tronWeb = new TronWeb({
+    fullHost: 'https://api.trongrid.io',
+});
+
 // create a send TRX transaction
-const unSignedTransaction = await window.binancew3w.tronLink.tronWeb.transactionBuilder.sendTrx(
+const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(
     targetAddress,
     100,
     adapter.address
@@ -23,7 +27,7 @@ const unSignedTransaction = await window.binancew3w.tronLink.tronWeb.transaction
 // using adapter to sign the transaction
 const signedTransaction = await adapter.signTransaction(unSignedTransaction);
 // broadcast the transaction
-await window.binancew3w.tronLink.tronWeb.trx.sendRawTransaction(signedTransaction);
+await tronWeb.trx.sendRawTransaction(signedTransaction);
 ```
 
 ## Documentation
