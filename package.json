@@ -1,7 +1,7 @@
 {
     "name": "tronwallet-adapter",
     "description": "wallet adapters for TRON blockchain",
-    "version": "1.2.9",
+    "version": "1.2.10",
     "main": "index.js",
     "sideEffects": false,
     "private": true,
@@ -47,7 +47,7 @@
         "lint:fix": "pnpm run fmt && eslint --fix .",
         "test": "pnpm --recursive --filter \"@tronweb3/*\" run test",
         "example": "pnpm run --filter {demos/react-ui/vite-app} dev",
-        "prepare": "husky install && pnpm build",
+        "prepare": "husky install",
         "update-version": "pnpm changeset add && pnpm changeset version",
         "prerelease": "node ./scripts/check-dep-version.js"
     },
@@ -55,7 +55,7 @@
         "@changesets/cli": "^2.26.0",
         "@commitlint/cli": "^17.3.0",
         "@commitlint/config-conventional": "^17.3.0",
-        "@rollup/plugin-commonjs": "^25.0.5",
+        "@rollup/plugin-commonjs": "^28.0.6",
         "@rollup/plugin-json": "^6.0.1",
         "@rollup/plugin-node-resolve": "^15.2.2",
         "@rollup/plugin-terser": "^0.4.4",
@@ -168,7 +168,8 @@
             "brace-expansion@>=1.0.0 <=1.1.11": ">=1.1.12",
             "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
             "pbkdf2@<=3.1.2": ">=3.1.3",
-            "pbkdf2@>=3.0.10 <=3.1.2": ">=3.1.3"
+            "pbkdf2@>=3.0.10 <=3.1.2": ">=3.1.3",
+            "glob": "11.0.3"
         }
     }
 }

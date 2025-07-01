@@ -48,7 +48,7 @@
         "@vitejs/plugin-react": "^4.2.1",
         "dotenv": "^16.3.1",
         "typescript": "^5.5.4",
-        "vite": "latest",
+        "vite": "^6.3.5",
         "vite-plugin-node-polyfills": "0.17.0"
     },
     "overrides": {
