@@ -1,3 +1,5 @@
+import { isInBrowser } from '@tronweb3/tronwallet-abstract-adapter';
+
 export function supportTomowallet() {
-    return !!window.tomo_wallet?.tron;
+    return isInBrowser() && !!window.tomo_wallet?.tron;
 }
