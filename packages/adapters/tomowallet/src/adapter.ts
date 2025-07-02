@@ -8,7 +8,6 @@ import {
     WalletDisconnectedError,
     WalletConnectionError,
     WalletSignTransactionError,
-    WalletSwitchChainError,
     WalletGetNetworkError,
     isInMobileBrowser,
 } from '@tronweb3/tronwallet-abstract-adapter';
@@ -110,7 +109,7 @@ export class TomoWalletAdapter extends Adapter {
     }
 
     /**
-     * Get network information used by Tomo. Currently not supported yet.
+     * Get network information used by Tomo.
      * @returns {Network} Current network information.
      */
     async network(): Promise<Network> {
@@ -231,38 +230,6 @@ export class TomoWalletAdapter extends Adapter {
                 } else {
                     throw new WalletSignMessageError(error, new Error(error));
                 }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Switch to target chain. If current chain is the same as target chain, the call will success immediately.
-     * Available chainIds:
-     * - Mainnet: 0x2b6653dc
-     * - Shasta: 0x94a9059e
-     * - Nile: 0xcd8690dc
-     * @param chainId chainId
-     */
-    async switchChain(chainId: string) {
-        try {
-            await this._checkWallet();
-            if (this.state === AdapterState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
-            const wallet = this._wallet as Tron;
-            try {
-                await wallet.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId }],
-                });
-            } catch (e: any) {
-                throw new WalletSwitchChainError(e?.message || e, e instanceof Error ? e : new Error(e));
             }
         } catch (error: any) {
             this.emit('error', error);

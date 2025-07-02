@@ -37,7 +37,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     interface TomoWalletAdapterConfig extends BaseAdapterConfig {
         /**
          * Timeout in millisecond for checking if Tomo wallet exists.
-        * Default is 30 * 1000ms
+        * Default is 3 * 1000ms
         */
         checkTimeout?: number;
         /**
