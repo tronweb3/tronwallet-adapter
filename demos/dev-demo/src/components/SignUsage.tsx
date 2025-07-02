@@ -7,6 +7,7 @@ import { useWallet } from "./WalletProvider";
 import { CHAIN_ID, TRONSCAN_URL } from "../config";
 import { tronWeb } from "../tronweb";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import { MultiSignUsage } from "./MultiSignUsage";
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
@@ -155,6 +156,8 @@ export default function SignUsage() {
           </div>
         </InformAlertWrap>
       </InformAlert>
+
+      <MultiSignUsage adapter={adapter!}/>
     </UsageBox >
   );
 }

@@ -21,6 +21,7 @@
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/abstract-adapter-evm": "latest",
         "@tronweb3/tronwallet-abstract-adapter": "latest",
+        "@tronweb3/tronwallet-adapter-react-ui": "^1.1.11",
         "@tronweb3/tronwallet-adapters": "latest",
         "events": "^3.3.0",
         "ganache": "^7.9.0",
