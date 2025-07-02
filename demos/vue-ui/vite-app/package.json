@@ -11,10 +11,8 @@
   "dependencies": {
     "@noble/secp256k1": "^1.7.1",
     "@tronweb3/tronwallet-abstract-adapter": "latest",
-    "@tronweb3/tronwallet-adapter-tronlink": "latest",
     "@tronweb3/tronwallet-adapter-vue-hooks": "latest",
     "@tronweb3/tronwallet-adapter-vue-ui": "latest",
-    "@tronweb3/tronwallet-adapter-walletconnect": "latest",
     "@tronweb3/tronwallet-adapters": "latest",
     "element-plus": "^2.4.3",
     "tronweb": "6.0.0",
