@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Link, Snackbar, Stack, styled, Typography } from "@mui/material";
+import { Box, Input, Link, Snackbar, Stack, styled, Typography } from "@mui/material";
 import { Button } from "./common";
 import { useMemo, useState } from "react";
 import SuccessIcon from "./SuccessIcon";
@@ -7,7 +7,6 @@ import { useWallet } from "./WalletProvider";
 import { CHAIN_ID, TRONSCAN_URL } from "../config";
 import { tronWeb } from "../tronweb";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { MultiSignUsage } from "./MultiSignUsage";
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
@@ -156,8 +155,6 @@ export default function SignUsage() {
           </div>
         </InformAlertWrap>
       </InformAlert>
-
-      <MultiSignUsage adapter={adapter!}/>
     </UsageBox >
   );
 }

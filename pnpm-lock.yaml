@@ -250,6 +250,15 @@ importers:
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: latest
         version: link:../../packages/adapters/abstract-adapter
+      '@tronweb3/tronwallet-adapter-ledger':
+        specifier: ^1.1.11
+        version: link:../../packages/adapters/ledger
+      '@tronweb3/tronwallet-adapter-react-hooks':
+        specifier: ^1.1.10
+        version: link:../../packages/react/react-hooks
+      '@tronweb3/tronwallet-adapter-react-ui':
+        specifier: ^1.1.11
+        version: link:../../packages/react/react-ui
       '@tronweb3/tronwallet-adapters':
         specifier: latest
         version: link:../../packages/adapters/adapters
