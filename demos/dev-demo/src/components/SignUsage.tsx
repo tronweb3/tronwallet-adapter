@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Link, Snackbar, Stack, styled, Typography } from "@mui/material";
+import { Box, Input, Link, Snackbar, Stack, styled, Typography } from "@mui/material";
 import { Button } from "./common";
 import { useMemo, useState } from "react";
 import SuccessIcon from "./SuccessIcon";
@@ -80,7 +80,7 @@ const InformAlertText = styled(Typography)({
 });
 
 // Replace with another address. Don't transfer any assets to this address.
-const receiver = 'TM6nL4t3PVeFHcYgePusVX3dhk4zSCEd1s';
+const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
 
 export default function SignUsage() {
   const { connectionState, adapter } = useWallet();

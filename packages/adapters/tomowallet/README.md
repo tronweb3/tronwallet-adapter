@@ -37,7 +37,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     interface TomoWalletAdapterConfig extends BaseAdapterConfig {
         /**
          * Timeout in millisecond for checking if Tomo wallet exists.
-        * Default is 30 * 1000ms
+        * Default is 3 * 1000ms
         */
         checkTimeout?: number;
         /**
@@ -74,3 +74,10 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     };
     ```
 
+### Caveats
+
+-   Deeplink is not supported in mobile device browsers.
+-   `switchChain()` is not supported.
+-   When `multiSign()` is called, the user must provide a private key. **It's not recommended to use this method.**
+
+For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

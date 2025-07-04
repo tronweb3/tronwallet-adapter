@@ -38,7 +38,7 @@ export interface WalletContextType {
   disconnect?: () => Promise<void>;
 }
 const Context = createContext<WalletContextType>({
-  selectedAdapterName: TomoWalletAdapterName,
+  selectedAdapterName: TronLinkAdapterName,
   setSelectedAdapterName: () => {
     //
   },
@@ -70,7 +70,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
-  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TomoWalletAdapterName);
+  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TronLinkAdapterName);
 
   const setSelectedAdapterName = useCallback((selectedAdapterName: AdapterName) => {
     _setSelectedAdapterName(selectedAdapterName);
