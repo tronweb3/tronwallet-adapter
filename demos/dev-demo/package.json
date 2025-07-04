@@ -1,7 +1,7 @@
 {
     "name": "dev-demo",
     "private": true,
-    "version": "0.0.3",
+    "version": "0.0.4",
     "type": "module",
     "scripts": {
         "dev": "vite --force",
@@ -21,16 +21,9 @@
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/abstract-adapter-evm": "latest",
         "@tronweb3/tronwallet-abstract-adapter": "latest",
-        "@tronweb3/tronwallet-adapter-bitkeep": "latest",
-        "@tronweb3/tronwallet-adapter-imtoken": "latest",
-        "@tronweb3/tronwallet-adapter-ledger": "latest",
-        "@tronweb3/tronwallet-adapter-metamask": "latest",
-        "@tronweb3/tronwallet-adapter-okxwallet": "latest",
-        "@tronweb3/tronwallet-adapter-react-hooks": "latest",
-        "@tronweb3/tronwallet-adapter-react-ui": "latest",
-        "@tronweb3/tronwallet-adapter-tokenpocket": "latest",
-        "@tronweb3/tronwallet-adapter-tronlink-evm": "latest",
-        "@tronweb3/tronwallet-adapter-trust": "latest",
+        "@tronweb3/tronwallet-adapter-ledger": "^1.1.11",
+        "@tronweb3/tronwallet-adapter-react-hooks": "^1.1.10",
+        "@tronweb3/tronwallet-adapter-react-ui": "^1.1.11",
         "@tronweb3/tronwallet-adapters": "latest",
         "events": "^3.3.0",
         "ganache": "^7.9.0",
@@ -48,7 +41,7 @@
         "@vitejs/plugin-react": "^4.2.1",
         "dotenv": "^16.3.1",
         "typescript": "^5.5.4",
-        "vite": "latest",
+        "vite": "^6.3.5",
         "vite-plugin-node-polyfills": "0.17.0"
     },
     "overrides": {
