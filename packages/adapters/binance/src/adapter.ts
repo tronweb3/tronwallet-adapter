@@ -18,7 +18,6 @@ import type {
     AdapterName,
     BaseAdapterConfig,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import { chainIdNetworkMap } from '@tronweb3/tronwallet-adapter-tronlink/src';
 
 declare global {
     interface Window {
@@ -38,6 +37,12 @@ export interface BinanceWalletAdapterConfig extends BaseAdapterConfig {
 }
 
 export const BinanceWalletAdapterName = 'Binance Wallet' as AdapterName<'Binance Wallet'>;
+
+const chainIdNetworkMap: Record<string, NetworkType> = {
+    '0x2b6653dc': NetworkType.Mainnet,
+    '0x94a9059e': NetworkType.Shasta,
+    '0xcd8690dc': NetworkType.Nile,
+};
 
 export class BinanceWalletAdapter extends Adapter {
     name = BinanceWalletAdapterName;
