@@ -35,6 +35,9 @@
             "path": "../bybit/tsconfig.all.json"
         },
         {
+            "path": "../tomowallet/tsconfig.all.json"
+        },
+        {
             "path": "../binance/tsconfig.all.json"
         },
         {

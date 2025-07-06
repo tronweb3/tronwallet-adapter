@@ -192,7 +192,7 @@ export function Detail(props: { children: ReactNode }) {
     return <div style={{ margin: 15 }}>{props.children}</div>;
 }
 
-function MultiSignDemo(props: { address: string; adapter: Adapter }) {
+export function MultiSignDemo(props: { address: string; adapter: Adapter }) {
     const [address1, setAddress1] = useState('');
     const [open, setOpen] = useState(false);
 
