@@ -8,6 +8,9 @@ import {
     WalletDisconnectedError,
     WalletConnectionError,
     WalletSignTransactionError,
+    type Network,
+    WalletGetNetworkError,
+    NetworkType,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -15,6 +18,7 @@ import type {
     AdapterName,
     BaseAdapterConfig,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import { chainIdNetworkMap } from '@tronweb3/tronwallet-adapter-tronlink/src';
 
 declare global {
     interface Window {
@@ -91,6 +95,32 @@ export class BinanceWalletAdapter extends Adapter {
         return this._connecting;
     }
 
+    /**
+     * Get network information used by Binance Wallet.
+     * @returns {Network} Current network information.
+     */
+    async network(): Promise<Network> {
+        try {
+            await this._checkWallet();
+            if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
+            try {
+                const chainId = this._provider.getChainId();
+                return {
+                    networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
+                    chainId,
+                    fullNode: '',
+                    solidityNode: '',
+                    eventServer: '',
+                };
+            } catch (e: any) {
+                throw new WalletGetNetworkError(e?.message, e);
+            }
+        } catch (e: any) {
+            this.emit('error', e);
+            throw e;
+        }
+    }
+
     async connect(): Promise<void> {
         try {
             if (this.connected || this.connecting) return;
@@ -133,7 +163,7 @@ export class BinanceWalletAdapter extends Adapter {
         try {
             if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
             try {
-                return await this._provider.signMessage(message);
+                return await this._provider.signMessageV2(message);
             } catch (error: any) {
                 throw new WalletSignMessageError(error?.message, error);
             }
