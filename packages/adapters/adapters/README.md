@@ -343,4 +343,5 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [GateWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)
 -   [FoxWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)
 -   [BybitWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)
+-   [GuardaAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)
 -   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)

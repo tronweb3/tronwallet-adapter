@@ -10,6 +10,7 @@
         "@tronweb3/abstract-adapter-evm": "^1.0.1",
         "@tronweb3/tronwallet-abstract-adapter": "^1.1.6",
         "@tronweb3/tronwallet-adapter-bitkeep": "^1.0.2",
+        "@tronweb3/tronwallet-adapter-guarda": "^1.0.0",
         "@tronweb3/tronwallet-adapter-ledger": "^1.1.8",
         "@tronweb3/tronwallet-adapter-metamask": "^1.0.1",
         "@tronweb3/tronwallet-adapter-okxwallet": "^1.0.2",

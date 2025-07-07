@@ -13,7 +13,8 @@ import {
   FoxWalletAdapter,
   BybitWalletAdapter,
   TronLinkAdapterName,
-  TrustAdapter
+  TrustAdapter,
+  GuardaAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
@@ -62,6 +63,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new FoxWalletAdapter(),
       new BybitWalletAdapter(),
       new LedgerAdapter(),
+      new GuardaAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
     ];
   }, []);
