@@ -28,7 +28,7 @@ body:
       description: Describe platforms supported by the wallet.
       options:
         - label: Android
-        - label: IOS
+        - label: iOS
         - label: Chrome Extension
     validations:
       required: true
