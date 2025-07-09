@@ -42,6 +42,9 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Tomo](https://tomo.inc/)                   | Android           | 4.2.0        |
 |                                             | IOS               | 4.2.0        |
 |                                             | Browser Extension | Not Support  |
+| [Binance](https://www.binance.com/en/binancewallet)                   | Android           | 2.102.5        |
+|                                             | IOS               | 3.0.1        |
+|                                             | Browser Extension | Not Support  |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
