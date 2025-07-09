@@ -206,7 +206,7 @@ tronwallet-adapter
 |   |   ├─bybit # adapter for Bybit Wallet
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
-|   |   ├─binancewallet # adapter for Binance Wallet
+|   |   ├─binance # adapter for Binance Wallet
 |   ├─react
 |   |   ├─react-hooks # react hooks to manage wallet state
 |   |   ├─react-ui # react ui components to select/connect wallets
@@ -215,7 +215,6 @@ tronwallet-adapter
 |   |   ├─vue-ui # vue ui components to select/connect wallets
 ├─demos
 |   ├─react-ui
-|   |   ├─create-react-app # demo created by create-react-app
 |   |   ├─vite-app # demo for vitejs
 |   |   ├─next-app # demo for nextjs
 |   ├─vue-ui
@@ -244,7 +243,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-bybit`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | Adapter for Bybit Wallet App(IOS and Android) and Extension      |
 | [`@tronweb3/tronwallet-adapter-trust`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | Adapter for TrustWallet Extension                                |
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | Adapter for Tomo Wallet App(IOS and Android)                                |
-| [`@tronweb3/tronwallet-adapter-binancewallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binancewallet) | Adapter for Binance Wallet App(IOS and Android) and Extension    |
+| [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance) | Adapter for Binance Wallet App(IOS and Android)    |
 
 ### React Components
 

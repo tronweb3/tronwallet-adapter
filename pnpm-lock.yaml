@@ -532,7 +532,7 @@ importers:
 
   packages/adapters/adapters:
     dependencies:
-      '@tronweb3/tronwallet-adapter-binancewallet':
+      '@tronweb3/tronwallet-adapter-binance':
         specifier: workspace:^
         version: link:../binance
       '@tronweb3/tronwallet-adapter-bitkeep':

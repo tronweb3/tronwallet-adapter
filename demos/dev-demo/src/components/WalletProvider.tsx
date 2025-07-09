@@ -16,7 +16,8 @@ import {
   TomoWalletAdapterName,
   TomoWalletAdapter,
   TronLinkAdapterName,
-  TrustAdapter
+  TrustAdapter,
+  BinanceWalletAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
@@ -65,6 +66,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new ImTokenAdapter(),
       new FoxWalletAdapter(),
       new BybitWalletAdapter(),
+      new BinanceWalletAdapter(),
       new LedgerAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
     ];

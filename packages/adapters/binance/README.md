@@ -1,11 +1,11 @@
-# `@tronweb3/tronwallet-adapter-binancewallet`
+# `@tronweb3/tronwallet-adapter-binance`
 
 This package provides an adapter to enable TRON DApps to connect to the [Binance Wallet](https://www.binance.com/en/binancewallet).
 
 ## Demo
 
 ```typescript
-import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binancewallet';
+import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binance';
 
 const adapter = new BinanceWalletAdapter();
 // connect to BinanceWallet
