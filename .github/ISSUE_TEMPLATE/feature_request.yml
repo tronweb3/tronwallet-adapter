@@ -28,7 +28,7 @@ body:
       description: Describe platforms supported by the wallet.
       options:
         - label: Android
-        - label: IOS
+        - label: iOS
         - label: Chrome Extension
     validations:
       required: true
@@ -44,7 +44,7 @@ body:
   - type: dropdown
     id: role
     attributes:
-      label: "Are you developer of the wallet or a web3 user ?"
+      label: "Are you a developer of the wallet or a web3 user ?"
       description: If you are a developer, please [contact the TRON team](mailto:application@tron.network) for wallet listing and boost its visibility.
       options:
         - Developer

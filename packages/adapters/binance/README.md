@@ -1,11 +1,11 @@
-# `@tronweb3/tronwallet-adapter-binancewallet`
+# `@tronweb3/tronwallet-adapter-binance`
 
 This package provides an adapter to enable TRON DApps to connect to the [Binance Wallet](https://www.binance.com/en/binancewallet).
 
 ## Demo
 
 ```typescript
-import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binancewallet';
+import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binance';
 
 const adapter = new BinanceWalletAdapter();
 // connect to BinanceWallet
@@ -81,7 +81,6 @@ interface BinanceWalletAdapterConfig {
 ### Caveats
 
 -   Binance Wallet doesn't implement `multiSign()` and `switchChain()`.
--   Binance Wallet only support these: `accountsChanged`,`connect`,`disconnect`.
 -   Binance Wallet App does not support any events.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
