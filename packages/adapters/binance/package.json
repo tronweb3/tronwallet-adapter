@@ -1,0 +1,58 @@
+{
+    "name": "@tronweb3/tronwallet-adapter-binance",
+    "version": "1.0.0",
+    "description": "Wallet adapter for Binance Wallet app on Android and iOS",
+    "keywords": [
+        "TRON",
+        "TronWeb",
+        "Binance Wallet"
+    ],
+    "author": "tronweb3",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tronweb3/tronwallet-adapter"
+    },
+    "license": "MIT",
+    "type": "module",
+    "sideEffects": false,
+    "engines": {
+        "node": ">=16",
+        "pnpm": ">=7"
+    },
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/esm/index.js",
+    "types": "./lib/types/index.d.ts",
+    "exports": {
+        "require": "./lib/cjs/index.js",
+        "import": "./lib/esm/index.js",
+        "types": "./lib/types/index.d.ts"
+    },
+    "files": [
+        "lib",
+        "src",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "clean": "shx mkdir -p lib && shx rm -rf lib",
+        "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
+        "test": "jest",
+        "test:coverage": "jest  --coverage",
+        "build": "pnpm run build:cjs && pnpm run build:esm",
+        "build:cjs": "tsc -p tsconfig.cjs.json",
+        "build:esm": "tsc -p tsconfig.esm.json",
+        "build:umd": "node ../../../scripts/build-umd.js"
+    },
+    "dependencies": {
+        "@binance/w3w-utils": "^1.1.6",
+        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
+        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
+    },
+    "devDependencies": {
+        "@testing-library/dom": "^8.20.0",
+        "jest-environment-jsdom": "^29.3.1",
+        "shx": "^0.3.4"
+    }
+}
