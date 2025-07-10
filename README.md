@@ -53,6 +53,13 @@ Follow these steps to support new wallets:
 1. List your wallet to [Tron Wallet](https://tron.network/wallet) .
 2. Open an issue in this repository or fork the repository and implement the according adapter.
 
+### Wallet Integration Standards
+Wallets are encouraged to implement the following TRON interface standards to ensure compatibility with the TronWallet Adapter and the broader TRON dApp ecosystem:
+
+- [TIP-1193](https://github.com/tronprotocol/tips/blob/master/tip-1193.md) – Defines a standard TRON provider interface for dApps to communicate with wallets.
+
+By following these standards, wallets can be seamlessly integrated into modern TRON dApps using unified APIs and adapters.
+
 ### Tron Wallets Features Report
 
 Please refer to [this document](https://github.com/tronweb3/tronwallet-adapter-docs/blob/main/wallet-feature.md) to see the features of Tron wallets.
