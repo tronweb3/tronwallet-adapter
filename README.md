@@ -62,7 +62,7 @@ By following these standards, wallets can be seamlessly integrated into modern T
 
 ### Tron Wallets Features Report
 
-Please refer to [this document](https://github.com/tronweb3/tronwallet-adapter-docs/blob/main/wallet-feature.md) to see the features of Tron wallets.
+Please refer to [this document](https://walletadapter.org/docs/guide/wallet-reference.html) to see the features of Tron wallets.
 
 ## Introduction
 
@@ -187,7 +187,7 @@ Examples:
 
 -   [For Tron Apps](./App.md)
 
-For more details, please refer to the [API Documentation](https://developers.tron.network/docs/tronwallet-adapter).
+For more details, please refer to the [API Documentation](https://walletadapter.org/docs/api-reference/adapter.html).
 
 ## TronWallet Adapter Packages
 
