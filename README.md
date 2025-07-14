@@ -8,35 +8,35 @@ This repository contains wallet adapters and components for Tron DApps. With out
 
 | Wallet Name                                 | platform          | version      |
 | ------------------------------------------- | ----------------- | ------------ |
-| [TronLink](https://www.tronlink.org/)       | Android           | >= 1.0.0     |
-|                                             | iOS               | >= 1.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
-| [BitGet](https://web3.bitget.com/en)        | Android           | >= 4.0.0     |
-|                                             | iOS               | >= 4.0.0     |
-|                                             | Browser Extension | >= 1.0.0     |
-| [OkxWallet](https://okx.com/)               | Android           | >= 6.0.0     |
-|                                             | iOS               | >= 6.0.0     |
-|                                             | Browser Extension | >= 3.0.0     |
-| [TokenPocket](https://www.tokenpocket.pro/) | Android           | >= 1.1.2     |
-|                                             | iOS               | >= 3.1.3     |
-|                                             | Browser Extension | >= 2.0.3     |
-| [imToken](https://token.im/)                | Android           | >= 2.5.0     |
-|                                             | iOS               | >= 2.5.0     |
+| [TronLink](https://www.tronlink.org/)       | Android           | 4.0.0     |
+|                                             | iOS               | 4.0.0     |
+|                                             | Browser Extension | 4.0.0        |
+| [BitGet](https://web3.bitget.com/en)        | Android           | 4.0.0     |
+|                                             | iOS               | 4.0.0     |
+|                                             | Browser Extension | 1.0.0     |
+| [OkxWallet](https://okx.com/)               | Android           | 6.0.0     |
+|                                             | iOS               | 6.0.0     |
+|                                             | Browser Extension | 3.0.0     |
+| [TokenPocket](https://www.tokenpocket.pro/) | Android           | 1.1.2     |
+|                                             | iOS               | 3.1.3     |
+|                                             | Browser Extension | 2.0.3     |
+| [imToken](https://token.im/)                | Android           | 2.5.0     |
+|                                             | iOS               | 2.5.0     |
 |                                             | Browser Extension | Not Support  |
-| [GateWallet](https://www.gate.io/web3)      | Android           | >= 6.30.10   |
-|                                             | iOS               | >= 6.20.1    |
-|                                             | Browser Extension | >= 2.35.2    |
-| [FoxWallet](https://foxwallet.com/)         | Android           | >= 5.3.1     |
-|                                             | iOS               | >= 5.3.1     |
+| [GateWallet](https://www.gate.io/web3)      | Android           | 6.30.10   |
+|                                             | iOS               | 6.20.1    |
+|                                             | Browser Extension | 2.35.2    |
+| [FoxWallet](https://foxwallet.com/)         | Android           | 5.3.1     |
+|                                             | iOS               | 5.3.1     |
 |                                             | Browser Extension | Not Support  |
-| [Bybit](https://bybit.com/web3)             | Android           | >= 4.51.1    |
-|                                             | iOS               | >= 4.51.1    |
-|                                             | Browser Extension | >= 3.16.3    |
+| [Bybit](https://bybit.com/web3)             | Android           | 4.51.1    |
+|                                             | iOS               | 4.51.1    |
+|                                             | Browser Extension | 3.16.3    |
 | [Ledger](https://www.ledger.com/)           | -                 | All versions |
-| [WalletConnect](https://walletconnect.org)  | -                 | >= v2.0      |
+| [WalletConnect](https://walletconnect.org)  | -                 | v2.0      |
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |
 |                                             | iOS               | Not Support  |
-|                                             | Browser Extension | >= 1.0.0     |
+|                                             | Browser Extension | 1.0.0     |
 | [Tomo](https://tomo.inc/)                   | Android           | 4.2.0        |
 |                                             | iOS               | 4.2.0        |
 |                                             | Browser Extension | Not Support  |
