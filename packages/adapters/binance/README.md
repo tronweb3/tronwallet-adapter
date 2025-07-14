@@ -80,7 +80,10 @@ interface BinanceWalletAdapterConfig {
 
 ### Caveats
 
--   Binance Wallet doesn't implement `multiSign()` and `switchChain()`.
--   Binance Wallet App does not support any events.
+-   Binance Wallet App doesn't implement `multiSign()` and `switchChain()`.
+-   Binance Wallet App supports the following events:
+    - `connect`
+    - `disconnect`
+    - `accountsChanged`
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
