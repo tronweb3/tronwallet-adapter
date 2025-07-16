@@ -1,16 +1,10 @@
+// @ts-ignore
 import { BinanceWalletAdapter } from '../../src/index.js';
+import { describe, it, expect } from 'vitest';
 
-window.open = jest.fn();
-beforeEach(function () {
-    jest.useFakeTimers();
-    global.document = window.document;
-    global.navigator = window.navigator;
-    window.tronLink = undefined;
-    window.tron = undefined;
-});
-describe('BinanceWalletAdapter', function () {
+describe('BinanceWalletAdapter', () => {
     describe('#adapter()', function () {
-        test('constructor', () => {
+        it('constructor', () => {
             const adapter = new BinanceWalletAdapter();
             expect(adapter.name).toEqual('Binance Wallet');
             expect(adapter).toHaveProperty('icon');
