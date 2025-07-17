@@ -44,15 +44,10 @@ interface BinanceWalletAdapterConfig {
      */
     openUrlWhenWalletNotFound?: boolean;
     /**
-     * Timeout in millisecond for checking if TokenPocket wallet is supported.
+     * Timeout in millisecond for checking if Binance wallet is supported.
      * Default is 2 * 1000ms
      */
     checkTimeout?: number;
-    /**
-     * Set if open TokenPocket app using DeepLink on mobile device.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
 }
 ```
 
