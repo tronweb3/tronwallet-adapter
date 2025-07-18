@@ -12,6 +12,7 @@
         "type": "git",
         "url": "https://github.com/tronweb3/tronwallet-adapter"
     },
+    "homepage": "https://walletadapter.org",
     "license": "MIT",
     "type": "module",
     "sideEffects": false,
