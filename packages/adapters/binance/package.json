@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-binance",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Wallet adapter for Binance Wallet app on Android and iOS",
     "keywords": [
         "TRON",
@@ -12,6 +12,7 @@
         "type": "git",
         "url": "https://github.com/tronweb3/tronwallet-adapter"
     },
+    "homepage": "https://walletadapter.org",
     "license": "MIT",
     "type": "module",
     "sideEffects": false,
@@ -38,8 +39,7 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "jest",
-        "test:coverage": "jest  --coverage",
+        "test": "vitest run",
         "build": "pnpm run build:cjs && pnpm run build:esm",
         "build:cjs": "tsc -p tsconfig.cjs.json",
         "build:esm": "tsc -p tsconfig.esm.json",
@@ -53,6 +53,7 @@
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
         "jest-environment-jsdom": "^29.3.1",
-        "shx": "^0.3.4"
+        "shx": "^0.3.4",
+        "vitest": "^3.2.4"
     }
 }
