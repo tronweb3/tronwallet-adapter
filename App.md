@@ -56,7 +56,7 @@ function App() {
 ```jsx
 import React, { useMemo } from 'react';
 import TronWeb from 'tronweb';
-const tronWeb: any = new TronWeb({
+const tronWeb = new TronWeb.TronWeb({
     fullHost: 'https://api.nileex.io', // here we use Nile test net
 });
 
@@ -70,7 +70,11 @@ function SignDemo() {
     }
 
     async function onSignTransaction() {
-        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.1), address);
+        const transaction = await tronWeb.transactionBuilder.sendTrx(
+          receiver,
+          Number(tronWeb.toSun(0.1)),
+          address || undefined
+        );
         const signedTransaction = await signTransaction(transaction);
         const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
         console.log(res);
