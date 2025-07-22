@@ -8,7 +8,7 @@ let adapter;
 const tronlinkAdapter = new TronLinkAdapter({
   openTronLinkAppOnMobile: true,
   openUrlWhenWalletNotFound: false,
-  checkTimeout: 3000,
+  checkTimeout: 5000,
 });
 
 const bitkeepAdapter = new BitKeepAdapter({

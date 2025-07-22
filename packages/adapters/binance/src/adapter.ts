@@ -80,6 +80,7 @@ export class BinanceWalletAdapter extends Adapter {
         this._checkWallet().then(() => {
             if (this.connected) {
                 this.emit('connect', this.address || '');
+                this._listenEvent();
             }
         });
     }
@@ -143,6 +144,7 @@ export class BinanceWalletAdapter extends Adapter {
                 this.setAddress(address);
                 this.setState(AdapterState.Connected);
                 this.emit('connect', address);
+                this._listenEvent();
             } catch (error: any) {
                 throw new WalletConnectionError(error?.message, error);
             }
@@ -162,6 +164,7 @@ export class BinanceWalletAdapter extends Adapter {
         this.setAddress(null);
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
+        this._stopListenEvent();
     }
 
     async signMessage(message: string): Promise<string> {
@@ -190,6 +193,19 @@ export class BinanceWalletAdapter extends Adapter {
             this.emit('error', error);
             throw error;
         }
+    }
+
+    private _onAccountsChanged = (address: string[]) => {
+        const preAddr = this.address || '';
+        this.setAddress(address[0]);
+        this.emit('accountsChanged', this.address || '', preAddr);
+    };
+    private _listenEvent() {
+        this._stopListenEvent();
+        this._provider.on('accountsChanged', this._onAccountsChanged);
+    }
+    private _stopListenEvent() {
+        this._provider.removeListener('accountsChanged', this._onAccountsChanged);
     }
 
     private _checkPromise: Promise<boolean> | null = null;
