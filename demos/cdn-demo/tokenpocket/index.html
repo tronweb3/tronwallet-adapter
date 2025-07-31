@@ -23,7 +23,7 @@
             const adapter = new TokenPocketAdapter({
                 openTronLinkAppOnMobile: true,
                 openUrlWhenWalletNotFound: false,
-                checkTimeout: 3000,
+                checkTimeout: 5000,
             });
 
             adapter.on('readyStateChanged', () => {
