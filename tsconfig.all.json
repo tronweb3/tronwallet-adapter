@@ -62,6 +62,9 @@
             "path": "./packages/vue/vue-hooks/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/ctrlwallet/tsconfig.all.json"
+        },
+        {
             "path": "./packages/adapters/binance/tsconfig.all.json"
         }
     ]
