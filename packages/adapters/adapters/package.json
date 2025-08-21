@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.9",
+    "version": "1.2.12",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
@@ -12,6 +12,7 @@
         "type": "git",
         "url": "https://github.com/tronweb3/tronwallet-adapter"
     },
+    "homepage": "https://walletadapter.org",
     "license": "MIT",
     "type": "module",
     "sideEffects": false,
@@ -53,7 +54,9 @@
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
-        "@tronweb3/tronwallet-adapter-guarda": "workspace:^"
+        "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
+        "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
+        "@tronweb3/tronwallet-adapter-binance": "workspace:^"
     },
     "devDependencies": {
         "@vitest/browser": "^2.0.4",

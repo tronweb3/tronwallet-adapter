@@ -20,6 +20,8 @@ As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use 
 | [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | adapter for [FoxWallet](https://foxwallet.com/)                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)     |
 | [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)         |
 | [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
+| [`@tronweb3/tronwallet-adapter-tomowallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | adapter for [Tomo Wallet App](https://tomo.inc/)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)         |
+| [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)                 | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)         |
 
 ## Usage
 
@@ -345,3 +347,5 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [BybitWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)
 -   [GuardaAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)
 -   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)
+-   [TomoWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)
+-   [BinanceWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)

@@ -2,19 +2,23 @@ import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tr
 import type { PropsWithChildren } from "react";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
+  TronLinkAdapter} from '@tronweb3/tronwallet-adapters';
+import {
   BitKeepAdapter,
   GateWalletAdapter,
   ImTokenAdapter,
   LedgerAdapter,
   OkxWalletAdapter,
   TokenPocketAdapter,
-  TronLinkAdapter,
   WalletConnectAdapter,
   FoxWalletAdapter,
   BybitWalletAdapter,
+  TomoWalletAdapterName,
+  TomoWalletAdapter,
   TronLinkAdapterName,
   TrustAdapter,
-  GuardaAdapter
+  GuardaAdapter,
+  BinanceWalletAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
@@ -53,6 +57,7 @@ const Context = createContext<WalletContextType>({
 export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
     return [
+      new TomoWalletAdapter(),
       new TronLinkAdapter(),
       new TokenPocketAdapter(),
       new OkxWalletAdapter(),
@@ -62,6 +67,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new ImTokenAdapter(),
       new FoxWalletAdapter(),
       new BybitWalletAdapter(),
+      new BinanceWalletAdapter(),
       new LedgerAdapter(),
       new GuardaAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
@@ -100,7 +106,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
-    (adapter as TronLinkAdapter)?.network?.().then((network) => {
+    (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
       setConnectionState(preState => ({
         ...preState,
         chainId: network.chainId,
@@ -144,7 +150,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
-        (adapter as TronLinkAdapter)?.network?.().then((network) => {
+        (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
           setConnectionState(preState => ({
             ...preState,
             chainId: network.chainId,

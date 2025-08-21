@@ -53,6 +53,9 @@
             "path": "./packages/adapters/bybit/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/tomowallet/tsconfig.all.json"
+        },
+        {
             "path": "./packages/react/react-hooks/tsconfig.all.json"
         },
         {
@@ -60,6 +63,9 @@
         },
         {
             "path": "./packages/vue/vue-hooks/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/binance/tsconfig.all.json"
         }
     ]
 }
