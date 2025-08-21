@@ -22,6 +22,7 @@ As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use 
 | [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | adapter for [Tomo Wallet App](https://tomo.inc/)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)         |
 | [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)                 | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)         |
+| [`@tronweb3/tronwallet-adapter-guarda`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)                 | adapter for [Guarda Wallet Extension](https://guarda.com?install=guarda-extensional)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)         |
 
 ## Usage
 
