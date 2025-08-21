@@ -53,8 +53,9 @@
         "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
-        "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
+        "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
+        "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance": "workspace:^"
     },
     "devDependencies": {

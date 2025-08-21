@@ -14,6 +14,8 @@ import {
     WalletConnectAdapter,
     FoxWalletAdapter,
     BybitWalletAdapter,
+    TrustAdapter,
+    GuardaAdapter,
     TomoWalletAdapter,
     TrustAdapter
 } from '@tronweb3/tronwallet-adapters';
@@ -37,6 +39,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
             new LedgerAdapter(),
             new WalletConnectAdapter(walletconnectConfig),
             new TrustAdapter(),
+            new GuardaAdapter(),
         ],
         []
     );

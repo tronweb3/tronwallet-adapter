@@ -35,8 +35,11 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Ledger](https://www.ledger.com/)           | -                 | All versions |
 | [WalletConnect](https://walletconnect.org)  | -                 | v2.0      |
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |
-|                                             | iOS               | Not Support  |
-|                                             | Browser Extension | 1.0.0     |
+|                                             | IOS               | Not Support  |
+|                                             | Browser Extension | >= 1.0.0     |
+| [Guarda](https://guarda.com/)               | Android           | Not Support     |
+|                                             | IOS               | Not Support     |
+|                                             | Browser Extension | 1.2.2     |
 | [Tomo](https://tomo.inc/)                   | Android           | 4.2.0        |
 |                                             | iOS               | 4.2.0        |
 |                                             | Browser Extension | Not Support  |
@@ -211,6 +214,7 @@ tronwallet-adapter
 |   |   ├─imtoken # adapter for imToken Wallet
 |   |   ├─gatewallet # adapter for gate.io Wallet
 |   |   ├─foxwallet # adapter for FoxWallet
+|   |   ├─guarda # adapter for Guarda Wallet
 |   |   ├─bybit # adapter for Bybit Wallet
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
