@@ -21,7 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const [adapters, setAdapters] = useState<Adapter[]>([]);
     useEffect(() => {
         import('@tronweb3/tronwallet-adapters').then((res) => {
-            const { BitKeepAdapter, OkxWalletAdapter, TokenPocketAdapter, TronLinkAdapter, WalletConnectAdapter, GuardaAdapter } = res;
+            const { BitKeepAdapter, OkxWalletAdapter, TokenPocketAdapter, TronLinkAdapter, WalletConnectAdapter } = res;
             const tronLinkAdapter = new TronLinkAdapter();
             const ledger = new LedgerAdapter({
                 accountNumber: 2,
@@ -49,7 +49,6 @@ export default function App({ Component, pageProps }: AppProps) {
             const bitKeepAdapter = new BitKeepAdapter();
             const tokenPocketAdapter = new TokenPocketAdapter();
             const okxwalletAdapter = new OkxWalletAdapter();
-            const guardaAdapter = new GuardaAdapter();
             setAdapters([
                 tronLinkAdapter,
                 bitKeepAdapter,
@@ -57,7 +56,6 @@ export default function App({ Component, pageProps }: AppProps) {
                 okxwalletAdapter,
                 walletConnectAdapter,
                 ledger,
-                guardaAdapter,
             ]);
         });
     }, [setAdapters]);

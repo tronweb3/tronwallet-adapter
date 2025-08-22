@@ -14,7 +14,6 @@ import {
     WalletConnectAdapter,
     FoxWalletAdapter,
     BybitWalletAdapter,
-    TrustAdapter,
     GuardaAdapter,
     TomoWalletAdapter,
     TrustAdapter
