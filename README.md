@@ -7,7 +7,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 ### Supported
 
 | Wallet Name                                 | platform          | version      |
-| ------------------------------------------- | ----------------- | ------------ |
+| ------------------------------------------- |  ----------------- | ------------ |
 | [TronLink](https://www.tronlink.org/)       | Android           | 4.0.0     |
 |                                             | iOS               | 4.0.0     |
 |                                             | Browser Extension | 4.0.0        |
@@ -36,7 +36,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [WalletConnect](https://walletconnect.org)  | -                 | v2.0      |
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |
 |                                             | IOS               | Not Support  |
-|                                             | Browser Extension | >= 1.0.0     |
+|                                             | Browser Extension | 2.48.0 <br>2.49.0     |
 | [Guarda](https://guarda.com/)               | Android           | Not Support     |
 |                                             | IOS               | Not Support     |
 |                                             | Browser Extension | 1.2.2     |
@@ -246,7 +246,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-tronlink`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | Adapter for TronLink extention and TronLink app(iOS and Android) |
 | [`@tronweb3/tronwallet-adapter-ledger`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | Adapter for Ledger                                               |
 | [`@tronweb3/tronwallet-adapter-walletconnect`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | Adapter for Walletconnect                                        |
-| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | Adapter for TokenPocket App(iOS and Android)                     |
+| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | Adapter for TokenPocket                    |
 | [`@tronweb3/tronwallet-adapter-bitkeep`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)             | Adapter for BitKeep extension and BitKeep App(iOS and Android)   |
 | [`@tronweb3/tronwallet-adapter-okxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | Adapter for Okx Wallet extension and App(Android)                |
 | [`@tronweb3/tronwallet-adapter-imtoken`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             | Adapter for imToken Wallet App(iOS and Android)                  |
