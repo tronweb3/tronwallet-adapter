@@ -10,6 +10,7 @@ import {
     WalletGetNetworkError,
     WalletConnectionError,
     isInMobileBrowser,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -144,17 +145,24 @@ export class TokenPocketAdapter extends Adapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TokenPocketWallet;
+            try {
+                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+                if (!res?.[0]) {
+                    throw new WalletConnectionError('Request connect error.');
+                }
+                const address = res[0];
 
-            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-            if (!res?.[0]) {
-                throw new WalletConnectionError('Request connect error.');
+                this.setAddress(address);
+                this.setState(AdapterState.Connected);
+                this.listenTronEvent();
+                this.emit('connect', this.address || '');
+            } catch (e: any) {
+                if (e instanceof WalletError) {
+                    throw e;
+                } else {
+                    throw new WalletConnectionError(e?.message, e);
+                }
             }
-            const address = res[0];
-
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this.listenTronEvent();
-            this.emit('connect', this.address || '');
         } catch (error: any) {
             this.emit('error', error);
             throw error;

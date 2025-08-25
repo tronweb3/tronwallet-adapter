@@ -9,6 +9,7 @@ import {
     WalletSignTransactionError,
     WalletGetNetworkError,
     WalletConnectionError,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -140,17 +141,22 @@ export class GuardaAdapter extends Adapter {
             this._connecting = true;
             const wallet = this._wallet as GuardaWallet;
 
-            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-
-            if (!res?.[0]) {
-                throw new WalletConnectionError('Request connect error.');
+            try {
+                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+                if (!res?.[0]) {
+                    throw new WalletConnectionError('Request connect error.');
+                }
+                const address = res[0];
+                this.setAddress(address);
+                this.setState(AdapterState.Connected);
+                this.emit('connect', this.address || '');
+            } catch (error: any) {
+                if (error instanceof WalletError) {
+                    throw error;
+                } else {
+                    throw new WalletConnectionError(error?.message, error);
+                }
             }
-
-            const address = res[0];
-
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this.emit('connect', this.address || '');
         } catch (error: any) {
             this.emit('error', error);
             throw error;
