@@ -247,9 +247,9 @@ export class TokenPocketAdapter extends Adapter {
     private onChainChanged: TronChainChangedCallback = (data) => {
         this.emit('chainChanged', data);
     };
-    private onAccountsChanged: TronAccountsChangedCallback = () => {
+    private onAccountsChanged: TronAccountsChangedCallback = (accounts) => {
         const preAddr = this.address || '';
-        const curAddr = (this._wallet?.tronWeb && this._wallet?.tronWeb.defaultAddress?.base58) || '';
+        const curAddr = accounts?.[0] || '';
         if (!curAddr) {
             this.setAddress(null);
             this.setState(AdapterState.Disconnect);
