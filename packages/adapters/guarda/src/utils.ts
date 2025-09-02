@@ -1,3 +1,5 @@
+import { isInBrowser } from '@tronweb3/tronwallet-abstract-adapter';
+
 export function supportGuarda() {
-    return !!window.tronWeb && typeof window.guarda !== 'undefined';
+    return isInBrowser() && typeof window.guarda !== 'undefined';
 }

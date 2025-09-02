@@ -3,9 +3,12 @@ export default {
     testEnvironment: 'jsdom',
     extensionsToTreatAsEsm: ['.ts'],
     transform: {
-        '^.+\\.ts$': ['ts-jest', {
-            useESM: true,
-        }],
+        '^.+\\.ts$': [
+            'ts-jest',
+            {
+                useESM: true,
+            },
+        ],
     },
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1',
@@ -14,4 +17,4 @@ export default {
     collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov', 'html'],
-}; 
+};

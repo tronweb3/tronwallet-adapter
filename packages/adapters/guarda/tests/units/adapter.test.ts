@@ -1,4 +1,4 @@
-import { GuardaAdapter } from '../../src/adapter';
+import { GuardaAdapter } from '../../src/adapter.js';
 
 describe('GuardaAdapter', () => {
     test('should be defined', () => {
@@ -22,4 +22,4 @@ describe('GuardaAdapter', () => {
         expect(adapter).toHaveProperty('on');
         expect(adapter).toHaveProperty('off');
     });
-}); 
+});

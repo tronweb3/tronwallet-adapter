@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-bybit",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Wallet adapter for Bybit Wallet extension and Bybit Wallet app.",
     "keywords": [
         "TRON",

@@ -1,7 +1,7 @@
 {
     "name": "@tronweb3/tronwallet-adapter-guarda",
     "version": "1.0.0",
-    "description": "Wallet adapter for Guarda Extension and App wallet.",
+    "description": "Wallet adapter for Guarda Extension.",
     "keywords": [
         "TRON",
         "TronWeb",
@@ -50,4 +50,4 @@
         "jest-environment-jsdom": "^29.3.1",
         "shx": "^0.3.4"
     }
-} 
+}

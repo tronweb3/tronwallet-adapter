@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>GuardaAdapter Test Demo</title>
+        <script src="https://unpkg.com/tronweb@6.0.4/dist/TronWeb.js"></script>
         <script src="../node_modules/@tronweb3/tronwallet-adapter-guarda/lib/umd/index.js"></script>
     </head>
     <body>
@@ -14,6 +15,11 @@
             <button id="signTransactionBtn">signTransaction</button>
         </div>
         <script>
+            const tronWeb = new TronWeb.TronWeb({
+                fullHost: 'https://api.nileex.io',
+                // fullHost: 'https://api.trongrid.io',
+                privateKey: '',
+            });
             const log = function (...args) {
                 console.log('Adapter:', ...args);
             };

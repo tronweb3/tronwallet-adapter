@@ -10,6 +10,7 @@ import {
     WalletGetNetworkError,
     WalletConnectionError,
     isInMobileBrowser,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -144,17 +145,24 @@ export class TokenPocketAdapter extends Adapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TokenPocketWallet;
+            try {
+                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+                if (!res?.[0]) {
+                    throw new WalletConnectionError('Request connect error.');
+                }
+                const address = res[0];
 
-            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-            if (!res?.[0]) {
-                throw new WalletConnectionError('Request connect error.');
+                this.setAddress(address);
+                this.setState(AdapterState.Connected);
+                this.listenTronEvent();
+                this.emit('connect', this.address || '');
+            } catch (e: any) {
+                if (e instanceof WalletError) {
+                    throw e;
+                } else {
+                    throw new WalletConnectionError(e?.message, e);
+                }
             }
-            const address = res[0];
-
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this.listenTronEvent();
-            this.emit('connect', this.address || '');
         } catch (error: any) {
             this.emit('error', error);
             throw error;
@@ -178,10 +186,12 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.sign(transaction, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -200,10 +210,12 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -218,10 +230,12 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.signMessageV2(message, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignMessageError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignMessageError(error, new Error(error));
+                } else {
+                    throw new WalletSignMessageError('Unknown error', error);
                 }
             }
         } catch (error: any) {
