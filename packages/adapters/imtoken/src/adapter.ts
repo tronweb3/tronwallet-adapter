@@ -155,10 +155,12 @@ export class ImTokenAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.sign(transaction, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -177,10 +179,12 @@ export class ImTokenAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -195,10 +199,12 @@ export class ImTokenAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.signMessageV2(message, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignMessageError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignMessageError(error, new Error(error));
+                } else {
+                    throw new WalletSignMessageError('Unknown error', error);
                 }
             }
         } catch (error: any) {
