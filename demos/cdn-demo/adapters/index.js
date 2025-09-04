@@ -1,4 +1,9 @@
-const log = function (...args) {
+
+const tronWeb = new window.TronWeb.TronWeb({
+    fullHost: 'https://api.nileex.io',
+    // fullHost: 'https://api.trongrid.io',
+    privateKey: '',
+});const log = function (...args) {
   console.log('Adapter:', ...args);
 };
 let address;

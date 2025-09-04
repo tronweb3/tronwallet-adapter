@@ -80,5 +80,6 @@ interface TokenPocketConfig {
 
 -   TokenPocket Wallet doesn't implement `multiSign()` and `switchChain()`.
 -   TokenPocket App will be connected automatically and when user change accounts, the page will reload. So there is no need to to listen to `accountsChanged` event.
+-   TokenPocket Extension doesn't support `accountsChanged` and `chainChanged` events.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
