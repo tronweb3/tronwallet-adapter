@@ -178,6 +178,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
         address: adapter?.address || '',
       }));
     } catch (e: unknown) {
+      console.error('Connect Error', e);
       setConnectionState(preState => ({
         ...preState,
         connecting: false,

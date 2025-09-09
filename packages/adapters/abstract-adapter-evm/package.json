@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/abstract-adapter-evm",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Abstract interface definition of Evm Wallet Adapters.",
     "author": "tronweb3",
     "repository": {
@@ -39,8 +39,8 @@
     },
     "dependencies": {
         "eventemitter3": "^4.0.0",
-        "jest": "^29.6.2",
-        "jest-environment-jsdom": "^29.6.2"
+        "jest": "29.7.0",
+        "jest-environment-jsdom": "29.7.0"
     },
     "devDependencies": {
         "shx": "^0.3.4"

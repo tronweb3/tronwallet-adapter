@@ -63,6 +63,9 @@
         },
         {
             "path": "./packages/adapters/binance/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/binance-evm/tsconfig.all.json"
         }
     ]
 }

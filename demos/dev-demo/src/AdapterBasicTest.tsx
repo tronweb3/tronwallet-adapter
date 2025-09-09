@@ -1,47 +1,23 @@
 import type { SelectChangeEvent } from '@mui/material';
 import { Alert, Box, Button, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import type { Adapter, Network } from '@tronweb3/tronwallet-abstract-adapter';
-import { AdapterState, WalletReadyState } from '@tronweb3/tronwallet-abstract-adapter';
+import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
+import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import {
-    BitKeepAdapter,
-    GateWalletAdapter,
-    ImTokenAdapter,
-    LedgerAdapter,
-    OkxWalletAdapter,
-    TokenPocketAdapter,
-    TronLinkAdapter,
-    WalletConnectAdapter,
-    FoxWalletAdapter,
-    BybitWalletAdapter,
-    TomoWalletAdapter,
-    TrustAdapter
-} from '@tronweb3/tronwallet-adapters';
+    BinanceEvmAdapter
+} from '@tronweb3/tronwallet-adapter-binance-evm';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { tronWeb } from './tronweb';
-import { walletconnectConfig } from './config';
-const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
+import { utils } from 'tronweb';
+import { ethers } from "ethers";
+
+const receiver = '0x18B0FDE2FEA85E960677C2a41b80e7557AdcbAE0';
 
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
     const adapters = useMemo(
-        () => [
-            new TomoWalletAdapter(),
-            new TronLinkAdapter(),
-            new TokenPocketAdapter(),
-            new OkxWalletAdapter(),
-            new BitKeepAdapter(),
-            new GateWalletAdapter(),
-            new ImTokenAdapter(),
-            new FoxWalletAdapter(),
-            new BybitWalletAdapter(),
-            new LedgerAdapter(),
-            new WalletConnectAdapter(walletconnectConfig),
-            new TrustAdapter(),
-        ],
+        () => [new BinanceEvmAdapter()],
         []
     );
-    const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'TronLink');
-    const [connectState, setConnectState] = useState(AdapterState.NotFound);
+    const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvmAdapter');
     const [account, setAccount] = useState('');
     const [readyState, setReadyState] = useState(WalletReadyState.Loading);
     const [chainId, setChainId] = useState<string>('');
@@ -57,14 +33,13 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         [selectedName]
     );
     useEffect(() => {
-        setConnectState(adapter.state);
         setAccount(adapter.address || '');
         setReadyState(adapter.readyState);
         if (adapter.connected) {
             adapter
                 // @ts-ignore
                 .network()
-                .then((res: Network) => {
+                .then((res: any) => {
                     log('network()', res);
                     setChainId(res.chainId);
                 })
@@ -79,27 +54,20 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         });
         adapter.on('connect', async () => {
             log('connect: ', adapter.address);
+        });
+        adapter.on('accountsChanged', (accounts) => {
+            log('accountsChanged: current', accounts);
+            setAccount(accounts[0]);
             setAccount(adapter.address || '');
-            if (typeof (adapter as any).network === 'function') {
-                adapter
-                    // @ts-ignore
-                    .network()
-                    .then((res: Network) => {
-                        log('network()', res);
-                        setChainId(res.chainId);
-                    })
-                    .catch((e: Error) => {
-                        console.error('network() error:', e);
-                    });
-            }
-        });
-        adapter.on('stateChanged', (state) => {
-            log('stateChanged: ', state);
-            setConnectState(state);
-        });
-        adapter.on('accountsChanged', (data, preaddr) => {
-            log('accountsChanged: current', data, ' pre: ', preaddr);
-            setAccount(data as string);
+            adapter
+                .network()
+                .then((res: any) => {
+                    log('network()', res);
+                    setChainId(res.chainId);
+                })
+                .catch((e: Error) => {
+                    console.error('network() error:', e);
+                });
         });
 
         adapter.on('chainChanged', (data) => {
@@ -121,7 +89,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         () =>
             adapters.map((adapter) => (
                 <MenuItem value={adapter.name} key={adapter.name}>
-                    <Stack spacing={2}>
+                    <Stack width={200} flexDirection={'row'}>
                         <img src={adapter.icon} alt={adapter.name} style={{ width: 20, height: 20, marginRight: 8 }} />
                         {adapter.name}
                     </Stack>
@@ -129,6 +97,12 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
             )),
         [adapters]
     );
+
+    async function onConnect() {
+        const address = await adapter.connect();
+        log('connected: address ', address)
+        setAccount(address);
+    }
     return (
         <Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -138,12 +112,15 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
                 </Select>
             </Box>
             <InfoShow label="Selected wallet readyState:" value={readyState} />
-            <InfoShow label="Current connection status:" value={connectState} />
             <InfoShow label="Connected account address:" value={account} />
             <InfoShow label="Current network you choose:" value={chainId} />
-            <SectionConnect adapter={adapter} readyState={readyState} />
-            <SectionSign adapter={adapter} connectState={connectState} />
+            <Box>
+                <Button variant="contained" onClick={onConnect}>
+                    Connect
+                </Button>
+            </Box>
             <SectionSwitchChain adapter={adapter} />
+            <SectionSign adapter={adapter} />
         </Box>
     );
 });
@@ -159,85 +136,137 @@ function InfoShow({ label, value }: { label: string; value: string }) {
     );
 }
 
-const SectionConnect = memo(function SectionConnect({ adapter, readyState }: { adapter: Adapter; readyState: WalletReadyState }) {
-    async function onConnect() {
-        await adapter.connect();
-    }
-
-    return (
-        <Box>
-            <Button variant="contained" onClick={onConnect}>
-                Connect
-            </Button>
-
-            <Button variant="contained" onClick={() => adapter?.disconnect()}>
-                Disconnect
-            </Button>
-        </Box>
-    );
-});
-
-const SectionSign = memo(function SectionSign({ adapter, connectState }: { adapter: Adapter; connectState: AdapterState }) {
+const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }) {
     const [open, setOpen] = useState(false);
-    const [signMessage, setSignMessage] = useState('Hello, Adapter');
+    const [message, setMessage] = useState('Hello, Adapter');
     const [signedMessage, setSignedMessage] = useState('');
 
     async function onSignTransaction() {
-        const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address!);
-        const signedTransaction = await adapter.signTransaction(transaction);
-        // const signedTransaction = await tronWeb.trx.sign(transaction);
-        const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+        const transaction = {
+            value: '0x' + Number(0.01 * Math.pow(10, 18)).toString(16), // 0.01 is 0.01ETH
+            to: receiver,
+            from: adapter.address,
+        };
+        const signedTransaction = await adapter.sendTransaction(transaction);
         setOpen(true);
     }
 
     const onSignMessage = useCallback(
         async function () {
-            const res = await adapter.signMessage(signMessage);
+            const res = await adapter.signMessage({ message, address: adapter.address! });
             setSignedMessage(res);
         },
-        [adapter, signMessage, setSignedMessage]
+        [adapter, message, setSignedMessage]
     );
 
     const onVerifyMessage = useCallback(
         async function () {
-            const address = await tronWeb.trx.verifyMessageV2(signMessage, signedMessage);
-            alert(address === adapter.address ? 'success verify' : 'failed verify');
+            const utf8Message = utils.ethersUtils.toUtf8Bytes(message);
+            const hashedMessage = utils.ethersUtils.keccak256(utils.ethersUtils.concat([utils.ethersUtils.toUtf8Bytes('\x19Ethereum Signed Message:\n'), utils.ethersUtils.toUtf8Bytes(String(utf8Message.length)), utf8Message]))
+            const address = utils.crypto.ecRecover(hashedMessage, signedMessage.slice(2))
+            console.log('Signature is valid: ', address.slice(2).toLowerCase() === adapter.address!.slice(2).toLowerCase());
         },
-        [signMessage, signedMessage, adapter]
+        [message, signedMessage, adapter]
     );
+
+    const onSignTypedData = useCallback(async function () {
+        const typedData = {
+            types: {
+                EIP712Domain: [
+                    {
+                        name: "name",
+                        type: "string"
+                    },
+                    {
+                        name: "version",
+                        type: "string"
+                    },
+                    {
+                        name: "chainId",
+                        type: "uint256"
+                    },
+                    {
+                        name: "verifyingContract",
+                        type: "address"
+                    }
+                ],
+                Person: [
+                    {
+                        name: "name",
+                        type: "string"
+                    },
+                    {
+                        name: "wallet",
+                        type: "address"
+                    }
+                ],
+                Mail: [
+                    {
+                        name: "from",
+                        type: "Person"
+                    },
+                    {
+                        name: "to",
+                        type: "Person"
+                    },
+                    {
+                        name: "contents",
+                        type: "string"
+                    }
+                ]
+            },
+            primaryType: "Mail",
+            domain: {
+                name: "Ether Mail",
+                version: "1",
+                chainId: 1,
+                verifyingContract: "0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC"
+            },
+            message: {
+                from: {
+                    name: "Cow",
+                    wallet: "0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826"
+                },
+                to: {
+                    name: "Bob",
+                    wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
+                },
+                contents: "Hello, Bob!"
+            }
+        };
+        const signature = await adapter.signTypedData({ address: adapter.address || '', typedData });
+        console.log('SignTypedData signature: ', signature);
+        const isValid = await verifyEip712Signature({ Person: typedData.types.Person, Mail: typedData.types.Mail }, typedData.domain, typedData.message, signature, adapter.address || '')
+        console.log('SignTypedData isValid: ', isValid)
+    }, [adapter])
 
     return (
         <Box margin={'20px 0'}>
             <Typography variant="h5" gutterBottom>
                 Sign Usage
             </Typography>
-            <TextField label="Message to sign" size="small" value={signMessage} onChange={(e) => setSignMessage(e.target.value)} />
+            <TextField label="Message to sign" size="small" value={message} onChange={(e) => setMessage(e.target.value)} />
 
-            <Button variant="contained" disabled={connectState !== AdapterState.Connected} onClick={onSignTransaction}>
+            <Button variant="contained" onClick={onSignTransaction}>
                 Transfer
             </Button>
-            <Button variant="contained" disabled={connectState !== AdapterState.Connected} onClick={onSignMessage}>
+            <Button variant="contained" onClick={onSignMessage}>
                 Sign Message
             </Button>
 
             <Button variant="contained" disabled={!signedMessage} onClick={onVerifyMessage}>
                 Verify Signed Message
             </Button>
-            {open && (
-                <Alert onClose={() => setOpen(false)} severity="success" sx={{ width: '100%', marginTop: 1 }}>
-                    Success! You can confirm your transfer on{' '}
-                    <a target="_blank" rel="noreferrer" href={`https://nile.tronscan.org/#/address/${adapter.address}`}>
-                        Tron Scan
-                    </a>
-                </Alert>
-            )}
+            <Button variant="contained" onClick={onSignTypedData}>
+                Sign Typed Data
+            </Button>
         </Box>
     );
 });
 
 
 const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapter: Adapter }) {
-    const [selectedChainId, setSelectedChainId] = useState('0xcd8690dc');
+    const [selectedChainId, setSelectedChainId] = useState<`0x${string}`>('0x1');
     function onSwitchChain() {
         adapter.switchChain(selectedChainId);
     }
@@ -254,11 +283,11 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
                 id="demo-simple-select"
                 value={selectedChainId}
                 size="small"
-                onChange={(e) => setSelectedChainId(e.target.value)}
+                onChange={(e) => setSelectedChainId(e.target.value as Chain['chainId'])}
             >
-                <MenuItem value={'0x2b6653dc'}>Mainnet</MenuItem>
-                <MenuItem value={'0x94a9059e'}>Shasta</MenuItem>
-                <MenuItem value={'0xcd8690dc'}>Nile</MenuItem>
+                <MenuItem value={'0x38'}>BSC Mainnet</MenuItem>
+                <MenuItem value={'0x2105'}>Base Mainnet</MenuItem>
+                <MenuItem value={'0xa4b1'}>Arbitrum One</MenuItem>
             </Select>
 
             <Button style={{ margin: '0 20px' }} onClick={onSwitchChain} variant="contained">
@@ -267,3 +296,22 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
         </Box>
     );
 });
+
+
+async function verifyEip712Signature(types: any, domain: any, message: Record<string, any>, signature: string, expectedSigner: string) {
+  try {
+    const signerAddress = ethers.verifyTypedData(
+      domain, 
+      types,
+      message, 
+      signature
+    );
+
+    return ethers.isAddress(signerAddress) && 
+           signerAddress.toLowerCase() === expectedSigner.toLowerCase();
+  } catch (error: any) {
+    console.error("Verify failed：", error.message);
+    return false;
+  }
+}
+

@@ -150,7 +150,7 @@ Events are as follows:
         Found = 'Found',
     }
     ```
--   `accountsChanged(address: string, preAddress: string)`: Emit when the user's exposed account address changes.
+-   `accountsChanged(address: Array<string>)`: Emit when the user's exposed account address changes.
 
 ```typescript
 adapter.on('accountsChanged', (accounts: Array<string>) => {
