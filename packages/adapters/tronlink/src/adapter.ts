@@ -433,14 +433,14 @@ export class TronLinkAdapter extends Adapter {
         this._stopListenTronEvent();
         this._stopListenTronLinkEvent();
         const wallet = this._wallet as Tron;
-        wallet.on('chainChanged', this._onChainChanged);
-        wallet.on('accountsChanged', this._onAccountsChanged);
+        wallet.on?.('chainChanged', this._onChainChanged);
+        wallet.on?.('accountsChanged', this._onAccountsChanged);
     }
 
     private _stopListenTronEvent() {
         const wallet = this._wallet as Tron;
-        wallet.removeListener('chainChanged', this._onChainChanged);
-        wallet.removeListener('accountsChanged', this._onAccountsChanged);
+        wallet.removeListener?.('chainChanged', this._onChainChanged);
+        wallet.removeListener?.('accountsChanged', this._onAccountsChanged);
     }
 
     private _onChainChanged: TronChainChangedCallback = (data) => {
