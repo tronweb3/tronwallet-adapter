@@ -41,7 +41,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
                 .network()
                 .then((res: any) => {
                     log('network()', res);
-                    setChainId(res.chainId);
+                    setChainId(res);
                 })
                 .catch((e: Error) => {
                     console.error('network() error:', e);
@@ -63,7 +63,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
                 .network()
                 .then((res: any) => {
                     log('network()', res);
-                    setChainId(res.chainId);
+                    setChainId(res);
                 })
                 .catch((e: Error) => {
                     console.error('network() error:', e);
@@ -72,7 +72,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
 
         adapter.on('chainChanged', (data) => {
             log('chainChanged: ', data);
-            setChainId((data as any).chainId);
+            setChainId(data);
         });
 
         adapter.on('disconnect', () => {

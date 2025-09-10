@@ -107,7 +107,7 @@ export class BinanceEvmAdapter extends Adapter {
                 if (provider) {
                     resolve(provider);
                 } else {
-                    console.error('[BinanceEvmAdapter]: Unable to detect window.binancew3w.ethereum.');
+                    console.error('[BinanceEvmAdapter]: Unable to detect window.ethereum.');
                     resolve(null);
                 }
             };
@@ -134,7 +134,7 @@ export class BinanceEvmAdapter extends Adapter {
         });
         provider.on('accountsChanged', this.onAccountsChanged);
         provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', (chainId as any).chainId);
+            this.emit('chainChanged', chainId);
         });
     }
     private onAccountsChanged = (accounts: string[]) => {
