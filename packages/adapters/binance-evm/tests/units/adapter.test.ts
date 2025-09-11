@@ -1,14 +1,13 @@
-import { TronLinkEvmAdapter } from '../../src/adapter.js';
+import { BinanceEvmAdapter } from '../../src/adapter.js';
+import { describe, it, expect } from 'vitest';
 
-describe('TronLinkEvmAdapter', () => {
-    test('base props should be valid', () => {
-        const adapter = new TronLinkEvmAdapter();
-        expect(adapter.name).toEqual('TronLinkEvm');
-        expect(adapter.url).toEqual('https://www.tronlink.org/');
+describe('BinanceEvmAdapter', () => {
+    it('base props should be valid', () => {
+        const adapter = new BinanceEvmAdapter();
+        expect(adapter.name).toEqual('BinanceEvm');
+        expect(adapter.url).toEqual('https://www.binance.com/en/binancewallet');
         expect(adapter.readyState).toEqual('Loading');
         expect(adapter.address).toEqual(null);
         expect(adapter.connected).toEqual(false);
-        jest.advanceTimersByTime(4000);
-        expect(adapter.readyState).toEqual('Loading');
     });
 });

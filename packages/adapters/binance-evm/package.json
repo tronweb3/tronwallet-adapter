@@ -23,9 +23,9 @@
     "module": "./lib/esm/index.js",
     "types": "./lib/types/index.d.ts",
     "exports": {
+        "types": "./lib/types/index.d.ts",
         "require": "./lib/cjs/index.js",
-        "import": "./lib/esm/index.js",
-        "types": "./lib/types/index.d.ts"
+        "import": "./lib/esm/index.js"
     },
     "files": [
         "lib",
@@ -38,7 +38,7 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "jest",
+        "test": "vitest run",
         "test:coverage": "jest  --coverage",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
@@ -48,8 +48,7 @@
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
-        "jest": "28",
-        "jest-environment-jsdom": "28",
-        "shx": "0.3.4"
+        "shx": "0.3.4",
+        "vitest": "^3.2.4"
     }
 }

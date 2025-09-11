@@ -522,8 +522,17 @@ export class TronLinkAdapter extends Adapter {
             this._supportNewTronProtocol = true;
             this._wallet = window.tron;
             this._listenTronEvent();
-            address = (this._wallet.tronWeb && this._wallet.tronWeb?.defaultAddress?.base58) || null;
-            state = address ? AdapterState.Connected : AdapterState.Disconnect;
+            try {
+                address = (this._wallet?.tronWeb && this._wallet.tronWeb?.defaultAddress?.base58) || null;
+                state = address ? AdapterState.Connected : AdapterState.Disconnect;
+            } catch (e) {
+                console.error('Unknow error: ' + e, ' Please install TronLink extension wallet.');
+                address = null;
+                state = AdapterState.Disconnect;
+                this._readyState = WalletReadyState.NotFound;
+                this.emit('readyStateChanged', this.readyState);
+                return;
+            }
         } else if (window.tronLink) {
             this._wallet = window.tronLink;
             this._listenTronLinkEvent();
