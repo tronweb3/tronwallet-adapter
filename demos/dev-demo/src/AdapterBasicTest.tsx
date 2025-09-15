@@ -146,7 +146,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }
     async function onSignTransaction() {
         const chainId = await adapter.network();
         const transaction = {
-            value: '0x' + Number(0.01 * Math.pow(10, 18)).toString(16), // 0.01 is 0.01ETH
+            value: '0x' + Number(11).toString(16),
             to: receiver,
             from: adapter.address,
             chainId: chainId
@@ -159,6 +159,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }
         async function () {
             const res = await adapter.signMessage({ message, address: adapter.address! });
             setSignedMessage(res);
+            console.log('Sign string signature: ', res);
         },
         [adapter, message, setSignedMessage]
     );
@@ -235,7 +236,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }
                     name: "Bob",
                     wallet: "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB"
                 },
-                contents: "Hello, Bob!"
+                contents: "Hello, Bob!你好“”abc123……&*））《》"
             }
         };
         const signature = await adapter.signTypedData({ address: adapter.address || '', typedData });
@@ -297,6 +298,7 @@ const SectionTriggerContract = function({ adapter }: { adapter: Adapter }) {
             from: adapter.address,
             to: contractAddress,
             data,
+            gas: "0x19023",
         };
         const signedTransaction = await adapter.sendTransaction(transaction);
         console.log('signedTransaction', signedTransaction);
@@ -315,11 +317,11 @@ const SectionTriggerContract = function({ adapter }: { adapter: Adapter }) {
     }
     return (
         <Box margin={'20px 0'}>
-            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '500px' }}>
                 <Typography gutterBottom>Set the contract:</Typography>
-                <Input value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
+                <Input fullWidth value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
             </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography gutterBottom>Set the number:</Typography>
                 <Input value={number} onChange={(e) => setNumber(e.target.value)} />
             </Box>
