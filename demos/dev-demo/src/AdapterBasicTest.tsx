@@ -18,7 +18,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         () => [new BinanceEvmAdapter(), new MetaMaskAdapter()],
         []
     );
-    const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvmAdapter');
+    const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
     const [account, setAccount] = useState('');
     const [readyState, setReadyState] = useState(WalletReadyState.Loading);
     const [chainId, setChainId] = useState<string>('');
@@ -305,14 +305,17 @@ const SectionTriggerContract = function({ adapter }: { adapter: Adapter }) {
     }
 
     async function readContract() {
-        const selector = `${keccak256(toUtf8Bytes('retrieve()')).slice(0, 10)}`;
-        const transaction = {
-            from: adapter.address,
-            to: contractAddress,
-            data: selector,
-        };
-        const provider = await adapter.getProvider();
-        const result = await provider?.request({ method: 'eth_call', params: [transaction] })
+        const erc20Abi = [
+            "function retrieve() view returns (uint256)",
+        ];
+        const provider1 = await adapter.getProvider();
+        if (!provider1) {
+            return;
+        }
+        const provider = new ethers.BrowserProvider(window.ethereum)
+
+        const contract = new ethers.Contract(contractAddress, erc20Abi, provider);
+        const result = await contract.retrieve();
         console.log('read contract result: ', result);
     }
     return (
