@@ -1,20 +1,21 @@
 import type { SelectChangeEvent } from '@mui/material';
-import { Alert, Box, Button, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Input, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import {
     BinanceEvmAdapter
 } from '@tronweb3/tronwallet-adapter-binance-evm';
+import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
-import { ethers } from "ethers";
+import { ethers, keccak256, toUtf8Bytes } from "ethers";
 
 const receiver = '0x18B0FDE2FEA85E960677C2a41b80e7557AdcbAE0';
 
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
     const adapters = useMemo(
-        () => [new BinanceEvmAdapter()],
+        () => [new BinanceEvmAdapter(), new MetaMaskAdapter()],
         []
     );
     const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvmAdapter');
@@ -121,6 +122,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
             </Box>
             <SectionSwitchChain adapter={adapter} />
             <SectionSign adapter={adapter} />
+            <SectionTriggerContract adapter={adapter} />
         </Box>
     );
 });
@@ -142,10 +144,12 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }
     const [signedMessage, setSignedMessage] = useState('');
 
     async function onSignTransaction() {
+        const chainId = await adapter.network();
         const transaction = {
             value: '0x' + Number(0.01 * Math.pow(10, 18)).toString(16), // 0.01 is 0.01ETH
             to: receiver,
             from: adapter.address,
+            chainId: chainId
         };
         const signedTransaction = await adapter.sendTransaction(transaction);
         setOpen(true);
@@ -264,6 +268,70 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter; }
     );
 });
 
+const SectionTriggerContract = function({ adapter }: { adapter: Adapter }) {
+    const [number, setNumber] = useState('0');
+    const [contractAddress, setContractAddress] = useState('');
+    async function deployContract() {
+        // Deploy contract
+        const byteCode = '0x6080604052348015600e575f5ffd5b506101298061001c5f395ff3fe6080604052348015600e575f5ffd5b50600436106030575f3560e01c80632e64cec11460345780636057361d14604e575b5f5ffd5b603a6066565b60405160459190608d565b60405180910390f35b606460048036038101906060919060cd565b606e565b005b5f5f54905090565b805f8190555050565b5f819050919050565b6087816077565b82525050565b5f602082019050609e5f8301846080565b92915050565b5f5ffd5b60af816077565b811460b8575f5ffd5b50565b5f8135905060c78160a8565b92915050565b5f6020828403121560df5760de60a4565b5b5f60ea8482850160bb565b9150509291505056fea264697066735822122063f96a57b86a37af1ac0fbf522233470beb0ae3e330dcafa317cb897259fa87364736f6c634300081e0033';
+        const provider = await adapter.getProvider();
+        if (!provider) {
+            return;
+        }
+        const chainId = await adapter.network();
+        const baseDeployContranctTx = {
+            from: adapter.address,
+            to: null,
+            data: byteCode,
+            chainId: chainId,
+        };
+        const signedTransaction = await adapter.sendTransaction(baseDeployContranctTx);
+        console.log('transaction hash: ', signedTransaction);
+    }
+
+    async function triggerContract() {
+        const selector = `${keccak256(toUtf8Bytes('store(uint256)')).slice(0, 10)}`;
+        const param1 = Number(number).toString(16).padStart(64, '0');
+        const data = selector + param1;
+        const transaction = {
+            from: adapter.address,
+            to: contractAddress,
+            data,
+        };
+        const signedTransaction = await adapter.sendTransaction(transaction);
+        console.log('signedTransaction', signedTransaction);
+    }
+
+    async function readContract() {
+        const selector = `${keccak256(toUtf8Bytes('retrieve()')).slice(0, 10)}`;
+        const transaction = {
+            from: adapter.address,
+            to: contractAddress,
+            data: selector,
+        };
+        const provider = await adapter.getProvider();
+        const result = await provider?.request({ method: 'eth_call', params: [transaction] })
+        console.log('read contract result: ', result);
+    }
+    return (
+        <Box margin={'20px 0'}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Typography gutterBottom>Set the contract:</Typography>
+                <Input value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <Typography gutterBottom>Set the number:</Typography>
+                <Input value={number} onChange={(e) => setNumber(e.target.value)} />
+            </Box>
+            <Box>
+                <Button variant="contained"  onClick={deployContract}>Deploy Contract</Button>
+                <Button variant="contained"  onClick={triggerContract}>Store Number to Contract</Button>
+                <Button variant="contained"  onClick={readContract}>Get the Number from Contract</Button>
+            </Box>
+        </Box>
+    );
+}
+
 
 const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapter: Adapter }) {
     const [selectedChainId, setSelectedChainId] = useState<`0x${string}`>('0x1');
@@ -285,9 +353,11 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
                 size="small"
                 onChange={(e) => setSelectedChainId(e.target.value as Chain['chainId'])}
             >
+                <MenuItem value={'0x1'}>Ethereum Mainnet</MenuItem>
                 <MenuItem value={'0x38'}>BSC Mainnet</MenuItem>
                 <MenuItem value={'0x2105'}>Base Mainnet</MenuItem>
                 <MenuItem value={'0xa4b1'}>Arbitrum One</MenuItem>
+                <MenuItem value={'0x539'}>Localhost Test</MenuItem>
             </Select>
 
             <Button style={{ margin: '0 20px' }} onClick={onSwitchChain} variant="contained">
