@@ -191,6 +191,9 @@ importers:
       '@tronweb3/tronwallet-adapter-bitkeep':
         specifier: ^1.0.2
         version: link:../../packages/adapters/bitkeep
+      '@tronweb3/tronwallet-adapter-guarda':
+        specifier: ^1.0.0
+        version: link:../../packages/adapters/guarda
       '@tronweb3/tronwallet-adapter-ledger':
         specifier: ^1.1.8
         version: 1.1.8
@@ -561,6 +564,9 @@ importers:
       '@tronweb3/tronwallet-adapter-gatewallet':
         specifier: workspace:^
         version: link:../gatewallet
+      '@tronweb3/tronwallet-adapter-guarda':
+        specifier: workspace:^
+        version: link:../guarda
       '@tronweb3/tronwallet-adapter-imtoken':
         specifier: workspace:^
         version: link:../imtoken
@@ -707,6 +713,25 @@ importers:
         version: 0.3.4
 
   packages/adapters/gatewallet:
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+      '@tronweb3/tronwallet-adapter-tronlink':
+        specifier: workspace:^
+        version: link:../tronlink
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      jest-environment-jsdom:
+        specifier: ^29.3.1
+        version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+
+  packages/adapters/guarda:
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: workspace:^
