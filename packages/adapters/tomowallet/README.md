@@ -37,20 +37,20 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     interface TomoWalletAdapterConfig extends BaseAdapterConfig {
         /**
          * Timeout in millisecond for checking if Tomo wallet exists.
-        * Default is 3 * 1000ms
-        */
+         * Default is 3 * 1000ms
+         */
         checkTimeout?: number;
         /**
          * The icon of your dapp. Used when open Tomo app in mobile device browsers.
-        */
+         */
         dappIcon?: string;
         /**
          * The name of your dapp. Used when open Tomo app in mobile device browsers.
-        */
+         */
         dappName?: string;
     }
     ```
--   `network()` method is supported to get current network information. 
+-   `network()` method is supported to get current network information.
     Currently Tomo Wallet only supports TRON mainnet.  
     The type of returned value is `Network` as follows:
 

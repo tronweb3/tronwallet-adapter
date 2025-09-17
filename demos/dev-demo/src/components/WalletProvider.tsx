@@ -17,7 +17,8 @@ import {
   TomoWalletAdapter,
   TronLinkAdapterName,
   TrustAdapter,
-  BinanceWalletAdapter
+  BinanceWalletAdapter,
+  NaboxWalletAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
@@ -69,6 +70,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new BinanceWalletAdapter(),
       new LedgerAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
+      new NaboxWalletAdapter()
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
