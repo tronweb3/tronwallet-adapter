@@ -15,7 +15,7 @@ export function getBinanceEvmProvider(): null | EIP1193Provider {
 export function openBinanceWithDeeplink() {
     if (isInMobileBrowser() && !supportBinanceEvm()) {
         const link = getDeepLink(window.location.href, 14);
-        window.open(link.http, '_blank');
+        window.open(link.bnc, '_blank');
     }
     return false;
 }
