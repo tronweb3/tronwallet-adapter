@@ -11,3 +11,4 @@ export * from '@tronweb3/tronwallet-adapter-bybit';
 export * from '@tronweb3/tronwallet-adapter-tomowallet';
 export * from '@tronweb3/tronwallet-adapter-trust';
 export * from '@tronweb3/tronwallet-adapter-binance';
+export * from '@tronweb3/tronwallet-adapter-naboxwallet';

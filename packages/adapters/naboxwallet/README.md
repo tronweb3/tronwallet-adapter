@@ -1,49 +1,54 @@
-# `@tronweb3/tronwallet-adapter-binance`
+# `@tronweb3/tronwallet-adapter-okxwallet`
 
-This package provides an adapter to enable TRON DApps to connect to the [Binance Wallet](https://www.binance.com/en/binancewallet).
+This package provides an adapter to enable TRON DApps to connect to the [Okx Wallet extension](https://chromewebstore.google.com/detail/okx-wallet/mcohilncbfahbmgdjkbpemcciiolgcge) and [Okx Wallet App](https://www.okx.com/download).
 
 ## Demo
 
 ```typescript
-import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binance';
+import { NaboxWalletAdapter } from '@tronweb3/tronwallet-adapter-okxwallet';
 
-const adapter = new BinanceWalletAdapter();
-// connect to BinanceWallet
+const adapter = new NaboxWalletAdapter();
+// connect to OkxWallet
 await adapter.connect();
 
 // then you can get address
 console.log(adapter.address);
 
-const tronWeb = new TronWeb({
-    fullHost: 'https://api.trongrid.io',
-});
-
 // create a send TRX transaction
-const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
+const unSignedTransaction = await window.NaboxWallet.tronLink.tronWeb.transactionBuilder.sendTrx(
+    targetAddress,
+    100,
+    adapter.address
+);
 // using adapter to sign the transaction
 const signedTransaction = await adapter.signTransaction(unSignedTransaction);
 // broadcast the transaction
-await tronWeb.trx.sendRawTransaction(signedTransaction);
+await window.NaboxWallet.tronLink.tronWeb.trx.sendRawTransaction(signedTransaction);
 ```
 
 ## Documentation
 
 ### API
 
--   `Constructor(config: BinanceWalletAdapterConfig)`
+-   `Constructor(config: NaboxWalletAdapterConfig)`
 
 ```typescript
-interface BinanceWalletAdapterConfig {
+interface NaboxWalletAdapterConfig {
     /**
      * Set if open Wallet's website when wallet is not installed.
      * Default is true.
      */
     openUrlWhenWalletNotFound?: boolean;
     /**
-     * Timeout in millisecond for checking if Binance wallet is supported.
+     * Timeout in millisecond for checking if TokenPocket wallet is supported.
      * Default is 2 * 1000ms
      */
     checkTimeout?: number;
+    /**
+     * Set if open TokenPocket app using DeepLink on mobile device.
+     * Default is true.
+     */
+    openAppWithDeeplink?: boolean;
 }
 ```
 
@@ -71,10 +76,8 @@ interface BinanceWalletAdapterConfig {
 
 ### Caveats
 
--   Binance Wallet App doesn't implement `multiSign()` and `switchChain()`.
--   Binance Wallet App supports the following events:
-    -   `connect`
-    -   `disconnect`
-    -   `accountsChanged`
+-   Nabox Wallet App and Extension doesn't implement `multiSign()` and `switchChain()`.
+-   Nabox Wallet Extension only support these: `accountsChanged`,`connect`,`disconnect`.
+-   Nabox Wallet App does not support any events.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

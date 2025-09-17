@@ -81,6 +81,6 @@ interface BybitWalletAdapterConfig {
 -   Bybit Wallet App does not support any events.
 -   Currently deeplink can only open the app but not dapp browser.
 -   Keyless Wallet doesn't support Dapp connection.
--   Currently deeplink can not open App Store when app is not installed. 
+-   Currently deeplink can not open App Store when app is not installed.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)
