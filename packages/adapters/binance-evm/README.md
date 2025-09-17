@@ -31,9 +31,10 @@ await adapter.sendTransaction(transaction);
 
     ```typescript
     import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
-    const tronLinkEvmAdapter = new BinanceEvmAdapter();
+    const adapter = new BinanceEvmAdapter();
     ```
 
-**Caveat** Currently Binance wallet app does not support `addChain()`.
+### Caveat
+- Currently Binance wallet app does not support `addChain()`.
 
 More detailed API can be found in [Abstract Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/abstract-adapter-evm/README.md).
