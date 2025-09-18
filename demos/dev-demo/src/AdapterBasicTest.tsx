@@ -58,9 +58,9 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
         });
         adapter.on('accountsChanged', (accounts) => {
             log('accountsChanged: current', accounts);
-            setAccount(accounts[0]);
             setAccount(adapter.address || '');
-            adapter
+            if (adapter.address) {
+                adapter
                 .network()
                 .then((res: any) => {
                     log('network()', res);
@@ -69,6 +69,10 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
                 .catch((e: Error) => {
                     console.error('network() error:', e);
                 });
+            } else {
+                setChainId('')
+            }
+            
         });
 
         adapter.on('chainChanged', (data) => {
