@@ -538,7 +538,7 @@ importers:
   packages/adapters/abstract-adapter-evm:
     dependencies:
       eventemitter3:
-        specifier: ^4.0.0
+        specifier: 4.0.7
         version: 4.0.7
       jest:
         specifier: 29.7.0
@@ -548,7 +548,7 @@ importers:
         version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
     devDependencies:
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
 
   packages/adapters/adapters:
@@ -618,7 +618,7 @@ importers:
   packages/adapters/binance:
     dependencies:
       '@binance/w3w-utils':
-        specifier: ^1.1.6
+        specifier: 1.1.6
         version: 1.1.6
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: workspace:^
@@ -628,35 +628,35 @@ importers:
         version: link:../tronlink
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       jest-environment-jsdom:
-        specifier: ^29.3.1
+        specifier: 29.7.0
         version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
       vitest:
-        specifier: ^3.2.4
+        specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.7.5)(jiti@1.21.6)(jsdom@23.2.0(bufferutil@4.0.8)(utf-8-validate@6.0.3))(msw@2.7.3(@types/node@22.7.5)(typescript@5.5.4))(terser@5.31.3)(yaml@2.5.0)
 
   packages/adapters/binance-evm:
     dependencies:
       '@binance/w3w-utils':
-        specifier: ^1.1.6
+        specifier: 1.1.6
         version: 1.1.6
       '@tronweb3/abstract-adapter-evm':
         specifier: workspace:^
         version: link:../abstract-adapter-evm
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       shx:
         specifier: 0.3.4
         version: 0.3.4
       vitest:
-        specifier: ^3.2.4
+        specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.7.5)(jiti@1.21.6)(jsdom@23.2.0)(msw@2.7.3(@types/node@22.7.5)(typescript@5.5.4))(terser@5.31.3)(yaml@2.5.0)
 
   packages/adapters/bitkeep:
@@ -745,13 +745,13 @@ importers:
         version: link:../tronlink
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       jest-environment-jsdom:
-        specifier: ^29.3.1
+        specifier: 29.7.0
         version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
 
   packages/adapters/imtoken:
@@ -893,16 +893,16 @@ importers:
         version: link:../abstract-adapter
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       jest:
         specifier: 29.6.4
         version: 29.6.4(@types/node@22.7.5)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
       jest-environment-jsdom:
-        specifier: ^29.6.4
+        specifier: 29.7.0
         version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
 
   packages/adapters/tronlink-evm:
