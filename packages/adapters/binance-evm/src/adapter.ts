@@ -150,7 +150,7 @@ export class BinanceEvmAdapter extends Adapter {
 
         this.address = accounts?.[0] || null;
         if (this.address) {
-            this.emit('accountsChanged', [...(accounts || null)]);
+            this.emit('accountsChanged', accounts);
         }
     }
 }
