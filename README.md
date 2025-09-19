@@ -295,7 +295,7 @@ This package contains all wallet adapters for Tron including:
 -   [Trust](https://trustwallet.com)
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
--   [Guarda Wallet](https://guarda.com?install=guarda-extensional)
+-   [Guarda Wallet](https://guarda.com)
 
 Code example：
 

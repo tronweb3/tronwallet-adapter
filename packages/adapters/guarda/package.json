@@ -46,8 +46,8 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "jest-environment-jsdom": "^29.3.1",
-        "shx": "^0.3.4"
+        "@testing-library/dom": "8.20.1",
+        "jest-environment-jsdom": "29.7.0",
+        "shx": "0.3.4"
     }
 }

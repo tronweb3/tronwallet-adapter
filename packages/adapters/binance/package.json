@@ -46,14 +46,14 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@binance/w3w-utils": "^1.1.6",
+        "@binance/w3w-utils": "1.1.6",
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "jest-environment-jsdom": "^29.3.1",
-        "shx": "^0.3.4",
-        "vitest": "^3.2.4"
+        "@testing-library/dom": "8.20.1",
+        "jest-environment-jsdom": "29.7.0",
+        "shx": "0.3.4",
+        "vitest": "3.2.4"
     }
 }
