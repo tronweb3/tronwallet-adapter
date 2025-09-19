@@ -1,9 +1,9 @@
-import { colors, styled } from "@mui/material";
-import MuiButton from "@mui/material/Button";
+import { colors, styled } from '@mui/material';
+import MuiButton from '@mui/material/Button';
 
 export const Button = styled(MuiButton)({
-  height: '55px',
-  lineHeight: '55px',
+  height: '50px',
+  lineHeight: '50px',
   color: '#fff',
   borderRadius: '10px',
   border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -17,5 +17,5 @@ export const Button = styled(MuiButton)({
   },
   '&.Mui-disabled': {
     color: '#fff',
-  }
+  },
 });
