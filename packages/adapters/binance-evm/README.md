@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-binance-evm`
 
-This package provides an adapter to enable DApps to connect to the [Binance Wallet Extension and App](https://www.binance.com/en/binancewallet).
+This package provides an adapter to enable DApps to connect to the [Binance Wallet App](https://www.binance.com/en/binancewallet).
 
 ## Demo
 
