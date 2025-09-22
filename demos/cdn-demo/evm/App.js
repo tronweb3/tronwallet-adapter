@@ -49,7 +49,7 @@ export default {
         const receiverAddress = ref('');
         async function handleTransfer() {
             const transaction = {
-                value: '0x' + Number(0.01 * Math.pow(10, 18)).toString(16), // 0.01 is 0.01ETH
+                value: '0x1',
                 to: receiverAddress.value,
                 from: selectedAdapter.value.address,
             };
