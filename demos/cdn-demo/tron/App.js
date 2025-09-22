@@ -36,7 +36,14 @@ export default {
             new LedgerAdapter(),
             new WalletConnectAdapter(walletConnectConfig),
         ];
-        const selectedAdapterName = ref('TronLink');
+        const queryString = window.location.search || '';
+        const params = new URLSearchParams(queryString);
+
+        const selectedAdapterName = ref(params.get('wallet') || 'TronLink');
+        watch(selectedAdapterName, () => {
+            window.location.search = '?wallet=' + selectedAdapterName.value;
+        });
+
         const selectedAdapter = computed(() => options.find((option) => option.name === selectedAdapterName.value));
         const connectedAddress = ref('');
         const currentNetwork = ref('');
