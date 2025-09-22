@@ -4,13 +4,14 @@ import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
+import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
 import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
 
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskAdapter()], []);
+  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskAdapter(), new TronLinkEvmAdapter()], []);
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
