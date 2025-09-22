@@ -3,7 +3,7 @@ import { isInBinance, getDeepLink } from '@binance/w3w-utils';
 import { isInBrowser, isInMobileBrowser, type EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 
 export function supportBinanceEvm() {
-    return isInBrowser() && isInBinance();
+    return (isInMobileBrowser() && isInBinance()) || isInBrowser();
 }
 export function getBinanceEvmProvider(): null | EIP1193Provider {
     if (supportBinanceEvm()) {
