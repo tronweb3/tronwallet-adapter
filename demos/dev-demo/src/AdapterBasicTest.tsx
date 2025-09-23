@@ -294,7 +294,8 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
     const nonce = await provider.getTransactionCount(adapter.address!, 'latest');
     const baseDeployContranctTx = {
       from: adapter.address,
-      to: '0x0000000000000000000000000000000000000000',
+      //   TronLinkEvm require to address
+      to: adapter.name === 'TronLinkEvm' ? '0x0000000000000000000000000000000000000000' : null,
       data: byteCode,
       chainId: chainId,
       value: '0x0',
