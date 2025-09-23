@@ -285,17 +285,22 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
     // Deploy contract
     const byteCode =
       '0x6080604052348015600e575f5ffd5b506101298061001c5f395ff3fe6080604052348015600e575f5ffd5b50600436106030575f3560e01c80632e64cec11460345780636057361d14604e575b5f5ffd5b603a6066565b60405160459190608d565b60405180910390f35b606460048036038101906060919060cd565b606e565b005b5f5f54905090565b805f8190555050565b5f819050919050565b6087816077565b82525050565b5f602082019050609e5f8301846080565b92915050565b5f5ffd5b60af816077565b811460b8575f5ffd5b50565b5f8135905060c78160a8565b92915050565b5f6020828403121560df5760de60a4565b5b5f60ea8482850160bb565b9150509291505056fea264697066735822122063f96a57b86a37af1ac0fbf522233470beb0ae3e330dcafa317cb897259fa87364736f6c634300081e0033';
-    const provider = await adapter.getProvider();
-    if (!provider) {
+    const provider1 = await adapter.getProvider();
+    if (!provider1) {
       return;
     }
     const chainId = await adapter.network();
+    const provider = new ethers.BrowserProvider(provider1);
+    const nonce = await provider.getTransactionCount(adapter.address!, 'latest');
     const baseDeployContranctTx = {
       from: adapter.address,
-      to: null,
+      to: '0x0000000000000000000000000000000000000000',
       data: byteCode,
       chainId: chainId,
+      value: '0x0',
+      nonce: `0x${Number(nonce).toString(16)}`,
     };
+    console.log(baseDeployContranctTx);
     const signedTransaction = await adapter.sendTransaction(baseDeployContranctTx);
     console.log('transaction hash: ', signedTransaction);
   }
@@ -320,7 +325,7 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
     if (!provider1) {
       return;
     }
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.BrowserProvider(provider1);
 
     const contract = new ethers.Contract(contractAddress, erc20Abi, provider);
     const result = await contract.retrieve();
