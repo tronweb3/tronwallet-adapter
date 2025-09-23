@@ -15,7 +15,8 @@ import {
     FoxWalletAdapter,
     BybitWalletAdapter,
     TomoWalletAdapter,
-    TrustAdapter
+    TrustAdapter,
+    SafepalAdapter
 } from '@tronweb3/tronwallet-adapters';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { tronWeb } from './tronweb';
@@ -37,6 +38,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
             new LedgerAdapter(),
             new WalletConnectAdapter(walletconnectConfig),
             new TrustAdapter(),
+            new SafepalAdapter()
         ],
         []
     );

@@ -195,6 +195,9 @@ importers:
       '@tronweb3/tronwallet-adapter-okxwallet':
         specifier: ^1.0.2
         version: 1.0.3
+      '@tronweb3/tronwallet-adapter-safepal':
+        specifier: ^1.0.0
+        version: link:../../packages/adapters/safepal
       '@tronweb3/tronwallet-adapter-tokenpocket':
         specifier: 1.0.6
         version: link:../../packages/adapters/tokenpocket
@@ -559,6 +562,9 @@ importers:
       '@tronweb3/tronwallet-adapter-okxwallet':
         specifier: workspace:^
         version: link:../okxwallet
+      '@tronweb3/tronwallet-adapter-safepal':
+        specifier: workspace:^
+        version: link:../safepal
       '@tronweb3/tronwallet-adapter-tokenpocket':
         specifier: workspace:^
         version: link:../tokenpocket
@@ -768,6 +774,25 @@ importers:
         version: 0.3.4
 
   packages/adapters/okxwallet:
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+      '@tronweb3/tronwallet-adapter-tronlink':
+        specifier: workspace:^
+        version: link:../tronlink
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      jest-environment-jsdom:
+        specifier: ^29.3.1
+        version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+
+  packages/adapters/safepal:
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: workspace:^

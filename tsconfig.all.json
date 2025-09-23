@@ -63,6 +63,9 @@
         },
         {
             "path": "./packages/adapters/binance/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/safepal/tsconfig.all.json"
         }
     ]
 }
