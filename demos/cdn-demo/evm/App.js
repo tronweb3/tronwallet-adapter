@@ -5,7 +5,14 @@ const { MetaMaskAdapter } = window['@tronweb3/tronwallet-adapter-metamask'];
 export default {
     setup() {
         const options = [new TronLinkEvmAdapter(), new MetaMaskAdapter()];
-        const selectedAdapterName = ref('MetaMask');
+
+        const queryString = window.location.search || '';
+        const params = new URLSearchParams(queryString);
+        const selectedAdapterName = ref(params.get('wallet') || 'MetaMask');
+
+        watch(selectedAdapterName, () => {
+            window.location.search = '?wallet=' + selectedAdapterName.value;
+        });
         const selectedAdapter = computed(() => options.find((option) => option.name === selectedAdapterName.value));
         const connectedAddress = ref('');
 
