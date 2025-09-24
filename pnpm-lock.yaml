@@ -189,12 +189,30 @@ importers:
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: ^1.1.6
         version: 1.1.6
+      '@tronweb3/tronwallet-adapter-binance':
+        specifier: ^1.0.1
+        version: link:../../packages/adapters/binance
+      '@tronweb3/tronwallet-adapter-binance-evm':
+        specifier: ^1.0.0
+        version: link:../../packages/adapters/binance-evm
       '@tronweb3/tronwallet-adapter-bitkeep':
         specifier: ^1.0.2
         version: link:../../packages/adapters/bitkeep
+      '@tronweb3/tronwallet-adapter-bybit':
+        specifier: ^1.0.2
+        version: link:../../packages/adapters/bybit
+      '@tronweb3/tronwallet-adapter-foxwallet':
+        specifier: ^1.0.1
+        version: link:../../packages/adapters/foxwallet
+      '@tronweb3/tronwallet-adapter-gatewallet':
+        specifier: ^1.0.4
+        version: link:../../packages/adapters/gatewallet
       '@tronweb3/tronwallet-adapter-guarda':
         specifier: ^1.0.0
         version: link:../../packages/adapters/guarda
+      '@tronweb3/tronwallet-adapter-imtoken':
+        specifier: ^1.0.3
+        version: link:../../packages/adapters/imtoken
       '@tronweb3/tronwallet-adapter-ledger':
         specifier: ^1.1.8
         version: 1.1.8
@@ -207,12 +225,18 @@ importers:
       '@tronweb3/tronwallet-adapter-tokenpocket':
         specifier: 1.0.6
         version: 1.0.6(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-tomowallet':
+        specifier: ^1.0.1
+        version: link:../../packages/adapters/tomowallet
       '@tronweb3/tronwallet-adapter-tronlink':
         specifier: ^1.1.9
         version: 1.1.9
       '@tronweb3/tronwallet-adapter-tronlink-evm':
-        specifier: ^1.0.0
-        version: 1.0.0(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.9.3))(utf-8-validate@6.0.3)
+        specifier: ^1.0.1
+        version: link:../../packages/adapters/tronlink-evm
+      '@tronweb3/tronwallet-adapter-trust':
+        specifier: ^1.0.2
+        version: link:../../packages/adapters/trust
       '@tronweb3/tronwallet-adapter-walletconnect':
         specifier: ^1.0.5
         version: 1.0.6(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)
@@ -277,6 +301,9 @@ importers:
       '@tronweb3/tronwallet-adapter-react-ui':
         specifier: latest
         version: link:../../packages/react/react-ui
+      '@tronweb3/tronwallet-adapter-tronlink-evm':
+        specifier: ^1.0.1
+        version: link:../../packages/adapters/tronlink-evm
       '@tronweb3/tronwallet-adapters':
         specifier: latest
         version: link:../../packages/adapters/adapters
@@ -3844,10 +3871,6 @@ packages:
 
   '@tronweb3/tronwallet-adapter-tokenpocket@1.0.6':
     resolution: {integrity: sha512-NOsnAcF1nzVNkRsqSCt9pno5/w7QfH+ZOel9aO9ULW46lG5sSX5rFumqBE+CkK/SZg4wpDNkzvaf85d7vi+0+A==}
-    engines: {node: '>=16', pnpm: '>=7'}
-
-  '@tronweb3/tronwallet-adapter-tronlink-evm@1.0.0':
-    resolution: {integrity: sha512-YYSUNTMugz1omU8U7VWe+3vgKFr05NzrLTmCMBd35sxN4z/5Vc2AmNDxOZn+Zi7H8Uf9cjmhExcvXgI2YNYjJw==}
     engines: {node: '>=16', pnpm: '>=7'}
 
   '@tronweb3/tronwallet-adapter-tronlink@1.1.12':
@@ -12989,19 +13012,6 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - debug
-      - utf-8-validate
-
-  '@tronweb3/tronwallet-adapter-tronlink-evm@1.0.0(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.9.3))(utf-8-validate@6.0.3)':
-    dependencies:
-      '@tronweb3/abstract-adapter-evm': 1.0.1(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@20.5.1)(typescript@4.9.3))(utf-8-validate@6.0.3)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - bufferutil
-      - canvas
-      - node-notifier
-      - supports-color
-      - ts-node
       - utf-8-validate
 
   '@tronweb3/tronwallet-adapter-tronlink@1.1.12(bufferutil@4.0.8)(utf-8-validate@6.0.3)':
