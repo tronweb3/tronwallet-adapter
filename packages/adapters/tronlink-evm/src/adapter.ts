@@ -123,7 +123,7 @@ export class TronLinkEvmAdapter extends Adapter {
         });
         provider.on('accountsChanged', this.onAccountsChanged);
         provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', (chainId as any).chainId);
+            this.emit('chainChanged', chainId);
         });
     }
     private onAccountsChanged = (accounts: string[]) => {

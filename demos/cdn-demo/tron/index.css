@@ -1,0 +1,43 @@
+.wallet-demo {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 24px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.wallet-select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+.wallet-actions,
+.wallet-transfer {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.wallet-btn {
+    padding: 8px 16px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.wallet-btn:hover {
+    background: #0056b3;
+}
+.wallet-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
