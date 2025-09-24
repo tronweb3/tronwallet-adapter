@@ -20,6 +20,7 @@ const Container = styled('div')({
   background: `url(${BgImg}) no-repeat center bottom/100% 100%`,
   '@media (max-width: 780px)': {
     paddingTop: '50px',
+    height: 'unset',
   },
 });
 const Title = styled(Typography)({

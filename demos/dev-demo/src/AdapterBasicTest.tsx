@@ -1,11 +1,12 @@
 import type { SelectChangeEvent } from '@mui/material';
-import { Alert, Box, Button, Input, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Grid2, Input, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
 import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
 import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
+import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
@@ -102,36 +103,47 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     setAccount(address);
   }
   return (
-    <Box sx={{ margin: '20px' }}>
-      <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-        <Typography gutterBottom>Select the Adapter:</Typography>
-        <Select style={{ marginLeft: 15 }} size="small" value={selectedName} onChange={handleChange}>
-          {Items}
-        </Select>
-      </Box>
-      <InfoShow label="Selected wallet readyState:" value={readyState} />
-      <InfoShow label="Connected account address:" value={account} />
-      <InfoShow label="Current network you choose:" value={chainId} />
-      <Box>
-        <Button variant="contained" onClick={onConnect}>
-          Connect
-        </Button>
-      </Box>
-      <SectionSwitchChain adapter={adapter} />
-      <SectionSign adapter={adapter} />
-      <SectionTriggerContract adapter={adapter} />
-    </Box>
+    <Grid2 container marginTop={'200px'}>
+      <Grid2 size={{ xs: 12, md: 8, lg: 6 }} margin={'auto'}>
+        <Typography variant="h4" gutterBottom>
+          EVM Sign Usage
+        </Typography>
+        <InfoShow
+          label="Select the Adapter:"
+          value={
+            <Select size="small" value={selectedName} onChange={handleChange}>
+              {Items}
+            </Select>
+          }
+        />
+        <InfoShow label="Selected wallet readyState:" value={readyState} />
+        <InfoShow label="Connected account address:" value={account} />
+        <InfoShow label="Current network you choose:" value={chainId} />
+        <Box>
+          <Button variant="contained" onClick={onConnect} sx={{ marginLeft: 0 }}>
+            Connect
+          </Button>
+        </Box>
+        <SectionSwitchChain adapter={adapter} />
+        <SectionSign adapter={adapter} />
+        <SectionTriggerContract adapter={adapter} />
+      </Grid2>
+    </Grid2>
   );
 });
 
-function InfoShow({ label, value }: { label: string; value: string }) {
+function InfoShow({ label, value }: { label: string; value: ReactNode }) {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: '10px 0' }}>
-      <Typography gutterBottom style={{ width: 250 }}>
-        {label}
-      </Typography>
-      <Typography gutterBottom>{value}</Typography>
-    </Box>
+    <Grid2 container sx={{ margin: '10px 0' }}>
+      <Grid2 size={{ xs: 12, md: 4 }}>
+        <Typography gutterBottom style={{ width: 250 }}>
+          {label}
+        </Typography>
+      </Grid2>
+      <Grid2 size={{ xs: 12, md: 6 }}>
+        <Typography gutterBottom>{value}</Typography>
+      </Grid2>
+    </Grid2>
   );
 }
 
@@ -256,17 +268,20 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
           Sign Usage
         </Typography>
         <TextField label="Message to sign" size="small" value={message} onChange={(e) => setMessage(e.target.value)} />
+        <Box marginTop="20px">
+          <Button variant="contained" onClick={onSignMessage} sx={{ marginLeft: 0 }}>
+            Sign Message
+          </Button>
 
-        <Button variant="contained" onClick={onSignMessage}>
-          Sign Message
-        </Button>
-
-        <Button variant="contained" disabled={!signedMessage} onClick={onVerifyMessage}>
-          Verify Signed Message
-        </Button>
-        <Button variant="contained" onClick={onSignTypedData}>
-          Sign Typed Data
-        </Button>
+          <Button variant="contained" disabled={!signedMessage} onClick={onVerifyMessage}>
+            Verify Signed Message
+          </Button>
+        </Box>
+        <Box marginTop="20px">
+          <Button variant="contained" onClick={onSignTypedData} sx={{ marginLeft: 0 }}>
+            Sign Typed Data
+          </Button>
+        </Box>
       </Box>
       <Box sx={{ marginTop: '10px' }}>
         <TextField label="Receiver address" size="small" value={receiver} onChange={(e) => setReceiver(e.target.value)} />
@@ -337,21 +352,25 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
       <Typography variant="h5" gutterBottom>
         Interact with SmartContract
       </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '500px' }}>
+      <Button variant="contained" onClick={deployContract} sx={{ marginLeft: 0 }}>
+        Deploy Contract
+      </Button>
+      <Box sx={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '500px' }}>
         <TextField fullWidth label="Set the contract:" size="small" value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
         <TextField sx={{ marginTop: '20px' }} fullWidth label="Set the number:" size="small" value={number} onChange={(e) => setNumber(e.target.value)} />
       </Box>
-      <Box sx={{ marginTop: '20px' }}>
-        <Button variant="contained" onClick={deployContract}>
-          Deploy Contract
-        </Button>
-        <Button variant="contained" onClick={triggerContract}>
-          Store Number to Contract
-        </Button>
-        <Button variant="contained" onClick={readContract}>
-          Get the Number from Contract
-        </Button>
-      </Box>
+      <Grid2 container sx={{ marginTop: '10px', maxWidth: 500 }} spacing={1}>
+        <Grid2 size={{ xs: 12, md: 6, lg: 6 }}>
+          <Button variant="contained" onClick={triggerContract} sx={{ marginLeft: 0 }}>
+            Store Number to Contract
+          </Button>
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 6, lg: 6 }}>
+          <Button variant="contained" onClick={readContract} sx={{ marginLeft: 0 }}>
+            Get the Number from Contract
+          </Button>
+        </Grid2>
+      </Grid2>
     </Box>
   );
 };
