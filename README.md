@@ -43,6 +43,9 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Binance](https://www.binance.com/en/binancewallet)                   | Android           | 2.102.5        |
 |                                             | iOS               | 3.0.1        |
 |                                             | Browser Extension | Not Support  |
+| [SafePal](https://safepal.com)              | Android           | 4.10.0       |
+|                                             | iOS               | 4.10.0       |
+|                                             | Browser Extension | Not Support  |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
@@ -215,6 +218,7 @@ tronwallet-adapter
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
 |   |   ├─binance # adapter for Binance Wallet
+|   |   ├─safepal # adapter for SafePal Wallet
 |   ├─react
 |   |   ├─react-hooks # react hooks to manage wallet state
 |   |   ├─react-ui # react ui components to select/connect wallets
@@ -252,6 +256,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-trust`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | Adapter for TrustWallet Extension                                |
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | Adapter for Tomo Wallet App(iOS and Android)                                |
 | [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance) | Adapter for Binance Wallet App(iOS and Android)    |
+| [`@tronweb3/tronwallet-adapter-safepal`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-safepal) | Adapter for SafePal Wallet App(iOS and Android)    |
 
 ### React Components
 
@@ -290,6 +295,7 @@ This package contains all wallet adapters for Tron including:
 -   [Trust](https://trustwallet.com)
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
+-   [SafePal Wallet](https://safepal.com)
 
 Code example：
 

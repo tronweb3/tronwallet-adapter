@@ -5,14 +5,14 @@ This package provides an adapter to enable TRON DApps to connect to the [SafePal
 ## Demo
 
 ```typescript
-import { SafePalAdapter } from '@tronweb3/tronwallet-adapter-safepal';
+import { SafepalAdapter } from '@tronweb3/tronwallet-adapter-safepal';
 import TronWeb from 'tronweb';
 const tronWeb = new TronWeb({
     fullHost: 'https://api.trongrid.io',
     headers: { 'TRON-PRO-API-KEY': 'your api key' },
 });
 
-const adapter = new SafePalAdapter();
+const adapter = new SafepalAdapter();
 // connect
 await adapter.connect();
 
