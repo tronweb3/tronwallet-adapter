@@ -106,7 +106,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     <Grid2 container marginTop={'200px'}>
       <Grid2 size={{ xs: 12, md: 8, lg: 6 }} margin={'auto'}>
         <Typography variant="h4" gutterBottom>
-          EVM Sign Usage
+          EVM Sign Demo
         </Typography>
         <InfoShow
           label="Select the Adapter:"
