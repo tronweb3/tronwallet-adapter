@@ -19,10 +19,10 @@ const walletConnect = new WalletConnectAdapter({
     options: {
         relayUrl: 'wss://relay.walletconnect.com',
         // example WC app project ID
-        projectId: '5fc507d8fc7ae913fff0b8071c7df231',
+        projectId: '',
         metadata: {
             name: 'Test DApp',
-            description: 'JustLend WalletConnect',
+            description: 'Test dApp',
             url: 'https://your-dapp-url.org/',
             icons: ['https://your-dapp-url.org/mainLogo.svg'],
         },
