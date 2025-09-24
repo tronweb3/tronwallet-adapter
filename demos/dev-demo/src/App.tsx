@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <WalletProvider>
         <Box sx={{ width: '100%' }}>
-          {/* <AdapterBasicUsage /> */}
+          <AdapterBasicUsage />
           <AdapterBasicTest />
         </Box>
       </WalletProvider>
