@@ -1,0 +1,53 @@
+{
+    "name": "@tronweb3/tronwallet-adapter-guarda",
+    "version": "1.0.0",
+    "description": "Wallet adapter for Guarda Extension.",
+    "keywords": [
+        "TRON",
+        "TronWeb",
+        "Guarda"
+    ],
+    "author": "tronweb3",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tronweb3/tronwallet-adapter"
+    },
+    "license": "MIT",
+    "type": "module",
+    "sideEffects": false,
+    "engines": {
+        "node": ">=16",
+        "pnpm": ">=7"
+    },
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/esm/index.js",
+    "types": "./lib/types/index.d.ts",
+    "exports": {
+        "require": "./lib/cjs/index.js",
+        "import": "./lib/esm/index.js",
+        "types": "./lib/types/index.d.ts"
+    },
+    "files": [
+        "lib",
+        "src",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "clean": "shx mkdir -p lib && shx rm -rf lib",
+        "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
+        "test": "jest",
+        "build:umd": "node ../../../scripts/build-umd.js"
+    },
+    "dependencies": {
+        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
+        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
+    },
+    "devDependencies": {
+        "@testing-library/dom": "8.20.1",
+        "jest-environment-jsdom": "29.7.0",
+        "shx": "0.3.4"
+    }
+}

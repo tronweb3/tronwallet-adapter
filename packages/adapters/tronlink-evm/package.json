@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-tronlink-evm",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Wallet adapter for TronLink wallet extension.",
     "keywords": [
         "EVM",

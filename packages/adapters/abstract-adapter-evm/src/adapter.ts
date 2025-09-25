@@ -122,6 +122,13 @@ export abstract class Adapter<Name extends string = string>
 
     abstract connect(options?: Record<string, unknown>): Promise<string>;
     abstract getProvider(): Promise<EIP1193Provider | null>;
+    async network(): Promise<string> {
+        const provider = await this.prepareProvider();
+        return provider.request({
+            method: 'eth_chainId',
+            params: [],
+        });
+    }
     async signMessage({ message, address }: { message: string; address?: string }): Promise<string> {
         const provider = await this.prepareProvider();
         if (!this.connected) {
@@ -132,7 +139,16 @@ export abstract class Adapter<Name extends string = string>
             params: [message, address || this.address],
         });
     }
-    abstract signTypedData(params: { typedData: TypedData; address?: string }): Promise<string>;
+    async signTypedData(params: { typedData: TypedData; address?: string }): Promise<string> {
+        const provider = await this.prepareProvider();
+        if (!this.connected) {
+            throw new WalletDisconnectedError();
+        }
+        return provider.request({
+            method: 'eth_signTypedData_v4',
+            params: [params.address || this.address, params.typedData],
+        });
+    }
     async sendTransaction(transaction: any): Promise<string> {
         const provider = await this.prepareProvider();
         if (!this.connected) {

@@ -1,8 +1,7 @@
-import { WalletProvider as _WalletProvider, useLocalStorage } from "@tronweb3/tronwallet-adapter-react-hooks";
-import type { PropsWithChildren } from "react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import {
-  TronLinkAdapter} from '@tronweb3/tronwallet-adapters';
+import { WalletProvider as _WalletProvider, useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
+import type { PropsWithChildren } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 import {
   BitKeepAdapter,
   GateWalletAdapter,
@@ -17,11 +16,12 @@ import {
   TomoWalletAdapter,
   TronLinkAdapterName,
   TrustAdapter,
-  BinanceWalletAdapter
+  GuardaAdapter,
+  BinanceWalletAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
-import type { Adapter, AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
-import { WalletReadyState } from "@tronweb3/tronwallet-abstract-adapter";
+import type { Adapter, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
+import { WalletReadyState } from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface WalletContextType {
   selectedAdapterName: AdapterName;
@@ -51,7 +51,7 @@ const Context = createContext<WalletContextType>({
     readyState: WalletReadyState.NotFound,
     chainId: '',
   },
-  adapters: []
+  adapters: [],
 });
 export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
@@ -68,18 +68,22 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new BybitWalletAdapter(),
       new BinanceWalletAdapter(),
       new LedgerAdapter(),
+      new GuardaAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
-  const [selectedAdapterName, _setSelectedAdapterName] = useState(walletName as AdapterName || TronLinkAdapterName);
+  const [selectedAdapterName, _setSelectedAdapterName] = useState((walletName as AdapterName) || TronLinkAdapterName);
 
-  const setSelectedAdapterName = useCallback((selectedAdapterName: AdapterName) => {
-    _setSelectedAdapterName(selectedAdapterName);
-    setTimeout(() => {
-      window.history.replaceState({}, '', `/?wallet=${encodeURIComponent(selectedAdapterName)}`);
-    }, 200);
-  }, [_setSelectedAdapterName])
+  const setSelectedAdapterName = useCallback(
+    (selectedAdapterName: AdapterName) => {
+      _setSelectedAdapterName(selectedAdapterName);
+      setTimeout(() => {
+        window.history.replaceState({}, '', `/?wallet=${encodeURIComponent(selectedAdapterName)}`);
+      }, 200);
+    },
+    [_setSelectedAdapterName]
+  );
   const adapter = useMemo(() => adapters.find((adapter) => adapter.name === selectedAdapterName), [selectedAdapterName, adapters]);
   const [connectionState, setConnectionState] = useState({
     connected: false,
@@ -87,10 +91,10 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     address: '',
     readyState: WalletReadyState.NotFound,
     chainId: '',
-  })
+  });
 
   function onReadyStateChanged(readyState: WalletReadyState) {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: adapter?.connected || false,
       connecting: adapter?.connecting || false,
@@ -99,41 +103,41 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     }));
   }
   function onConnect() {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: true,
       address: adapter?.address || '',
     }));
     (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
-      setConnectionState(preState => ({
+      setConnectionState((preState) => ({
         ...preState,
         chainId: network.chainId,
-      }))
+      }));
     });
   }
 
   function onAccountsChanged(account: string) {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       address: account,
     }));
   }
 
   function onDisconnect() {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: false,
       address: '',
     }));
   }
   function onChainChanged(chainData: unknown) {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       chainId: (chainData as { chainId: string }).chainId,
     }));
   }
   useEffect(() => {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: adapter?.connected || false,
       connecting: adapter?.connecting || false,
@@ -149,10 +153,10 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
         (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
-          setConnectionState(preState => ({
+          setConnectionState((preState) => ({
             ...preState,
             chainId: network.chainId,
-          }))
+          }));
         });
       }
     }
@@ -160,50 +164,55 @@ export default function WalletProvider({ children }: PropsWithChildren) {
     return () => {
       adapter?.removeAllListeners();
     };
-
   }, [adapter]);
 
   async function connect() {
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: false,
       connecting: true,
     }));
     try {
       await adapter?.connect();
-      setConnectionState(preState => ({
+      setConnectionState((preState) => ({
         ...preState,
         connected: adapter?.connected || false,
         connecting: false,
         address: adapter?.address || '',
       }));
     } catch (e: unknown) {
-      setConnectionState(preState => ({
+      console.error('Connect Error', e);
+      setConnectionState((preState) => ({
         ...preState,
         connecting: false,
       }));
     }
-
   }
 
   async function disconnect() {
     await adapter?.disconnect();
-    setConnectionState(preState => ({
+    setConnectionState((preState) => ({
       ...preState,
       connected: false,
       connecting: false,
       address: '',
     }));
   }
-  return <Context.Provider value={{
-    adapter,
-    adapters,
-    selectedAdapterName,
-    setSelectedAdapterName,
-    connectionState,
-    connect,
-    disconnect,
-  }}>{children}</Context.Provider>
+  return (
+    <Context.Provider
+      value={{
+        adapter,
+        adapters,
+        selectedAdapterName,
+        setSelectedAdapterName,
+        connectionState,
+        connect,
+        disconnect,
+      }}
+    >
+      {children}
+    </Context.Provider>
+  );
 }
 
 export function useWallet(): WalletContextType {
