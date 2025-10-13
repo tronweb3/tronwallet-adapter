@@ -44,6 +44,9 @@
             "path": "../guarda/tsconfig.all.json"
         },
         {
+            "path": "../onekey/tsconfig.all.json"
+        },
+        {
             "path": "./tsconfig.cjs.json"
         },
         {
