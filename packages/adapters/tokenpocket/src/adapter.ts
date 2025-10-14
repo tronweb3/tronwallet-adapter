@@ -21,8 +21,13 @@ import type {
     TronWeb,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import type { Tron } from '@tronweb3/tronwallet-adapter-tronlink';
+import type { Tron, TronAccountsChangedCallback } from '@tronweb3/tronwallet-adapter-tronlink';
 import { openTokenPocket, supportTokenPocket } from './utils.js';
+import type { TIP6963AnnounceProviderEvent } from '@tronweb3/tronwallet-abstract-adapter';
+import {
+    TIP6963AnnounceProviderEventName,
+    TIP6963RequestProviderEventName,
+} from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface TokenPocketAdapterConfig extends BaseAdapterConfig {
     /**
@@ -79,7 +84,7 @@ export class TokenPocketAdapter extends Adapter {
         this._wallet = null;
         this._address = null;
 
-        if (supportTokenPocket()) {
+        if (isInMobileBrowser() && supportTokenPocket()) {
             this._readyState = WalletReadyState.Found;
             this._updateWallet();
         } else {
@@ -239,6 +244,43 @@ export class TokenPocketAdapter extends Adapter {
         }
     }
 
+    private onAccountsChanged: TronAccountsChangedCallback = (accounts) => {
+        const preAddr = this.address || '';
+        const curAddr = accounts?.[0] || '';
+        if (!curAddr) {
+            this.setAddress(null);
+            this.setState(AdapterState.Disconnect);
+        } else {
+            const address = curAddr as string;
+            this.setAddress(address);
+            this.setState(AdapterState.Connected);
+        }
+        this.emit('accountsChanged', this.address || '', preAddr);
+        if (!preAddr && this.address) {
+            this.emit('connect', this.address);
+        } else if (preAddr && !this.address) {
+            this.emit('disconnect');
+        }
+    };
+    private listenTronEvent() {
+        if (isInMobileBrowser()) {
+            return;
+        }
+        this.stopListenTronEvent();
+        const wallet = this._wallet;
+        if (!wallet || !wallet.tron) return;
+        wallet.tron.on('accountsChanged', this.onAccountsChanged);
+    }
+
+    private stopListenTronEvent() {
+        if (isInMobileBrowser()) {
+            return;
+        }
+        const wallet = this._wallet;
+        if (!wallet || !wallet.tron) return;
+        wallet.tron.removeListener('accountsChanged', this.onAccountsChanged);
+    }
+
     private async checkAndGetWallet() {
         this.checkIfOpenApp();
         await this._checkWallet();
@@ -265,10 +307,19 @@ export class TokenPocketAdapter extends Adapter {
         let times = 0;
         const maxTimes = Math.floor(this.config.checkTimeout / 200);
         const check = () => {
-            if (isInMobileBrowser() ? window.tronWeb?.ready : this._wallet?.ready) {
+            if (isInMobileBrowser() && window.tronWeb?.ready) {
                 this.checkReadyInterval && clearInterval(this.checkReadyInterval);
                 this.checkReadyInterval = null;
                 this._updateWallet();
+                this.emit('connect', this.address || '');
+            } else if (this._wallet?.tronWeb?.defaultAddress?.base58) {
+                this.checkReadyInterval && clearInterval(this.checkReadyInterval);
+                this.checkReadyInterval = null;
+                this._wallet.ready = true;
+                const address = this._wallet?.tronWeb?.defaultAddress?.base58;
+                const state = address ? AdapterState.Connected : AdapterState.Disconnect;
+                this.setAddress(address);
+                this.setState(state);
                 this.emit('connect', this.address || '');
             } else if (times > maxTimes) {
                 this.checkReadyInterval && clearInterval(this.checkReadyInterval);
@@ -292,6 +343,46 @@ export class TokenPocketAdapter extends Adapter {
         if (this._checkPromise) {
             return this._checkPromise;
         }
+
+        if (isInBrowser() && !isInMobileBrowser()) {
+            this._checkPromise = new Promise((resolve) => {
+                const timer = setTimeout(() => {
+                    window.removeEventListener(TIP6963AnnounceProviderEventName, callback);
+                    this._readyState = WalletReadyState.NotFound;
+                    this.emit('readyStateChanged', this._readyState);
+                    resolve(false);
+                }, this.config.checkTimeout);
+                const callback = (event: TIP6963AnnounceProviderEvent) => {
+                    const { info, provider } = event.detail;
+                    if (info.name === 'TokenPocket') {
+                        this._wallet = {
+                            ready: !!provider.tronWeb?.defaultAddress?.base58,
+                            tron: provider as unknown as Tron,
+                            tronWeb: provider.tronWeb,
+                        };
+                        this.listenTronEvent();
+                        this._readyState = WalletReadyState.Found;
+                        const address = this._wallet.tronWeb.defaultAddress?.base58 || null;
+                        const state = address ? AdapterState.Connected : AdapterState.Disconnect;
+                        this.emit('readyStateChanged', this.readyState);
+                        this.setState(state);
+                        this.setAddress(address);
+                        window.removeEventListener(TIP6963AnnounceProviderEventName, callback);
+                        clearTimeout(timer);
+                        resolve(true);
+
+                        if (!this.connected) {
+                            this.checkForWalletReady();
+                        }
+                    }
+                };
+                window.addEventListener(TIP6963AnnounceProviderEventName, callback, { once: true });
+                window.dispatchEvent(new Event(TIP6963RequestProviderEventName));
+            });
+            return this._checkPromise;
+        }
+        // Support TIP-6963 with wallet extension
+
         const interval = 100;
         const maxTimes = Math.floor(this.config.checkTimeout / interval);
         let times = 0,
