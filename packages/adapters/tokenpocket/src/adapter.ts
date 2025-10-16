@@ -347,12 +347,18 @@ export class TokenPocketAdapter extends Adapter {
         if (isInBrowser() && !isInMobileBrowser()) {
             this._checkPromise = new Promise((resolve) => {
                 const timer = setTimeout(() => {
-                    window.removeEventListener(TIP6963AnnounceProviderEventName, callback);
-                    this._readyState = WalletReadyState.NotFound;
+                    window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
+                    this._updateWallet();
+                    if (supportTokenPocket()) {
+                        this._readyState = WalletReadyState.Found;
+                        resolve(true);
+                    } else {
+                        this._readyState = WalletReadyState.NotFound;
+                        resolve(false);
+                    }
                     this.emit('readyStateChanged', this._readyState);
-                    resolve(false);
                 }, this.config.checkTimeout);
-                const callback = (event: TIP6963AnnounceProviderEvent) => {
+                const handler = (event: TIP6963AnnounceProviderEvent) => {
                     const { info, provider } = event.detail;
                     if (info.name === 'TokenPocket') {
                         this._wallet = {
@@ -367,7 +373,7 @@ export class TokenPocketAdapter extends Adapter {
                         this.emit('readyStateChanged', this.readyState);
                         this.setState(state);
                         this.setAddress(address);
-                        window.removeEventListener(TIP6963AnnounceProviderEventName, callback);
+                        window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
                         clearTimeout(timer);
                         resolve(true);
 
@@ -376,7 +382,7 @@ export class TokenPocketAdapter extends Adapter {
                         }
                     }
                 };
-                window.addEventListener(TIP6963AnnounceProviderEventName, callback, { once: true });
+                window.addEventListener(TIP6963AnnounceProviderEventName, handler);
                 window.dispatchEvent(new Event(TIP6963RequestProviderEventName));
             });
             return this._checkPromise;
