@@ -316,7 +316,7 @@ export class TokenPocketAdapter extends Adapter {
                 this.checkReadyInterval && clearInterval(this.checkReadyInterval);
                 this.checkReadyInterval = null;
                 this._wallet.ready = true;
-                const address = this._wallet?.tronWeb?.defaultAddress?.base58;
+                const address = this._wallet.tronWeb.defaultAddress.base58;
                 const state = address ? AdapterState.Connected : AdapterState.Disconnect;
                 this.setAddress(address);
                 this.setState(state);
@@ -370,9 +370,9 @@ export class TokenPocketAdapter extends Adapter {
                         this._readyState = WalletReadyState.Found;
                         const address = this._wallet.tronWeb.defaultAddress?.base58 || null;
                         const state = address ? AdapterState.Connected : AdapterState.Disconnect;
-                        this.emit('readyStateChanged', this.readyState);
                         this.setState(state);
                         this.setAddress(address);
+                        this.emit('readyStateChanged', this.readyState);
                         window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
                         clearTimeout(timer);
                         resolve(true);
