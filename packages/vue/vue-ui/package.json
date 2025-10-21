@@ -53,19 +53,19 @@
         "@tronweb3/tronwallet-adapter-vue-hooks": "workspace:^"
     },
     "devDependencies": {
-        "@babel/cli": "^7.27.1",
-        "@babel/core": "^7.27.1",
-        "@babel/preset-typescript": "^7.27.1",
+        "@babel/cli": "7.27.2",
+        "@babel/core": "7.27.1",
+        "@babel/preset-typescript": "7.27.1",
         "@babel/traverse": "7.27.1",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
-        "@vitejs/plugin-vue": "^5.2.4",
-        "@vitejs/plugin-vue-jsx": "^4.1.0",
-        "@vue/babel-plugin-jsx": "^1.4.0",
-        "@vue/test-utils": "^2.4.3",
-        "jsdom": "^23.0.1",
-        "shx": "^0.3.4",
-        "vite": "^6.3.5",
-        "vitest": "^1.0.2",
+        "@vitejs/plugin-vue": "5.2.4",
+        "@vitejs/plugin-vue-jsx": "4.1.2",
+        "@vue/babel-plugin-jsx": "1.4.0",
+        "@vue/test-utils": "2.4.6",
+        "jsdom": "23.2.0",
+        "shx": "0.3.4",
+        "vite": "6.3.5",
+        "vitest": "3.0.7",
         "vue": "3.4.15"
     }
 }

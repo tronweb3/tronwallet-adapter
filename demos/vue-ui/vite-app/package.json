@@ -1,41 +1,41 @@
 {
-  "name": "vite-app",
-  "private": true,
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "dev": "vite --force",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@noble/secp256k1": "^1.7.1",
-    "@tronweb3/tronwallet-abstract-adapter": "latest",
-    "@tronweb3/tronwallet-adapter-vue-hooks": "latest",
-    "@tronweb3/tronwallet-adapter-vue-ui": "latest",
-    "@tronweb3/tronwallet-adapters": "latest",
-    "element-plus": "^2.4.3",
-    "tronweb": "6.0.0",
-    "vue": "^3.3.8"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-legacy": "^6.1.1",
-    "@vitejs/plugin-vue": "^5.2.4",
-    "typescript": "^5.2.2",
-    "vite": "^6.3.5",
-    "vite-plugin-node-polyfills": "^0.22.0",
-    "vue-tsc": "^2.2.10"
-  },
-  "overrides": {
-    "@ledgerhq/errors": "6.10.0",
-    "@ledgerhq/devices": "6.27.1",
-    "@ledgerhq/hw-transport": "6.27.1",
-    "@ledgerhq/hw-transport-webhid": "6.27.1"
-  },
-  "resolutions": {
-    "@ledgerhq/errors": "6.10.0",
-    "@ledgerhq/devices": "6.27.1",
-    "@ledgerhq/hw-transport": "6.27.1",
-    "@ledgerhq/hw-transport-webhid": "6.27.1"
-  }
+    "name": "vite-app",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite --force",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@noble/secp256k1": "^1.7.1",
+        "@tronweb3/tronwallet-abstract-adapter": "latest",
+        "@tronweb3/tronwallet-adapter-vue-hooks": "latest",
+        "@tronweb3/tronwallet-adapter-vue-ui": "latest",
+        "@tronweb3/tronwallet-adapters": "latest",
+        "element-plus": "^2.4.3",
+        "tronweb": "6.0.0",
+        "vue": "^3.3.8"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-legacy": "^6.1.1",
+        "@vitejs/plugin-vue": "^5.2.4",
+        "typescript": "^5.2.2",
+        "vite": "^6.3.5",
+        "vite-plugin-node-polyfills": "^0.22.0",
+        "vue-tsc": "^2.2.10"
+    },
+    "overrides": {
+        "@ledgerhq/errors": "6.10.0",
+        "@ledgerhq/devices": "6.27.1",
+        "@ledgerhq/hw-transport": "6.27.1",
+        "@ledgerhq/hw-transport-webhid": "6.27.1"
+    },
+    "resolutions": {
+        "@ledgerhq/errors": "6.10.0",
+        "@ledgerhq/devices": "6.27.1",
+        "@ledgerhq/hw-transport": "6.27.1",
+        "@ledgerhq/hw-transport-webhid": "6.27.1"
+    }
 }

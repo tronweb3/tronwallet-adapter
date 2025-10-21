@@ -21,7 +21,14 @@ export default function App({ Component, pageProps }: AppProps) {
     const [adapters, setAdapters] = useState<Adapter[]>([]);
     useEffect(() => {
         import('@tronweb3/tronwallet-adapters').then((res) => {
-            const { BitKeepAdapter, OkxWalletAdapter, TokenPocketAdapter, TronLinkAdapter, WalletConnectAdapter, SafepalAdapter} = res;
+            const {
+                BitKeepAdapter,
+                OkxWalletAdapter,
+                TokenPocketAdapter,
+                TronLinkAdapter,
+                WalletConnectAdapter,
+                SafepalAdapter,
+            } = res;
             const tronLinkAdapter = new TronLinkAdapter();
             const ledger = new LedgerAdapter({
                 accountNumber: 2,
@@ -31,10 +38,10 @@ export default function App({ Component, pageProps }: AppProps) {
                 options: {
                     relayUrl: 'wss://relay.walletconnect.com',
                     // example WC app project ID
-                    projectId: '5fc507d8fc7ae913fff0b8071c7df231',
+                    projectId: '',
                     metadata: {
                         name: 'Test DApp',
-                        description: 'JustLend WalletConnect',
+                        description: 'Test dApp',
                         url: 'https://your-dapp-url.org/',
                         icons: ['https://your-dapp-url.org/mainLogo.svg'],
                     },
@@ -57,7 +64,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 okxwalletAdapter,
                 walletConnectAdapter,
                 ledger,
-                safepalAdapter
+                safepalAdapter,
             ]);
         });
     }, [setAdapters]);

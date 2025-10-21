@@ -15,4 +15,5 @@ test("window['@tronweb3/tronwallet-adapters'] should exist", () => {
     expect(Adapters.BybitWalletAdapter).not.toBeUndefined();
     expect(Adapters.TrustAdapter).not.toBeUndefined();
     expect(Adapters.SafepalAdapter).not.toBeUndefined();
+    expect(Adapters.GuardaAdapter).not.toBeUndefined();
 });

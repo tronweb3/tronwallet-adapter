@@ -2,7 +2,8 @@
     // "extends": [],
     "parser": "@typescript-eslint/parser",
     "env": {
-        "node": true
+        "node": true,
+        "browser": true
     },
     "rules": {
         "require-extensions/require-extensions": "off"

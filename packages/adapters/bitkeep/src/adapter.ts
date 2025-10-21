@@ -10,6 +10,7 @@ import {
     WalletConnectionError,
     WalletGetNetworkError,
     isInMobileBrowser,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
 import type { Tron, TronLinkWallet } from '@tronweb3/tronwallet-adapter-tronlink';
@@ -151,12 +152,20 @@ export class BitKeepAdapter extends Adapter {
             if (!isInMobileBrowser()) {
                 if (!wallet) return;
                 this._connecting = true;
-                const res = await wallet.tron.request({ method: 'tron_requestAccounts' });
-                if (res?.code !== 200) {
-                    throw new WalletConnectionError(
-                        // @ts-ignore
-                        res?.code === 40001 ? 'The connection request is canceled by user.' : res?.message
-                    );
+                try {
+                    const res = await wallet.tron.request({ method: 'tron_requestAccounts' });
+                    if (res?.code !== 200) {
+                        throw new WalletConnectionError(
+                            // @ts-ignore
+                            res?.code === 40001 ? 'The connection request is canceled by user.' : res?.message
+                        );
+                    }
+                } catch (e: any) {
+                    if (e instanceof WalletError) {
+                        throw e;
+                    } else {
+                        throw new WalletConnectionError(e?.message, e);
+                    }
                 }
             }
             const address =

@@ -10,6 +10,7 @@ import {
     WalletGetNetworkError,
     WalletConnectionError,
     isInMobileBrowser,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -20,11 +21,7 @@ import type {
     TronWeb,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import type {
-    Tron,
-    TronAccountsChangedCallback,
-    TronChainChangedCallback,
-} from '@tronweb3/tronwallet-adapter-tronlink';
+import type { Tron } from '@tronweb3/tronwallet-adapter-tronlink';
 import { openTokenPocket, supportTokenPocket } from './utils.js';
 
 export interface TokenPocketAdapterConfig extends BaseAdapterConfig {
@@ -144,17 +141,23 @@ export class TokenPocketAdapter extends Adapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TokenPocketWallet;
+            try {
+                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+                if (!res?.[0]) {
+                    throw new WalletConnectionError('Request connect error.');
+                }
+                const address = res[0];
 
-            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-            if (!res?.[0]) {
-                throw new WalletConnectionError('Request connect error.');
+                this.setAddress(address);
+                this.setState(AdapterState.Connected);
+                this.emit('connect', this.address || '');
+            } catch (e: any) {
+                if (e instanceof WalletError) {
+                    throw e;
+                } else {
+                    throw new WalletConnectionError(e?.message, e);
+                }
             }
-            const address = res[0];
-
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this.listenTronEvent();
-            this.emit('connect', this.address || '');
         } catch (error: any) {
             this.emit('error', error);
             throw error;
@@ -178,10 +181,12 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.sign(transaction, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -200,10 +205,12 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignTransactionError(error, new Error(error));
+                } else {
+                    throw new WalletSignTransactionError('Unknown error', error);
                 }
             }
         } catch (error: any) {
@@ -218,58 +225,18 @@ export class TokenPocketAdapter extends Adapter {
             try {
                 return await wallet.tronWeb.trx.signMessageV2(message, privateKey);
             } catch (error: any) {
-                if (error instanceof Error) {
+                if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignMessageError(error.message, error);
-                } else {
+                } else if (typeof error === 'string') {
                     throw new WalletSignMessageError(error, new Error(error));
+                } else {
+                    throw new WalletSignMessageError('Unknown error', error);
                 }
             }
         } catch (error: any) {
             this.emit('error', error);
             throw error;
         }
-    }
-
-    private onChainChanged: TronChainChangedCallback = (data) => {
-        this.emit('chainChanged', data);
-    };
-    private onAccountsChanged: TronAccountsChangedCallback = () => {
-        const preAddr = this.address || '';
-        const curAddr = (this._wallet?.tronWeb && this._wallet?.tronWeb.defaultAddress?.base58) || '';
-        if (!curAddr) {
-            this.setAddress(null);
-            this.setState(AdapterState.Disconnect);
-        } else {
-            const address = curAddr as string;
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-        }
-        this.emit('accountsChanged', this.address || '', preAddr);
-        if (!preAddr && this.address) {
-            this.emit('connect', this.address);
-        } else if (preAddr && !this.address) {
-            this.emit('disconnect');
-        }
-    };
-    private listenTronEvent() {
-        if (isInMobileBrowser()) {
-            return;
-        }
-        this.stopListenTronEvent();
-        const wallet = this._wallet;
-        if (!wallet || !wallet.tron) return;
-        wallet.tron.on('chainChanged', this.onChainChanged);
-        wallet.tron.on('accountsChanged', this.onAccountsChanged);
-    }
-
-    private stopListenTronEvent() {
-        if (isInMobileBrowser()) {
-            return;
-        }
-        const wallet = this._wallet;
-        if (!wallet || !wallet.tron) return;
-        wallet.tron.removeListener('chainChanged', this.onChainChanged);
-        wallet.tron.removeListener('accountsChanged', this.onAccountsChanged);
     }
 
     private async checkAndGetWallet() {
@@ -365,7 +332,6 @@ export class TokenPocketAdapter extends Adapter {
                   };
             address = this._wallet.tronWeb.defaultAddress?.base58 || null;
             state = address ? AdapterState.Connected : AdapterState.Disconnect;
-            this.listenTronEvent();
             if (!address) {
                 this.checkForWalletReady();
             }

@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-imtoken",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Wallet adapter for imToken Wallet Android and IOS app.",
     "keywords": [
         "TRON",

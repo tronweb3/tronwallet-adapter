@@ -7,41 +7,44 @@ This repository contains wallet adapters and components for Tron DApps. With out
 ### Supported
 
 | Wallet Name                                 | platform          | version      |
-| ------------------------------------------- | ----------------- | ------------ |
-| [TronLink](https://www.tronlink.org/)       | Android           | 4.0.0     |
-|                                             | iOS               | 4.0.0     |
-|                                             | Browser Extension | 4.0.0        |
-| [BitGet](https://web3.bitget.com/en)        | Android           | 4.0.0     |
-|                                             | iOS               | 4.0.0     |
-|                                             | Browser Extension | 1.0.0     |
-| [OkxWallet](https://okx.com/)               | Android           | 6.0.0     |
-|                                             | iOS               | 6.0.0     |
-|                                             | Browser Extension | 3.0.0     |
-| [TokenPocket](https://www.tokenpocket.pro/) | Android           | 1.1.2     |
-|                                             | iOS               | 3.1.3     |
-|                                             | Browser Extension | 2.0.3     |
-| [imToken](https://token.im/)                | Android           | 2.5.0     |
-|                                             | iOS               | 2.5.0     |
+| ------------------------------------------- |  ----------------- | ------------ |
+| [TronLink](https://www.tronlink.org/)       | Android           | 4.17.1     |
+|                                             | iOS               | 4.17.0     |
+|                                             | Browser Extension | 4.5.0        |
+| [BitGet](https://web3.bitget.com/en)        | Android           | 9.14.1     |
+|                                             | iOS               | 9.14.0     |
+|                                             | Browser Extension | 2.16.21     |
+| [OkxWallet](https://okx.com/)               | Android           | 6.132.1     |
+|                                             | iOS               | 6.134.0     |
+|                                             | Browser Extension | 3.71.0     |
+| [TokenPocket](https://www.tokenpocket.pro/) | Android           | 2.8.4     |
+|                                             | iOS               | 2.10.0     |
+|                                             | Browser Extension | 2.4.0     |
+| [imToken](https://token.im/)                | Android           | 2.17.1.8031     |
+|                                             | iOS               | 2.17.1.8031     |
 |                                             | Browser Extension | Not Support  |
-| [GateWallet](https://www.gate.io/web3)      | Android           | 6.30.10   |
-|                                             | iOS               | 6.20.1    |
-|                                             | Browser Extension | 2.35.2    |
+| [GateWallet](https://www.gate.io/web3)      | Android           | 7.18.5   |
+|                                             | iOS               | 7.18.0    |
+|                                             | Browser Extension | 2.68.0    |
 | [FoxWallet](https://foxwallet.com/)         | Android           | 5.3.1     |
-|                                             | iOS               | 5.3.1     |
+|                                             | iOS               | 5.5.10     |
 |                                             | Browser Extension | Not Support  |
-| [Bybit](https://bybit.com/web3)             | Android           | 4.51.1    |
-|                                             | iOS               | 4.51.1    |
-|                                             | Browser Extension | 3.16.3    |
+| [Bybit](https://bybit.com/web3)             | Android           | 5.2.5    |
+|                                             | iOS               | 5.2.5    |
+|                                             | Browser Extension | 4.1.3    |
 | [Ledger](https://www.ledger.com/)           | -                 | All versions |
 | [WalletConnect](https://walletconnect.org)  | -                 | v2.0      |
 | [Trust](https://trustwallet.com)            | Android           | Not Support  |
-|                                             | iOS               | Not Support  |
-|                                             | Browser Extension | 1.0.0     |
-| [Tomo](https://tomo.inc/)                   | Android           | 4.2.0        |
-|                                             | iOS               | 4.2.0        |
+|                                             | IOS               | Not Support  |
+|                                             | Browser Extension | 2.48.0 <br> 2.49.0 <br> 2.50.1     |
+| [Guarda](https://guarda.com/)               | Android           | Not Support     |
+|                                             | IOS               | Not Support     |
+|                                             | Browser Extension | 1.2.2     |
+| [Tomo](https://tomo.inc/)                 | Android           | 4.2.4        |
+|                                             | iOS               | 4.2.4        |
 |                                             | Browser Extension | Not Support  |
-| [Binance](https://www.binance.com/en/binancewallet)                   | Android           | 2.102.5        |
-|                                             | iOS               | 3.0.1        |
+| [Binance](https://www.binance.com/en/binancewallet) | Android| 3.2.4       |
+|                                             | iOS               | 3.2.3    |
 |                                             | Browser Extension | Not Support  |
 | [SafePal](https://safepal.com)              | Android           | 4.10.0       |
 |                                             | iOS               | 4.10.0       |
@@ -214,6 +217,7 @@ tronwallet-adapter
 |   |   ├─imtoken # adapter for imToken Wallet
 |   |   ├─gatewallet # adapter for gate.io Wallet
 |   |   ├─foxwallet # adapter for FoxWallet
+|   |   ├─guarda # adapter for Guarda Wallet
 |   |   ├─bybit # adapter for Bybit Wallet
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
@@ -246,7 +250,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-tronlink`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | Adapter for TronLink extention and TronLink app(iOS and Android) |
 | [`@tronweb3/tronwallet-adapter-ledger`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | Adapter for Ledger                                               |
 | [`@tronweb3/tronwallet-adapter-walletconnect`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | Adapter for Walletconnect                                        |
-| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | Adapter for TokenPocket App(iOS and Android)                     |
+| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | Adapter for TokenPocket                    |
 | [`@tronweb3/tronwallet-adapter-bitkeep`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)             | Adapter for BitKeep extension and BitKeep App(iOS and Android)   |
 | [`@tronweb3/tronwallet-adapter-okxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | Adapter for Okx Wallet extension and App(Android)                |
 | [`@tronweb3/tronwallet-adapter-imtoken`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             | Adapter for imToken Wallet App(iOS and Android)                  |
@@ -257,6 +261,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | Adapter for Tomo Wallet App(iOS and Android)                                |
 | [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance) | Adapter for Binance Wallet App(iOS and Android)    |
 | [`@tronweb3/tronwallet-adapter-safepal`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-safepal) | Adapter for SafePal Wallet App(iOS and Android)    |
+| [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)       | Adapter for Guarda Wallet Extension    |
 
 ### React Components
 
@@ -296,6 +301,7 @@ This package contains all wallet adapters for Tron including:
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [SafePal Wallet](https://safepal.com)
+-   [Guarda Wallet](https://guarda.com)
 
 Code example：
 

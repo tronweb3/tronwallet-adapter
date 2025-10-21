@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>TronWallet Adapter CDN Demo</title>
+        <link rel="stylesheet" href="../tron/index.css"></link>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="../node_modules/@tronweb3/tronwallet-adapter-tronlink-evm/lib/umd/index.js"></script>
+        <script src="../node_modules/@tronweb3/tronwallet-adapter-metamask/lib/umd/index.js"></script>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <div id="app"></div>
+        <script type="module">
+            import { createApp } from 'vue';
+            import App from './App.js';
+
+            createApp(App).mount('#app');
+        </script>
+    </body>
+</html>

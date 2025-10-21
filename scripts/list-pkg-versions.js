@@ -34,7 +34,9 @@ DIRS.forEach((dir) => {
 
 pkgVersions.forEach(({ name, version }) => {
     try {
+        console.log(`Get info for ${name}...`);
         const oldVersion = execSync(`npm view ${name} version`, { stdio: 'pipe' }).toString().trim();
+        console.log(`${name} old version: ${oldVersion}`);
         if (oldVersion !== version) {
             pkgsToBeReleased.push({ name, version, oldVersion });
         } else {
