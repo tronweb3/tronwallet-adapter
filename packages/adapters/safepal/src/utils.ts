@@ -1,7 +1,7 @@
-import { isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
+import { isInBrowser, isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 export function supportSafepalWallet() {
-    return !!window.safepalwallet;
+    return isInBrowser() && !!window.safepalwallet && !!window.safepalwallet.tron;
 }
 
 export function openSafepalWallet() {
