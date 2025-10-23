@@ -156,7 +156,7 @@ function InfoShow({ label, value }: { label: string; value: ReactNode }) {
         </Typography>
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
-        <Typography gutterBottom>{value}</Typography>
+        <div>{value}</div>
       </Grid2>
     </Grid2>
   );

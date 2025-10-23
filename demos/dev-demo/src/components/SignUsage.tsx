@@ -1,6 +1,6 @@
 import { Box, Input, Link, Snackbar, Stack, styled, Typography } from '@mui/material';
 import { Button } from './common';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SuccessIcon from './SuccessIcon';
 import ErrorIcon from './ErrorIcon';
 import { useWallet } from './WalletProvider';
@@ -158,6 +158,11 @@ export default function SignUsage() {
       return <InformAlertText>{success ? 'Success! The signature is valid' : 'Failed to verify the signature'}</InformAlertText>;
     }
   }, [title, success, signature, connectionState.chainId, connectionState.address]);
+
+  const [isReceiverError, setIsReceiverError] = useState(false);
+  useEffect(() => {
+    setIsReceiverError(!!receiver && !tronWeb.isAddress(receiver));
+  }, [receiver, setIsReceiverError]);
   return (
     <UsageBox background="linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)">
       <UsageTitle>Sign Usage</UsageTitle>
@@ -168,8 +173,8 @@ export default function SignUsage() {
       <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage}>
         Verify Signed Message
       </Button>
-      <MessageInput placeholder="Receiver Address" disableUnderline={true} value={receiver} onChange={(e) => setReceiver(e.target.value)} />
-      <Button disabled={!connectionState.connected} onClick={onTransfer}>
+      <MessageInput placeholder="Receiver Address" disableUnderline={!isReceiverError} value={receiver} onChange={(e) => setReceiver(e.target.value)} error={isReceiverError} />
+      <Button disabled={!connectionState.connected || isReceiverError} onClick={onTransfer}>
         Transfer
       </Button>
       <InformAlert open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
