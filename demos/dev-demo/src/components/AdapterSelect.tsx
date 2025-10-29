@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import type { SelectChangeEvent} from "@mui/material";
-import { Box, Divider, MenuItem, Select, Stack, Typography } from "@mui/material";
-import { useMemo } from "react";
-import { useWallet } from "./WalletProvider";
-import type { AdapterName } from "@tronweb3/tronwallet-abstract-adapter";
+import styled from '@emotion/styled';
+import type { SelectChangeEvent } from '@mui/material';
+import { Box, Divider, MenuItem, Select, Stack, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import { useWallet } from './WalletProvider';
+import type { AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 
 const SelectBox = styled(Box)({
   width: '100%',
@@ -67,11 +67,13 @@ export default function AdapterSelect() {
       },
     },
   };
-  return <SelectBox>
-    <Typography sx={{ lineHeight: '60px', color: '#7b7c9d', flex: 1, fontWeight: 500, }}>Select the Adapter</Typography>
-    <Divider orientation="vertical" sx={{ height: '20px' }}/>
-    <MySelect size="small" value={selectedAdapterName} onChange={handleChange}  MenuProps={menuProps}>
-      {Items}
-    </MySelect>
-  </SelectBox>
+  return (
+    <SelectBox>
+      <Typography sx={{ lineHeight: '60px', color: '#7b7c9d', flex: 1, fontWeight: 500 }}>Select the Adapter</Typography>
+      <Divider orientation="vertical" sx={{ height: '20px' }} />
+      <MySelect size="small" value={selectedAdapterName} onChange={handleChange} MenuProps={menuProps}>
+        {Items}
+      </MySelect>
+    </SelectBox>
+  );
 }

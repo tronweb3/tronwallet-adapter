@@ -20,6 +20,7 @@ import {
     BybitWalletAdapter,
     LedgerAdapter,
     WalletConnectAdapter,
+    SafepalAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { tronWeb } from './tronweb';
 import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
@@ -94,7 +95,18 @@ export function App() {
         const okxWalletAdapter = new OkxWalletAdapter();
         const gateAdapter = new GateWalletAdapter();
         const bybitAdapter = new BybitWalletAdapter();
-        return [tronLink1, walletConnect1, ledger, tokenPocket, bitKeep, okxWalletAdapter, gateAdapter, bybitAdapter];
+        const safepalAdapter = new SafepalAdapter();
+        return [
+            tronLink1,
+            walletConnect1,
+            ledger,
+            tokenPocket,
+            bitKeep,
+            okxWalletAdapter,
+            gateAdapter,
+            bybitAdapter,
+            safepalAdapter,
+        ];
     }, []);
     function onConnect() {
         console.log('onConnect');

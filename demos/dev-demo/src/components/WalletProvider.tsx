@@ -16,6 +16,7 @@ import {
   TomoWalletAdapter,
   TronLinkAdapterName,
   TrustAdapter,
+  SafepalAdapter,
   GuardaAdapter,
   BinanceWalletAdapter,
 } from '@tronweb3/tronwallet-adapters';
@@ -68,6 +69,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new BybitWalletAdapter(),
       new BinanceWalletAdapter(),
       new LedgerAdapter(),
+      new SafepalAdapter(),
       new GuardaAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
     ];

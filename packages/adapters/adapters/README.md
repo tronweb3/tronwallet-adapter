@@ -350,3 +350,4 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)
 -   [TomoWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)
 -   [BinanceWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)
+-   [SafepalAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/safepal)

@@ -56,7 +56,8 @@
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
         "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance": "workspace:^",
-        "@tronweb3/tronwallet-adapter-guarda": "workspace:^"
+        "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
+        "@tronweb3/tronwallet-adapter-safepal": "workspace:^"
     },
     "devDependencies": {
         "@vitest/browser": "^2.0.4",
