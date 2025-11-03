@@ -11,7 +11,9 @@ The `Adapter` class defines the common interface for all adapters of specified w
 #### Constructor
 
 -   `constructor(options)`: adapter constructor method, an optional config is valid. For detailed options type, refer to the specified adapter.
--   [MetaMask Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/metamask/README.md)
+-   [MetaMaskAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/metamask/README.md)
+-   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/tronlink-evm/README.md)
+-   [BinanceEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/binance-evm/README.md)
 
 #### Properties
 
@@ -150,7 +152,7 @@ Events are as follows:
         Found = 'Found',
     }
     ```
--   `accountsChanged(address: string, preAddress: string)`: Emit when the user's exposed account address changes.
+-   `accountsChanged(address: Array<string>)`: Emit when the user's exposed account address changes.
 
 ```typescript
 adapter.on('accountsChanged', (accounts: Array<string>) => {

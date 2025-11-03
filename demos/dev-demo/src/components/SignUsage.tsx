@@ -1,11 +1,11 @@
-import { Box, Input, Link, Snackbar, Stack, styled, Typography } from "@mui/material";
-import { Button } from "./common";
-import { useMemo, useState } from "react";
-import SuccessIcon from "./SuccessIcon";
-import ErrorIcon from "./ErrorIcon";
-import { useWallet } from "./WalletProvider";
-import { CHAIN_ID, TRONSCAN_URL } from "../config";
-import { tronWeb } from "../tronweb";
+import { Box, Input, Link, Snackbar, Stack, styled, Typography } from '@mui/material';
+import { Button } from './common';
+import { useEffect, useMemo, useState } from 'react';
+import SuccessIcon from './SuccessIcon';
+import ErrorIcon from './ErrorIcon';
+import { useWallet } from './WalletProvider';
+import { CHAIN_ID, TRONSCAN_URL } from '../config';
+import { tronWeb } from '../tronweb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
@@ -19,11 +19,11 @@ export const UsageBox = styled(Box)(({ background }: { background: string }) => 
   display: 'flex',
   flexDirection: 'column',
 
-  "@media (max-width: 780px)": {
+  '@media (max-width: 780px)': {
     width: '100%',
     marginLeft: '0px',
-    marginTop: '20px'
-  }
+    marginTop: '20px',
+  },
 }));
 
 export const UsageTitle = styled('h2')({
@@ -32,15 +32,15 @@ export const UsageTitle = styled('h2')({
   fontSize: '20px',
   lineHeight: '25px',
   color: '#fff',
-  margin: '0'
+  margin: '0',
 });
 
-const MessageInput = styled(Input)({
+const MessageInput = styled(Input)(({ marginTop }: { marginTop?: string }) => ({
   width: '100%',
-  height: '55px',
+  height: '50px',
   borderRadius: '10px',
   backgroundColor: 'rgba(20, 18, 118, 0.7)',
-  marginTop: '50px',
+  marginTop: marginTop || '10px',
   marginBottom: '20px',
   padding: '0 20px',
   border: '1px solid transparent',
@@ -49,15 +49,15 @@ const MessageInput = styled(Input)({
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   '& .MuiInput-input': {
-    'caretColor': 'white',
+    caretColor: 'white',
     color: 'white',
   },
 
   '& .MuiInput-input::placeholder': {
     color: 'rgba(255, 255, 255, 0.5)',
-    opacity: 1
-  }
-});
+    opacity: 1,
+  },
+}));
 
 const InformAlert = styled(Snackbar)({
   padding: '10px',
@@ -76,16 +76,16 @@ const InformAlertWrap = styled('div')({
   justifyContent: 'flex-start',
 });
 const InformAlertText = styled(Typography)({
-  color: 'rgba(123, 124, 157, 1)'
+  color: 'rgba(123, 124, 157, 1)',
 });
 
 // Replace with another address. Don't transfer any assets to this address.
-const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
 
 export default function SignUsage() {
   const { connectionState, adapter } = useWallet();
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState('');
+  const [receiver, setReceiver] = useState('');
   const [signature, setSignature] = useState('');
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Verify Message'>('Transfer');
@@ -98,7 +98,7 @@ export default function SignUsage() {
     setSuccess(true);
     setOpen(true);
     setTitle('Sign Message');
-  }
+  };
   const onVerifySignedMessage = async () => {
     if (!adapter) {
       return;
@@ -107,9 +107,10 @@ export default function SignUsage() {
     setSuccess(recoveredAddress === adapter.address);
     setOpen(true);
     setTitle('Verify Message');
-  }
+  };
   const onTransfer = async () => {
-    if (!adapter) {
+    if (!adapter || !receiver) {
+      console.error('Please select wallet and input the receiver address');
       return;
     }
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
@@ -118,33 +119,64 @@ export default function SignUsage() {
     setSuccess(res.result);
     setOpen(true);
     setTitle('Transfer');
-  }
+  };
 
   const InformAlertContent = useMemo(() => {
     if (title === 'Transfer') {
-      return <InformAlertText>
-        {success ? <>Success! You can confirm your transaction on <Link href={`${TRONSCAN_URL[connectionState.chainId] || TRONSCAN_URL[CHAIN_ID.Nile]}#/address/${connectionState.address}`} target="_blank" rel="noreferrer">TronScan</Link></> : 'Transfer failed'}
-      </InformAlertText>
+      return (
+        <InformAlertText>
+          {success ? (
+            <>
+              Success! You can confirm your transaction on{' '}
+              <Link href={`${TRONSCAN_URL[connectionState.chainId] || TRONSCAN_URL[CHAIN_ID.Nile]}#/address/${connectionState.address}`} target="_blank" rel="noreferrer">
+                TronScan
+              </Link>
+            </>
+          ) : (
+            'Transfer failed'
+          )}
+        </InformAlertText>
+      );
     }
     if (title === 'Sign Message') {
-      return <InformAlertText>
-        {success
-          ? <>Success! The signature is <i>{signature.slice(0, 6)}...{signature.slice(-6)}</i></> : 'Failed to sign the message'}
-      </InformAlertText>
+      return (
+        <InformAlertText>
+          {success ? (
+            <>
+              Success! The signature is{' '}
+              <i>
+                {signature.slice(0, 6)}...{signature.slice(-6)}
+              </i>
+            </>
+          ) : (
+            'Failed to sign the message'
+          )}
+        </InformAlertText>
+      );
     }
     if (title === 'Verify Message') {
-      return <InformAlertText>
-        {success ? 'Success! The signature is valid' : 'Failed to verify the signature'}
-      </InformAlertText>
+      return <InformAlertText>{success ? 'Success! The signature is valid' : 'Failed to verify the signature'}</InformAlertText>;
     }
   }, [title, success, signature, connectionState.chainId, connectionState.address]);
+
+  const [isReceiverError, setIsReceiverError] = useState(false);
+  useEffect(() => {
+    setIsReceiverError(!!receiver && !tronWeb.isAddress(receiver));
+  }, [receiver, setIsReceiverError]);
   return (
-    <UsageBox background='linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)'>
+    <UsageBox background="linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)">
       <UsageTitle>Sign Usage</UsageTitle>
       <MessageInput placeholder="Message to sign" disableUnderline={true} value={message} onChange={(e) => setMessage(e.target.value)} />
-      <Button disabled={!connectionState.connected} onClick={onSignMessage} sx={{ marginBottom: '20px' }}>Sign Message</Button>
-      <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage} sx={{ marginBottom: '20px' }}>Verify Signed Message</Button>
-      <Button disabled={!connectionState.connected} onClick={onTransfer}>Transfer</Button>
+      <Button disabled={!connectionState.connected} onClick={onSignMessage} sx={{ marginBottom: '20px' }}>
+        Sign Message
+      </Button>
+      <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage}>
+        Verify Signed Message
+      </Button>
+      <MessageInput placeholder="Receiver Address" disableUnderline={!isReceiverError} value={receiver} onChange={(e) => setReceiver(e.target.value)} error={isReceiverError} />
+      <Button disabled={!connectionState.connected || isReceiverError} onClick={onTransfer}>
+        Transfer
+      </Button>
       <InformAlert open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
         <InformAlertWrap>
           {success ? <SuccessIcon /> : <ErrorIcon />}
@@ -155,6 +187,6 @@ export default function SignUsage() {
           </div>
         </InformAlertWrap>
       </InformAlert>
-    </UsageBox >
+    </UsageBox>
   );
 }

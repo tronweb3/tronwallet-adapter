@@ -1,19 +1,19 @@
 {
-    // "extends": [],
-    "parser": "@typescript-eslint/parser",
-    "env": {
-        "node": true
-    },
-    "rules": {
-        "react/self-closing-comp": "error",
-        "require-extensions/require-extensions": "off"
-    },
-    "overrides": [
-        {
-            "files": "./scripts/*.cjs",
-            "rules": {
-                "@typescript-eslint/no-var-requires": "off"
-            }
-        }
-    ]
+  // "extends": [],
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "react/self-closing-comp": "error",
+    "require-extensions/require-extensions": "off"
+  },
+  "overrides": [
+    {
+      "files": "./scripts/*.cjs",
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 {
     "name": "tronwallet-adapter",
     "description": "wallet adapters for TRON blockchain",
-    "version": "1.2.13",
+    "version": "1.2.15",
     "main": "index.js",
     "sideEffects": false,
     "private": true,
@@ -178,7 +178,8 @@
             "sha.js@<=2.4.11": ">=2.4.12",
             "cipher-base@<=1.0.4": ">=1.0.5",
             "next@>=15.0.0 <=15.4.4": ">=15.4.5",
-            "next@>=15.0.0-canary.0 <15.4.7": ">=15.4.7"
+            "next@>=15.0.0-canary.0 <15.4.7": ">=15.4.7",
+            "axios@<1.12.0": ">=1.12.0"
         }
     }
 }

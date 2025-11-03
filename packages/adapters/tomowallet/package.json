@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-tomowallet",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Wallet adapter for Tomo Wallet app.",
     "keywords": [
         "TRON",
@@ -16,8 +16,8 @@
     "type": "module",
     "sideEffects": false,
     "engines": {
-        "node": "18.20.2",
-        "pnpm": "9.6.0"
+        "node": ">=16",
+        "pnpm": ">=7"
     },
     "main": "./lib/cjs/index.js",
     "module": "./lib/esm/index.js",

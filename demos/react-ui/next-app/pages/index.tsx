@@ -90,7 +90,7 @@ function SignDemo() {
     const { signMessage, signTransaction, address } = useWallet();
     const [message, setMessage] = useState('');
     const [signedMessage, setSignedMessage] = useState('');
-    const receiver = 'TMDKznuDWaZwfZHcM61FVFstyYNmK6Njk1';
+    const [receiver, setReceiver] = useState('');
     const [open, setOpen] = useState(false);
 
     async function onSignMessage() {
@@ -113,16 +113,24 @@ function SignDemo() {
             <p style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', wordBreak: 'break-all' }}>
                 You can sign a message by click the button.
             </p>
-            <Button style={{ marginRight: '20px' }} onClick={onSignMessage}>
-                SignMessage
-            </Button>
+
             <TextField
+                label="message to sign"
                 size="small"
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="input message to signed"
             ></TextField>
+            <Button style={{ marginRight: '20px' }} onClick={onSignMessage}>
+                SignMessage
+            </Button>
             <p>Your sigedMessage is: {signedMessage}</p>
             <h2>Sign a Transaction</h2>
+            <TextField
+                label="Receiver Address"
+                size="small"
+                onChange={(e) => setReceiver(e.target.value)}
+                placeholder="input receiver address"
+            ></TextField>
             <p style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', wordBreak: 'break-all' }}>
                 You can transfer 0.1 Trx to &nbsp;<i>{receiver}</i>&nbsp;by click the button.
             </p>

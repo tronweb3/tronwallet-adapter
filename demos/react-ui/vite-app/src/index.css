@@ -66,7 +66,7 @@ p {
     display: flex;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     word-break: break-all;
-    margin: 10px 0 ;
+    margin: 10px 0;
 }
 p span:first-of-type {
     width: 160px;

@@ -37,11 +37,15 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Trust](https://trustwallet.com)                    | Android           | Not Support                    |
 |                                                     | IOS               | Not Support                    |
 |                                                     | Browser Extension | 2.48.0 <br> 2.49.0 <br> 2.50.1 |
+| [Guarda](https://guarda.com/)                       | Android           | Not Support                    |
+|                                                     | IOS               | Not Support                    |
+|                                                     | Browser Extension | 1.2.2                          |
 | [Tomo](https://tomo.inc/)                           | Android           | 4.2.4                          |
 |                                                     | iOS               | 4.2.4                          |
 |                                                     | Browser Extension | Not Support                    |
 | [Binance](https://www.binance.com/en/binancewallet) | Android           | 3.2.4                          |
 |                                                     | iOS               | 3.2.3                          |
+|                                                     | Browser Extension | Not Support                    |
 |                                                     | Browser Extension | Not Support                    |
 | [NaboxWallet](https://nabox.io/)                    | Android           | 3.3.5                          |
 |                                                     | iOS               | 3.3.4                          |
@@ -215,6 +219,7 @@ tronwallet-adapter
 |   |   ├─imtoken # adapter for imToken Wallet
 |   |   ├─gatewallet # adapter for gate.io Wallet
 |   |   ├─foxwallet # adapter for FoxWallet
+|   |   ├─guarda # adapter for Guarda Wallet
 |   |   ├─bybit # adapter for Bybit Wallet
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
@@ -257,6 +262,7 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)       | Adapter for Tomo Wallet App(iOS and Android)                     |
 | [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | Adapter for Binance Wallet App(iOS and Android)                  |
 | [`@tronweb3/tronwallet-adapter-naboxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-naboxwallet)     | Adapter for Nabox Wallet App(iOS and Android) and Extension      |
+| [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | Adapter for Guarda Wallet Extension                              |
 
 ### React Components
 
@@ -296,6 +302,7 @@ This package contains all wallet adapters for Tron including:
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [Nabox Wallet](https://nabox.io/)
+-   [Guarda Wallet](https://guarda.com)
 
 Code example：
 

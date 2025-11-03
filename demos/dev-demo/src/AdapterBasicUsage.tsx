@@ -20,7 +20,8 @@ const Container = styled('div')({
   background: `url(${BgImg}) no-repeat center bottom/100% 100%`,
   '@media (max-width: 780px)': {
     paddingTop: '50px',
-  }
+    height: 'unset',
+  },
 });
 const Title = styled(Typography)({
   fontFamily: 'Wix Madefor Display, sans-serif',
@@ -37,22 +38,19 @@ const MainContent = styled('div')({
   margin: '20px auto',
   display: 'flex',
 
-  "@media (max-width: 780px)": {
+  '@media (max-width: 780px)': {
     flexDirection: 'column',
     alignItems: 'center',
-  }
+  },
 });
 
-const BasicInfoWrap = styled('div')(({ width = '610px', marginLeft = '0px' }: {
-  width?: string,
-  marginLeft?: string | number,
-}) => ({
+const BasicInfoWrap = styled('div')(({ width = '610px', marginLeft = '0px' }: { width?: string; marginLeft?: string | number }) => ({
   width,
   marginLeft,
   flex: '1 0 auto',
-  "@media (max-width: 780px)": {
+  '@media (max-width: 780px)': {
     width: '100%',
-  }
+  },
 }));
 
 const ConnectButton = styled(Button)({
@@ -76,11 +74,10 @@ const ConnectButton = styled(Button)({
   },
   '&.Mui-disabled': {
     color: '#fff',
-  }
-})
+  },
+});
 const AdapterBasicUsage: React.FC = () => {
   const { connectionState, connect, disconnect } = useWallet();
-
 
   return (
     <Container>
