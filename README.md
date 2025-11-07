@@ -46,10 +46,9 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Binance](https://www.binance.com/en/binancewallet) | Android           | 3.2.4                          |
 |                                                     | iOS               | 3.2.3                          |
 |                                                     | Browser Extension | Not Support                    |
-|                                                     | Browser Extension | Not Support                    |
-| [NaboxWallet](https://nabox.io/)                    | Android           | 3.3.5                          |
-|                                                     | iOS               | 3.3.4                          |
-|                                                     | Browser Extension | 1.2.35                         |
+| [NaboxWallet](https://nabox.io/)                    | Android           | 3.3.6                          |
+|                                                     | iOS               | 3.3.5                          |
+|                                                     | Browser Extension | 1.2.37                         |
 
 > **Note**: In case wallet developers intend to release breaking changes, you can [open an issue here](https://github.com/tronweb3/tronwallet-adapter/issues/new) to inform us, thus enabling us to update the new protocols accordingly.
 
