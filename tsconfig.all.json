@@ -69,6 +69,9 @@
         },
         {
             "path": "./packages/adapters/binance-evm/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/naboxwallet/tsconfig.all.json"
         }
     ]
 }

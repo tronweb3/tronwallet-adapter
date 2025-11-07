@@ -76,7 +76,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 ### Caveats
 
 -   `signMessage()` is not supported in imToken Android App (v2.16).
--    `multiSign()` and `switchChain()` are not supported in imToken App.
+-   `multiSign()` and `switchChain()` are not supported in imToken App.
 -   imToken App will reload current page so there is no need to listen `accountsChanged` event.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

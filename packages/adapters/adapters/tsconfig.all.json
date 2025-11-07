@@ -44,6 +44,9 @@
             "path": "../guarda/tsconfig.all.json"
         },
         {
+            "path": "../naboxwallet/tsconfig.all.json"
+        },
+        {
             "path": "./tsconfig.cjs.json"
         },
         {

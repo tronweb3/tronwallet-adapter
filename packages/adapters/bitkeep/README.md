@@ -74,6 +74,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     ```
 
 ### Caveats
+
 -   `multiSign()` and `switchChain()` are not supported in BitKeep App and Extension.
 -   BitKeep App and Extension will reload current page so there is no need to listen `accountsChanged` event.
 
