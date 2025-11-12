@@ -93,8 +93,15 @@ export default function SignUsage() {
     if (!adapter) {
       return;
     }
-    const res = await adapter.signMessage(message);
-    setSignature(res);
+    let res;
+    try {
+      res = await adapter.signMessage(message);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+
+    setSignature(res as any);
     setSuccess(true);
     setOpen(true);
     setTitle('Sign Message');
@@ -114,7 +121,13 @@ export default function SignUsage() {
       return;
     }
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
-    const signedTransaction = await adapter.signTransaction(transaction);
+    let signedTransaction: any;
+    try {
+      signedTransaction = await adapter.signTransaction(transaction);
+    } catch (e) {
+      console.error('EEEEEE: ', e);
+      console.log(e);
+    }
     const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
     setSuccess(res.result);
     setOpen(true);
@@ -145,7 +158,7 @@ export default function SignUsage() {
             <>
               Success! The signature is{' '}
               <i>
-                {signature.slice(0, 6)}...{signature.slice(-6)}
+                {signature?.slice(0, 6)}...{signature?.slice(-6)}
               </i>
             </>
           ) : (

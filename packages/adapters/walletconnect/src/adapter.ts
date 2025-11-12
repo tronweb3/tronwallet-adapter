@@ -12,8 +12,8 @@ import {
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type { Transaction, SignedTransaction, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import { ChainNetwork } from '@tronweb3/tronwallet-abstract-adapter';
+import type { ThemeVariables } from '@tronweb3/walletconnect-tron';
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron';
-import type { WalletConnectWeb3ModalConfig } from '@tronweb3/walletconnect-tron';
 import type { SignClientTypes } from '@walletconnect/types';
 
 export const WalletConnectWalletName = 'WalletConnect' as AdapterName<'WalletConnect'>;
@@ -23,15 +23,19 @@ export interface WalletConnectAdapterConfig {
      * Network to use, one of Mainnet,Shasta,Nile or chainId such as 0x2b6653dc
      */
     network: `${ChainNetwork}` | string;
-    /**
-     * Options to WalletConnect
-     */
     options: SignClientTypes.Options;
     /**
-     * WalletConnectModalOptions to WalletConnect
-     * Detailed documentation can be found in WalletConnect page: https://docs.walletconnect.com/advanced/walletconnectmodal/options.
+     * Theme mode configuration flag. By default themeMode option will be set to user system settings.
+     * @default `system`
+     * @type `dark` | `light`
+     * @see https://docs.reown.com/appkit/react/core/theming
      */
-    web3ModalConfig?: WalletConnectWeb3ModalConfig;
+    themeMode?: `dark` | `light`;
+    /**
+     * Theme variable configuration object.
+     * @default undefined
+     */
+    themeVariables?: ThemeVariables;
 }
 
 export class WalletConnectAdapter extends Adapter {
@@ -96,11 +100,10 @@ export class WalletConnectAdapter extends Adapter {
             let address: string;
             try {
                 wallet = new WalletConnectWallet({
+                    ...this._config,
                     network:
                         WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
                         `tron:${this._config.network}`,
-                    options: this._config.options,
-                    web3ModalConfig: this._config.web3ModalConfig,
                 });
 
                 ({ address } = await wallet.connect());
@@ -109,7 +112,8 @@ export class WalletConnectAdapter extends Adapter {
                 throw new WalletConnectionError(error?.message, error);
             }
 
-            wallet.client.on('session_delete', this._disconnected);
+            wallet.on('disconnect', this._disconnected);
+            wallet.on('accountsChanged', this._accountsChanged);
 
             this._wallet = wallet;
             this._address = address || '';
@@ -130,7 +134,8 @@ export class WalletConnectAdapter extends Adapter {
         }
         const wallet = this._wallet;
         if (wallet) {
-            wallet.client.off('session_delete', this._disconnected);
+            wallet.off('disconnect', this._disconnected);
+            wallet.off('accountsChanged', this._accountsChanged);
 
             this._wallet = null;
             this._address = null;
@@ -153,7 +158,7 @@ export class WalletConnectAdapter extends Adapter {
             if (!wallet) throw new WalletDisconnectedError();
 
             try {
-                return await wallet.signTransaction({ transaction });
+                return await wallet.signTransaction(transaction);
             } catch (error: any) {
                 throw new WalletSignTransactionError(error?.message, error);
             }
@@ -182,7 +187,8 @@ export class WalletConnectAdapter extends Adapter {
     private _disconnected = () => {
         const wallet = this._wallet;
         if (wallet) {
-            wallet.client.off('session_delete', this._disconnected);
+            wallet.off('disconnected', this._disconnected);
+            wallet.off('accountsChanged', this._accountsChanged);
 
             this._wallet = null;
             this._address = null;
@@ -191,5 +197,11 @@ export class WalletConnectAdapter extends Adapter {
             this.emit('disconnect');
             this.emit('stateChanged', this._state);
         }
+    };
+
+    private _accountsChanged = (curAddr: string[]) => {
+        const preAddress = this.address;
+        this._address = curAddr?.[0] || '';
+        this.emit('accountsChanged', this.address || '', preAddress || '');
     };
 }

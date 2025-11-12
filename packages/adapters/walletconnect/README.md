@@ -27,7 +27,7 @@ const adapter = new WalletConnectAdapter({
     options: {
         relayUrl: 'wss://relay.walletconnect.com',
         // example walletconnect app project ID
-        projectId: 'e899c82be21d4acca2c8aec45e893598',
+        projectId: '',
         metadata: {
             name: 'Example App',
             description: 'Example App',
@@ -35,21 +35,9 @@ const adapter = new WalletConnectAdapter({
             icons: ['https://yourdapp-url.com/icon.png'],
         },
     },
-    web3ModalConfig: {
-        themeMode: 'dark',
-        themeVariables: {
-            '--wcm-z-index': 1000,
-        },
-        /**
-         * Recommended Wallets are fetched from WalletConnect explore api:
-         * https://walletconnect.com/explorer?type=wallet&version=2.
-         * You can copy these ids from the page.
-         */
-        explorerRecommendedWalletIds: [
-            '225affb176778569276e484e1b92637ad061b01e13a048b35a9d280c3b58970f',
-            '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369',
-            '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0',
-        ],
+    themeMode: 'dark',
+    themeVariables: {
+        '--w3m-z-index': 1000,
     },
 });
 // connect
@@ -93,15 +81,53 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
             };
         };
         /**
-         * Config for web3Modal constructor.
-         * Detailed documentation can be found in WalletConnect page: https://docs.walletconnect.com/2.0/web/web3modal/html/wagmi/options.
-         * - `walletConnectVersion` will be ignored and will be set to 2.
-         * - `projectId` will be ignored and will be set with `options.projectId`.
+         * Theme mode configuration flag. By default themeMode option will be set to user system settings.
+         * @default `system`
+         * @type `dark` | `light`
+         * @see https://docs.reown.com/appkit/react/core/theming
          */
-        web3ModalConfig?: WalletConnectWeb3ModalConfig;
+        themeMode?: `dark` | `light`;
+        /**
+         * Theme variable configuration object.
+         * @default undefined
+         */
+        themeVariables?: ThemeVariables;
+    }
+    interface ThemeVariables {
+        /**
+         * Base font family.
+        */
+        '--w3m-font-family'?: string;
+        /**
+         * Color used for buttons, icons, labels, etc.
+        */
+        '--w3m-accent'?: string;
+        /**
+         * The color that blends in with the default colors.
+        */
+        '--w3m-color-mix'?: string;
+        /**
+         * The percentage on how much “—w3m-color-mix” should blend in.
+        */
+        '--w3m-color-mix-strength'?: number;
+        /**
+         * The base pixel size for fonts.
+        */
+        '--w3m-font-size-master'?: string;
+        /**
+         * The base border radius in pixels.
+        */
+        '--w3m-border-radius-master'?: string;
+        /**
+         * The z-index of the modal.
+        */
+        '--w3m-z-index'?: number;
+        /**
+        * The color of the QRCode.
+        */
+        '--w3m-qr-color'?: string;
     }
     ```
-    More detail about WalletConnect client options please refer to the [WalletConnect document](https://docs.walletconnect.com/2.0/javascript/sign/dapp-usage).
 
 ### Caveates
 
