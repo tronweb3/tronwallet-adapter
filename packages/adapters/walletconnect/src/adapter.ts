@@ -10,6 +10,8 @@ import {
     WalletSignTransactionError,
     WalletReadyState,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import type { WalletConnectModalConfig } from '@walletconnect/modal';
+export type WalletConnectWeb3ModalConfig = Omit<WalletConnectModalConfig, 'projectId'>;
 import type { Transaction, SignedTransaction, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import { ChainNetwork } from '@tronweb3/tronwallet-abstract-adapter';
 import type { ThemeVariables } from '@tronweb3/walletconnect-tron';
@@ -18,6 +20,16 @@ import type { SignClientTypes } from '@walletconnect/types';
 
 export const WalletConnectWalletName = 'WalletConnect' as AdapterName<'WalletConnect'>;
 const NETWORK = Object.keys(ChainNetwork);
+const validThemeVariables = [
+    '--w3m-font-family',
+    '--w3m-accent',
+    '--w3m-color-mix',
+    '--w3m-color-mix-strength',
+    '--w3m-font-size-master',
+    '--w3m-border-radius-master',
+    '--w3m-z-index',
+    '--w3m-qr-color',
+];
 export interface WalletConnectAdapterConfig {
     /**
      * Network to use, one of Mainnet,Shasta,Nile or chainId such as 0x2b6653dc
@@ -36,6 +48,12 @@ export interface WalletConnectAdapterConfig {
      * @default undefined
      */
     themeVariables?: ThemeVariables;
+    /**
+     * WalletConnectModalOptions to WalletConnect.
+     * Only some properties of themeVariables and themeMode are valiable. It's recomended to use `config.themeVariables` and `config.themeMode`.
+     * Detailed documentation can be found in WalletConnect page: https://docs.walletconnect.com/advanced/walletconnectmodal/options.
+     */
+    web3ModalConfig?: WalletConnectWeb3ModalConfig;
 }
 
 export class WalletConnectAdapter extends Adapter {
@@ -68,6 +86,21 @@ export class WalletConnectAdapter extends Adapter {
         if (!config.options) {
             throw new Error(`[WalletconnectAdapter] config.options is required.`);
         }
+
+        const themeVariables: ThemeVariables = {};
+
+        if (config.web3ModalConfig?.themeVariables) {
+            Object.entries(config.web3ModalConfig.themeVariables).forEach(([k, v]) => {
+                const w3mKey = k.replace('--wcm-', '--w3m-') as keyof ThemeVariables;
+                if (validThemeVariables.includes(w3mKey)) {
+                    // @ts-ignore
+                    themeVariables[w3mKey] = v;
+                }
+            });
+        }
+        config.themeMode = config.themeMode || config.web3ModalConfig?.themeMode;
+        config.themeVariables = config.themeVariables || themeVariables;
+        Reflect.deleteProperty(config, 'web3ModalConfig');
 
         this._connecting = false;
         this._wallet = null;

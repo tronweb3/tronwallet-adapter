@@ -44,6 +44,7 @@
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
         "@tronweb3/walletconnect-tron": "4.0.0",
         "@wagmi/core": "^1.1.0",
+        "@walletconnect/modal": "2.6.2",
         "@walletconnect/sign-client": "^2.1.4",
         "@walletconnect/types": "^2.1.4",
         "viem": "^0.3.50"

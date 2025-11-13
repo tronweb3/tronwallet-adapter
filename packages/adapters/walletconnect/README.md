@@ -92,6 +92,11 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
          * @default undefined
          */
         themeVariables?: ThemeVariables;
+        /**
+         * WalletConnectModalOptions to WalletConnect.
+         * Only some properties of themeVariables and themeMode are valiable. It's recomended to use `config.themeVariables` and `config.themeMode`.
+         */
+        web3ModalConfig?: WalletConnectWeb3ModalConfig;
     }
     interface ThemeVariables {
         /**

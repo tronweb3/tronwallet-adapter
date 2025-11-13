@@ -981,6 +981,9 @@ importers:
       '@wagmi/core':
         specifier: ^1.1.0
         version: 1.4.13(@types/react@18.3.3)(bufferutil@4.0.8)(immer@9.0.21)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(viem@0.3.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4))(zod@3.22.4)
+      '@walletconnect/modal':
+        specifier: 2.6.2
+        version: 2.6.2(@types/react@18.3.3)(react@18.3.1)
       '@walletconnect/sign-client':
         specifier: ^2.1.4
         version: 2.14.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -2988,9 +2991,6 @@ packages:
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
-
-  '@lit-labs/ssr-dom-shim@1.2.0':
-    resolution: {integrity: sha512-yWJKmpGE6lUURKAaIltoPIE/wrbY3TEkqQt+X0m+7fQNnAv0keydnYvbiJFP1PnMhizmIWRWOG5KLhYyc/xl+g==}
 
   '@lit-labs/ssr-dom-shim@1.4.0':
     resolution: {integrity: sha512-ficsEARKnmmW5njugNYKipTm4SFnbik7CXtoencDZzmzo/dQ+2Q0bgkzJuoJP20Aj0F+izzJjOqsnkd6F/o1bw==}
@@ -12216,8 +12216,6 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@lit-labs/ssr-dom-shim@1.2.0': {}
-
   '@lit-labs/ssr-dom-shim@1.4.0': {}
 
   '@lit/react@1.0.8(@types/react@18.3.3)':
@@ -12227,7 +12225,7 @@ snapshots:
 
   '@lit/reactive-element@1.6.3':
     dependencies:
-      '@lit-labs/ssr-dom-shim': 1.2.0
+      '@lit-labs/ssr-dom-shim': 1.4.0
 
   '@lit/reactive-element@2.1.1':
     dependencies:
@@ -18784,7 +18782,7 @@ snapshots:
 
   lit-element@3.3.3:
     dependencies:
-      '@lit-labs/ssr-dom-shim': 1.2.0
+      '@lit-labs/ssr-dom-shim': 1.4.0
       '@lit/reactive-element': 1.6.3
       lit-html: 2.8.0
 
