@@ -128,6 +128,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
         '--w3m-qr-color'?: string;
     }
     ```
+- `getConnectionStatus(): Promise<{ address: string }>`: Get current connection status. If WalletConnect is connected, the address will be a non-empty value.
 
 ### Caveates
 

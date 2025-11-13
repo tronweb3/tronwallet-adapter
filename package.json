@@ -6,7 +6,7 @@
     "sideEffects": false,
     "private": true,
     "engines": {
-        "node": "18.20.2",
+        "node": "20.18.0",
         "pnpm": "9.6.0"
     },
     "repository": {

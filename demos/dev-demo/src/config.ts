@@ -16,7 +16,7 @@ export const walletconnectConfig: WalletConnectAdapterConfig = {
   themeMode: 'light',
   themeVariables: {
     '--w3m-z-index': 100,
-    // '--w3m-qr-color': 'red',
+    '--w3m-qr-color': 'red',
   },
 };
 

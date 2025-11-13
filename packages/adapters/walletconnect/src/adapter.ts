@@ -96,26 +96,27 @@ export class WalletConnectAdapter extends Adapter {
             if (this.state === AdapterState.NotFound) throw new WalletNotFoundError();
             this._connecting = true;
 
-            let wallet: WalletConnectWallet;
             let address: string;
             try {
-                wallet = new WalletConnectWallet({
-                    ...this._config,
-                    network:
-                        WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
-                        `tron:${this._config.network}`,
-                });
-
-                ({ address } = await wallet.connect());
+                if (this._wallet) {
+                    ({ address } = await this._wallet.connect());
+                } else {
+                    this._wallet = new WalletConnectWallet({
+                        ...this._config,
+                        network:
+                            WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
+                            `tron:${this._config.network}`,
+                    });
+                    ({ address } = await this._wallet.connect());
+                }
             } catch (error: any) {
                 if (error.constructor.name === 'Web3ModalError') throw new WalletWindowClosedError();
                 throw new WalletConnectionError(error?.message, error);
             }
 
-            wallet.on('disconnect', this._disconnected);
-            wallet.on('accountsChanged', this._accountsChanged);
+            this._wallet.on('disconnect', this._disconnected);
+            this._wallet.on('accountsChanged', this._accountsChanged);
 
-            this._wallet = wallet;
             this._address = address || '';
             this._state = AdapterState.Connected;
             this.emit('stateChanged', this._state);
@@ -137,7 +138,6 @@ export class WalletConnectAdapter extends Adapter {
             wallet.off('disconnect', this._disconnected);
             wallet.off('accountsChanged', this._accountsChanged);
 
-            this._wallet = null;
             this._address = null;
 
             try {
@@ -184,13 +184,31 @@ export class WalletConnectAdapter extends Adapter {
         }
     }
 
+    /**
+     * Get WalletConnect connection status.
+     * Address is not empty if the WalletConnectWallet is connected.
+     * @returns {object} status
+     * @property {string} status.address - connected address
+     */
+    async getConnectionStatus(): Promise<{ address: string }> {
+        if (!this._wallet || !this.connected) {
+            return { address: '' };
+        }
+        try {
+            return await this._wallet.checkConnectStatus();
+        } catch (e) {
+            this._address = null;
+            this._state = AdapterState.Disconnect;
+            return { address: '' };
+        }
+    }
+
     private _disconnected = () => {
         const wallet = this._wallet;
         if (wallet) {
             wallet.off('disconnected', this._disconnected);
             wallet.off('accountsChanged', this._accountsChanged);
 
-            this._wallet = null;
             this._address = null;
 
             this._state = AdapterState.Disconnect;
