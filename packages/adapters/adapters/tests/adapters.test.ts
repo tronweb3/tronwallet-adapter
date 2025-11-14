@@ -1,8 +1,7 @@
 import { test, expect } from 'vitest';
-import '../../lib/umd/index.js';
+import * as Adapters from '../src/index.js';
 
-test("window['@tronweb3/tronwallet-adapters'] should exist", () => {
-    const Adapters = (window as any)['@tronweb3/tronwallet-adapters'];
+test('this library should expose all adapters', () => {
     expect(Adapters).not.toBeUndefined();
     expect(Adapters.TronLinkAdapter).not.toBeUndefined();
     expect(Adapters.BitKeepAdapter).not.toBeUndefined();
@@ -15,4 +14,5 @@ test("window['@tronweb3/tronwallet-adapters'] should exist", () => {
     expect(Adapters.BybitWalletAdapter).not.toBeUndefined();
     expect(Adapters.TrustAdapter).not.toBeUndefined();
     expect(Adapters.GuardaAdapter).not.toBeUndefined();
+    expect(Adapters.BinanceWalletAdapter).not.toBeUndefined();
 });

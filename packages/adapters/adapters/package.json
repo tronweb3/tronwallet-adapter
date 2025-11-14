@@ -37,32 +37,30 @@
         "access": "public"
     },
     "scripts": {
-        "test:browser": "vitest",
+        "test": "vitest run",
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
+        "@tronweb3/tronwallet-adapter-binance": "workspace:^",
         "@tronweb3/tronwallet-adapter-bitkeep": "workspace:^",
+        "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
+        "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
+        "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",
+        "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
         "@tronweb3/tronwallet-adapter-imtoken": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger": "workspace:^",
         "@tronweb3/tronwallet-adapter-okxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-tokenpocket": "workspace:^",
-        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
-        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
-        "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",
-        "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
-        "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
-        "@tronweb3/tronwallet-adapter-trust": "workspace:^",
         "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
-        "@tronweb3/tronwallet-adapter-binance": "workspace:^",
-        "@tronweb3/tronwallet-adapter-guarda": "workspace:^"
+        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
+        "@tronweb3/tronwallet-adapter-trust": "workspace:^",
+        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },
     "devDependencies": {
-        "@vitest/browser": "^2.0.4",
         "@walletconnect/modal": "^2.6.2",
         "@walletconnect/sign-client": "^2.1.4",
-        "playwright": "^1.45.3",
         "shx": "^0.3.4",
         "vitest": "^2.0.4"
     }
