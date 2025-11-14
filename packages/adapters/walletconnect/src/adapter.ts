@@ -119,13 +119,16 @@ export class WalletConnectAdapter extends Adapter {
         return this._state;
     }
 
+    /**
+     * Currently unused for WalletConnectAdapter.
+     */
     get connecting() {
         return this._connecting;
     }
 
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) return;
+            if (this.connected) return;
             if (this.state === AdapterState.NotFound) throw new WalletNotFoundError();
             this._connecting = true;
 
@@ -158,7 +161,7 @@ export class WalletConnectAdapter extends Adapter {
             this.emit('error', error);
             throw error;
         } finally {
-            this._connecting = false;
+            // this._connecting = false;
         }
     }
 
