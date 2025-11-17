@@ -126,6 +126,7 @@ export default function SignUsage() {
       signedTransaction = await adapter.signTransaction(transaction);
     } catch (e) {
       console.log(e);
+      return;
     }
     const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
     setSuccess(res.result);
