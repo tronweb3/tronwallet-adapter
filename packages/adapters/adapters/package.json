@@ -61,6 +61,7 @@
     "devDependencies": {
         "@walletconnect/modal": "^2.6.2",
         "@walletconnect/sign-client": "^2.1.4",
+        "happy-dom": "20.0.10",
         "shx": "^0.3.4",
         "vitest": "^2.0.4"
     }
