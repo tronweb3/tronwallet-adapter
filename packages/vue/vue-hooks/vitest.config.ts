@@ -7,6 +7,6 @@ export default defineConfig({
                 inline: ['chai', 'get-func-name'],
             },
         },
-        environment: 'jsdom',
+        environment: 'happy-dom',
     },
 });
