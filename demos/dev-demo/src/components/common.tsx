@@ -1,7 +1,7 @@
 import { colors, styled } from '@mui/material';
 import MuiButton from '@mui/material/Button';
 
-export const Button = styled(MuiButton)({
+export const Button = styled(MuiButton)(({ margin }: { margin?: string }) => ({
   height: '50px',
   lineHeight: '50px',
   color: '#fff',
@@ -10,7 +10,7 @@ export const Button = styled(MuiButton)({
   fontSize: '14px',
   fontWeight: 500,
   transition: 'all 0.5s ease',
-  margin: '0',
+  margin: margin || '0',
   '&:hover': {
     backgroundColor: '#fff',
     color: '#000',
@@ -18,4 +18,4 @@ export const Button = styled(MuiButton)({
   '&.Mui-disabled': {
     color: '#fff',
   },
-});
+}));

@@ -10,25 +10,47 @@ import {
     WalletSignTransactionError,
     WalletReadyState,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import type { WalletConnectModalConfig } from '@walletconnect/modal';
+export type WalletConnectWeb3ModalConfig = Omit<WalletConnectModalConfig, 'projectId'>;
 import type { Transaction, SignedTransaction, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import { ChainNetwork } from '@tronweb3/tronwallet-abstract-adapter';
+import type { ThemeVariables } from '@tronweb3/walletconnect-tron';
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron';
-import type { WalletConnectWeb3ModalConfig } from '@tronweb3/walletconnect-tron';
 import type { SignClientTypes } from '@walletconnect/types';
 
 export const WalletConnectWalletName = 'WalletConnect' as AdapterName<'WalletConnect'>;
 const NETWORK = Object.keys(ChainNetwork);
+const validThemeVariables = [
+    '--w3m-font-family',
+    '--w3m-accent',
+    '--w3m-color-mix',
+    '--w3m-color-mix-strength',
+    '--w3m-font-size-master',
+    '--w3m-border-radius-master',
+    '--w3m-z-index',
+    '--w3m-qr-color',
+];
 export interface WalletConnectAdapterConfig {
     /**
      * Network to use, one of Mainnet,Shasta,Nile or chainId such as 0x2b6653dc
      */
     network: `${ChainNetwork}` | string;
-    /**
-     * Options to WalletConnect
-     */
     options: SignClientTypes.Options;
     /**
-     * WalletConnectModalOptions to WalletConnect
+     * Theme mode configuration flag. By default themeMode option will be set to user system settings.
+     * @default `system`
+     * @type `dark` | `light`
+     * @see https://docs.reown.com/appkit/react/core/theming
+     */
+    themeMode?: `dark` | `light`;
+    /**
+     * Theme variable configuration object.
+     * @default undefined
+     */
+    themeVariables?: ThemeVariables;
+    /**
+     * WalletConnectModalOptions to WalletConnect.
+     * Only some properties of themeVariables and themeMode are valiable. It's recomended to use `config.themeVariables` and `config.themeMode`.
      * Detailed documentation can be found in WalletConnect page: https://docs.walletconnect.com/advanced/walletconnectmodal/options.
      */
     web3ModalConfig?: WalletConnectWeb3ModalConfig;
@@ -65,6 +87,21 @@ export class WalletConnectAdapter extends Adapter {
             throw new Error(`[WalletconnectAdapter] config.options is required.`);
         }
 
+        const themeVariables: ThemeVariables = {};
+
+        if (config.web3ModalConfig?.themeVariables) {
+            Object.entries(config.web3ModalConfig.themeVariables).forEach(([k, v]) => {
+                const w3mKey = k.replace('--wcm-', '--w3m-') as keyof ThemeVariables;
+                if (validThemeVariables.includes(w3mKey)) {
+                    // @ts-ignore
+                    themeVariables[w3mKey] = v;
+                }
+            });
+        }
+        config.themeMode = config.themeMode || config.web3ModalConfig?.themeMode;
+        config.themeVariables = config.themeVariables || themeVariables;
+        Reflect.deleteProperty(config, 'web3ModalConfig');
+
         this._connecting = false;
         this._wallet = null;
         this._address = null;
@@ -82,36 +119,40 @@ export class WalletConnectAdapter extends Adapter {
         return this._state;
     }
 
+    /**
+     * Currently unused for WalletConnectAdapter.
+     */
     get connecting() {
         return this._connecting;
     }
 
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) return;
+            if (this.connected) return;
             if (this.state === AdapterState.NotFound) throw new WalletNotFoundError();
             this._connecting = true;
 
-            let wallet: WalletConnectWallet;
             let address: string;
             try {
-                wallet = new WalletConnectWallet({
-                    network:
-                        WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
-                        `tron:${this._config.network}`,
-                    options: this._config.options,
-                    web3ModalConfig: this._config.web3ModalConfig,
-                });
-
-                ({ address } = await wallet.connect());
+                if (this._wallet) {
+                    ({ address } = await this._wallet.connect());
+                } else {
+                    this._wallet = new WalletConnectWallet({
+                        ...this._config,
+                        network:
+                            WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
+                            `tron:${this._config.network}`,
+                    });
+                    ({ address } = await this._wallet.connect());
+                }
             } catch (error: any) {
                 if (error.constructor.name === 'Web3ModalError') throw new WalletWindowClosedError();
                 throw new WalletConnectionError(error?.message, error);
             }
 
-            wallet.client.on('session_delete', this._disconnected);
+            this._wallet.on('disconnect', this._disconnected);
+            this._wallet.on('accountsChanged', this._accountsChanged);
 
-            this._wallet = wallet;
             this._address = address || '';
             this._state = AdapterState.Connected;
             this.emit('stateChanged', this._state);
@@ -120,7 +161,7 @@ export class WalletConnectAdapter extends Adapter {
             this.emit('error', error);
             throw error;
         } finally {
-            this._connecting = false;
+            // this._connecting = false;
         }
     }
 
@@ -130,9 +171,9 @@ export class WalletConnectAdapter extends Adapter {
         }
         const wallet = this._wallet;
         if (wallet) {
-            wallet.client.off('session_delete', this._disconnected);
+            wallet.off('disconnect', this._disconnected);
+            wallet.off('accountsChanged', this._accountsChanged);
 
-            this._wallet = null;
             this._address = null;
 
             try {
@@ -153,7 +194,7 @@ export class WalletConnectAdapter extends Adapter {
             if (!wallet) throw new WalletDisconnectedError();
 
             try {
-                return await wallet.signTransaction({ transaction });
+                return await wallet.signTransaction(transaction);
             } catch (error: any) {
                 throw new WalletSignTransactionError(error?.message, error);
             }
@@ -179,17 +220,42 @@ export class WalletConnectAdapter extends Adapter {
         }
     }
 
+    /**
+     * Get WalletConnect connection status.
+     * Address is not empty if the WalletConnectWallet is connected.
+     * @returns {object} status
+     * @property {string} status.address - connected address
+     */
+    async getConnectionStatus(): Promise<{ address: string }> {
+        if (!this._wallet || !this.connected) {
+            return { address: '' };
+        }
+        try {
+            return await this._wallet.checkConnectStatus();
+        } catch (e) {
+            this._address = null;
+            this._state = AdapterState.Disconnect;
+            return { address: '' };
+        }
+    }
+
     private _disconnected = () => {
         const wallet = this._wallet;
         if (wallet) {
-            wallet.client.off('session_delete', this._disconnected);
+            wallet.off('disconnected', this._disconnected);
+            wallet.off('accountsChanged', this._accountsChanged);
 
-            this._wallet = null;
             this._address = null;
 
             this._state = AdapterState.Disconnect;
             this.emit('disconnect');
             this.emit('stateChanged', this._state);
         }
+    };
+
+    private _accountsChanged = (curAddr: string[]) => {
+        const preAddress = this.address;
+        this._address = curAddr?.[0] || '';
+        this.emit('accountsChanged', this.address || '', preAddress || '');
     };
 }

@@ -124,6 +124,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
   }
 
   function onDisconnect() {
+    console.log('[DevDemo] disconnect event');
     setConnectionState((preState) => ({
       ...preState,
       connected: false,
