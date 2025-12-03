@@ -12,6 +12,10 @@ export const WalletSelectModal = defineComponent({
             type: Boolean,
             default: false,
         },
+        openUrlWhenWalletNotFoundSync: {
+            type: Boolean,
+            default: false,
+        },
     },
     emits: ['close'],
     setup(props, { emit }) {
@@ -45,6 +49,12 @@ export const WalletSelectModal = defineComponent({
         });
 
         const onWalletClick = (wallet: Wallet) => {
+            if (props.openUrlWhenWalletNotFoundSync && wallet.state === AdapterState.NotFound) {
+                if (wallet.adapter.url) {
+                    window.open(wallet.adapter.url, '_blank');
+                }
+                return;
+            }
             select(wallet.adapter.name);
             emit('close');
         };
