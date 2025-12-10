@@ -3,8 +3,6 @@
     "version": "1.0.2",
     "description": "Wallet adapter for Metamask wallet extension and app.",
     "keywords": [
-        "EVM",
-        "Ethereum Wallet",
         "Metamask wallet"
     ],
     "author": "tronweb3",
@@ -43,7 +41,7 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@tronweb3/abstract-adapter-evm": "workspace:^"
+        "@metamask/connect-tron": "^0.1.0"
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
