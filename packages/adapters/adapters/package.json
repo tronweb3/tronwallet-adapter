@@ -51,6 +51,7 @@
         "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
         "@tronweb3/tronwallet-adapter-imtoken": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger": "workspace:^",
+        "@tronweb3/tronwallet-adapter-metamask": "workspace:^",
         "@tronweb3/tronwallet-adapter-okxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-tokenpocket": "workspace:^",
         "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
