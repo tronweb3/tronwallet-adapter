@@ -46,8 +46,53 @@ export interface WalletConnectAdapterConfig {
     /**
      * Theme variable configuration object.
      * @default undefined
+     * @see https://docs.reown.com/appkit/react/core/theming#themevariables
      */
     themeVariables?: ThemeVariables;
+    /**
+     * Control the display of "All Wallets" button.
+     * @default `HIDE` (recommended for Tron as most wallets don't support it)
+     * @see https://docs.reown.com/appkit/react/core/options
+     */
+    allWallets?: 'SHOW' | 'HIDE' | 'ONLY_MOBILE';
+    /**
+     * List of featured wallet IDs to display first (in order).
+     * @see https://walletguide.walletconnect.network/ to find wallet IDs
+     */
+    featuredWalletIds?: string[];
+    /**
+     * Whitelist of wallet IDs to include (if set, only these wallets will be shown).
+     */
+    includeWalletIds?: string[];
+    /**
+     * Blacklist of wallet IDs to exclude.
+     */
+    excludeWalletIds?: string[];
+    /**
+     * Custom wallets to add to the list.
+     */
+    customWallets?: any[];
+    /**
+     * Enable Reown cloud analytics.
+     * @default true
+     */
+    enableAnalytics?: boolean;
+    /**
+     * Enable debug logs.
+     * @default false
+     */
+    debug?: boolean;
+    /**
+     * Enable mobile deep linking optimization.
+     * When enabled, automatically configures mobile wallet IDs and settings for better deep linking support.
+     * @default true
+     */
+    enableMobileDeepLink?: boolean;
+    /**
+     * Additional AppKit configuration options.
+     * Any extra properties will be passed directly to createAppKit.
+     */
+    [key: string]: any;
     /**
      * WalletConnectModalOptions to WalletConnect.
      * Only some properties of themeVariables and themeMode are valiable. It's recomended to use `config.themeVariables` and `config.themeMode`.
@@ -98,8 +143,15 @@ export class WalletConnectAdapter extends Adapter {
                 }
             });
         }
+
         config.themeMode = config.themeMode || config.web3ModalConfig?.themeMode;
         config.themeVariables = config.themeVariables || themeVariables;
+        config.featuredWalletIds =
+            config.featuredWalletIds ||
+            (config.web3ModalConfig?.explorerRecommendedWalletIds === 'NONE'
+                ? undefined
+                : config.web3ModalConfig?.explorerRecommendedWalletIds);
+        config.privacyPolicyUrl = config.privacyPolicyUrl || config.web3ModalConfig?.privacyPolicyUrl;
         Reflect.deleteProperty(config, 'web3ModalConfig');
 
         this._connecting = false;
@@ -132,21 +184,20 @@ export class WalletConnectAdapter extends Adapter {
             if (this.state === AdapterState.NotFound) throw new WalletNotFoundError();
             this._connecting = true;
 
-            let address: string;
+            let address = '';
             try {
-                if (this._wallet) {
-                    ({ address } = await this._wallet.connect());
-                } else {
+                if (!this._wallet) {
                     this._wallet = new WalletConnectWallet({
                         ...this._config,
                         network:
                             WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
                             `tron:${this._config.network}`,
                     });
-                    ({ address } = await this._wallet.connect());
                 }
+
+                ({ address } = await this._wallet.connect());
             } catch (error: any) {
-                if (error.constructor.name === 'Web3ModalError') throw new WalletWindowClosedError();
+                if (error.message === 'User closed the connection modal') throw new WalletWindowClosedError();
                 throw new WalletConnectionError(error?.message, error);
             }
 

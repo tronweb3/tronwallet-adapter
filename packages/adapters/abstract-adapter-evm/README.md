@@ -1,4 +1,4 @@
-# `@tronweb3/tronwallet-abstract-evm-adapter`
+# `@tronweb3/abstract-adapter-evm`
 
 This is the abstract interface definition of Evm Wallet Adapters. All wallet adapters implement abstract interface to provide unified interface.
 
