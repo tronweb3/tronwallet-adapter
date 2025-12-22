@@ -62,10 +62,13 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 -   `Constructor(config: WalletConnectAdapterConfig)`
     WalletAdapter will pass the config to [AppKit Modal](https://docs.reown.com/appkit/react/core/options).
     
-    **Notice**: To keep backward compatibility WalletAdapter retains `web3ModalConfig`. But only these config are available:
-        - `web3ModalConfig.themeMode`
-        - `web3ModalConfig.themeVariables`
-        - `web3ModalConfig.explorerRecommendedWalletIds`
+    **Notice**: To keep backward compatibility WalletAdapter retains `web3ModalConfig`. However, only these configurations are currently available:
+    - `web3ModalConfig.themeMode`
+    - `web3ModalConfig.themeVariables`: 
+        - `--wcm-z-index`
+        - `--wcm-font-family`
+    - `web3ModalConfig.explorerRecommendedWalletIds`
+
     It's recommended to use `themeMode`, `themeVariables` and `featuredWalletIds`.
 
     ```typescript
@@ -145,19 +148,6 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
          * Any extra properties will be passed directly to createAppKit.
          */
         [key: string]: any;
-        /**
-         * WalletConnectModalOptions to WalletConnect.
-         * Only some properties of `themeVariables` are valiable.
-         * It's recomended to use `config.themeVariables`, `config.themeMode` and `config.featuredWalletIds`.
-         */
-        web3ModalConfig?: {
-            themeMode?: `dark` | `light`;
-            themeVariables?: {
-                '--wcm-z-index'?: string;
-                '--wcm-font-family'?: string;
-            };
-            explorerRecommendedWalletIds?: string[];
-        };
     }
     interface ThemeVariables {
         /**
