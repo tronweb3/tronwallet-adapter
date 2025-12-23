@@ -16,6 +16,7 @@
         "@tronweb3/tronwallet-adapters": "latest",
         "element-plus": "^2.4.3",
         "tronweb": "6.0.0",
+        "typescript": "5.5.4",
         "vue": "^3.3.8"
     },
     "devDependencies": {

@@ -25,7 +25,8 @@
         "react-dom": "^18.3.1",
         "react-hot-toast": "^2.4.0",
         "tronweb": "^6.0.0",
-        "tslib": "^2.5.0"
+        "tslib": "^2.5.0",
+        "typescript": "5.5.4"
     },
     "devDependencies": {
         "@types/react": "18.3.3",
