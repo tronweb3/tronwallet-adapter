@@ -217,7 +217,7 @@ export class WalletConnectAdapter extends Adapter {
     }
 
     async disconnect(): Promise<void> {
-        if (this.state === AdapterState.NotFound) {
+        if (this.state === AdapterState.NotFound || !this.connected) {
             return;
         }
         const wallet = this._wallet;
