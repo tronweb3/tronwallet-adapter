@@ -32,7 +32,6 @@
         "@vitejs/plugin-legacy": "^6.1.1",
         "@vitejs/plugin-react": "^4.4.1",
         "rollup-plugin-polyfill-node": "^0.13.0",
-        "typescript": "^4.6.4",
         "vite": "^6.3.5",
         "vite-plugin-node-polyfills": "^0.24.0"
     },

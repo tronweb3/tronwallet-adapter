@@ -36,6 +36,7 @@
         "build:clean": "pnpm run clean && pnpm run build && pnpm run package",
         "build:umd": "pnpm --recursive run build:umd",
         "build-dev-demo": "pnpm build && pnpm run --filter {demos/dev-demo} build",
+        "build-demos": "pnpm run --filter {demos/*/*} build",
         "package": "pnpm --recursive run package",
         "release": "pnpm prerelease && changeset publish",
         "watch": "pnpm run watch:ts & pnpm run watch:other",
@@ -53,7 +54,7 @@
     },
     "devDependencies": {
         "@changesets/cli": "^2.26.0",
-        "@commitlint/cli": "^17.3.0",
+        "@commitlint/cli": "^20.2.0",
         "@commitlint/config-conventional": "^17.3.0",
         "@rollup/plugin-commonjs": "^28.0.6",
         "@rollup/plugin-json": "^6.0.1",
