@@ -18,6 +18,7 @@ import {
   TrustAdapter,
   GuardaAdapter,
   BinanceWalletAdapter,
+  MetaMaskAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
@@ -70,6 +71,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new LedgerAdapter(),
       new GuardaAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
+      new MetaMaskAdapter() as any,
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
