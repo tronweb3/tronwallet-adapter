@@ -6,7 +6,7 @@ const path = require('path');
 
 const EVM_PKGS = [
     '@tronweb3/abstract-adapter-evm',
-    '@tronweb3/tronwallet-adapter-metamask',
+    '@tronweb3/tronwallet-adapter-metamask-evm',
     '@tronweb3/tronwallet-adapter-tronlink-evm',
     '@tronweb3/tronwallet-adapter-binance-evm',
 ];

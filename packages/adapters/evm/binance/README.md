@@ -37,4 +37,4 @@ await adapter.sendTransaction(transaction);
 ### Caveat
 - Currently Binance wallet app does not support `addChain()`.
 
-More detailed API can be found in [Abstract Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/abstract-adapter-evm/README.md).
+More detailed API can be found in [Abstract Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/evm/abstract-adapter/README.md).

@@ -11,9 +11,9 @@ The `Adapter` class defines the common interface for all adapters of specified w
 #### Constructor
 
 -   `constructor(options)`: adapter constructor method, an optional config is valid. For detailed options type, refer to the specified adapter.
--   [MetaMaskAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/metamask/README.md)
--   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/tronlink-evm/README.md)
--   [BinanceEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/binance-evm/README.md)
+-   [MetaMaskEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/evm/metamask/README.md)
+-   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/evm/tronlink/README.md)
+-   [BinanceEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/evm/binance/README.md)
 
 #### Properties
 
@@ -218,7 +218,7 @@ All errors are as follows:
 Following exmaple shows how to get original error info with `WalletError`:
 
 ```js
-const adapter = new MetaMaskAdapter();
+const adapter = new MetaMaskEvmAdapter();
 try {
     await adapter.connect();
 } catch (e: any) {

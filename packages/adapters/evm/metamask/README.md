@@ -1,13 +1,13 @@
-# `@tronweb3/tronwallet-adapter-metamask`
+# `@tronweb3/tronwallet-adapter-metamask-evm`
 
-This package provides an adapter to enable DApps to connect to the [MetaMask Wallet extension](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn) and [MetaMask Wallet App](https://metamask.io/).
+This package provides an adapter to enable DApps to connect to the [MetaMask Wallet](https://metamask.io/).
 
 ## Demo
 
 ```typescript
-import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
+import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
 
-const adapter = new MetaMaskAdapter();
+const adapter = new MetaMaskEvmAdapter();
 // connect
 await adapter.connect();
 
@@ -27,18 +27,18 @@ await adapter.sendTransaction(transaction);
 
 ### API
 
--   `Constructor(config: MetaMaskAdapterOptions)`
+-   `Constructor(config: MetaMaskEvmAdapterOptions)`
 
     ```typescript
-    import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
-    interface MetaMaskAdapterOptions {
+    import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
+    interface MetaMaskEvmAdapterOptions {
         /**
          * Set if open MetaMask app when in mobile device.
          * Default is true.
          */
         useDeeplink?: boolean;
     }
-    const metaMaskAdapter = new MetaMaskAdapter({ useDeeplink: false });
+    const metaMaskAdapter = new MetaMaskEvmAdapter({ useDeeplink: false });
     ```
 
-More detailed API can be found in [Abstract Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/abstract-adapter-evm/README.md).
+More detailed API can be found in [Abstract Adapter](https://github.com/tronweb3/tronwallet-adapter/blob/main/packages/adapters/evm/abstract-adapter/README.md).

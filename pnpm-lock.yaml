@@ -219,9 +219,9 @@ importers:
       '@tronweb3/tronwallet-adapter-ledger':
         specifier: ^1.1.8
         version: 1.1.8
-      '@tronweb3/tronwallet-adapter-metamask':
-        specifier: ^1.0.1
-        version: 1.0.1(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-metamask-evm':
+        specifier: ^1.0.0
+        version: link:../../packages/adapters/evm/metamask
       '@tronweb3/tronwallet-adapter-okxwallet':
         specifier: ^1.0.2
         version: 1.0.3
@@ -3958,10 +3958,6 @@ packages:
 
   '@tronweb3/tronwallet-adapter-ledger@1.1.8':
     resolution: {integrity: sha512-Tg8plalHNErkp9o+AOCjzlFcWzzI4ewBljaZYc6ue/5W83PNzRHSmUqlwGIDScJD/oSU9gZ/avYPCfJI1MPKtQ==}
-    engines: {node: '>=16', pnpm: '>=7'}
-
-  '@tronweb3/tronwallet-adapter-metamask@1.0.1':
-    resolution: {integrity: sha512-zl4xU28Z2p90v3DPgyseLXkyDzeGsy6g586BddaprhUbjlw19nmsX9Jys31IRXCYM5BKgWFPhEzIcEHxsbdxBg==}
     engines: {node: '>=16', pnpm: '>=7'}
 
   '@tronweb3/tronwallet-adapter-okxwallet@1.0.3':
@@ -13351,19 +13347,6 @@ snapshots:
       buffer: 6.0.3
       eventemitter3: 4.0.7
       preact: 10.23.0
-
-  '@tronweb3/tronwallet-adapter-metamask@1.0.1(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))(utf-8-validate@6.0.3)':
-    dependencies:
-      '@tronweb3/abstract-adapter-evm': 1.0.1(@types/node@18.19.42)(babel-plugin-macros@3.1.0)(bufferutil@4.0.8)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))(utf-8-validate@6.0.3)
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - bufferutil
-      - canvas
-      - node-notifier
-      - supports-color
-      - ts-node
-      - utf-8-validate
 
   '@tronweb3/tronwallet-adapter-okxwallet@1.0.3':
     dependencies:
