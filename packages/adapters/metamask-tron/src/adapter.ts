@@ -289,18 +289,19 @@ export class MetaMaskAdapter extends Adapter {
         return new Promise((resolve) => {
             const timeout = setTimeout(() => {
                 resolve(undefined);
-            }, 200);
+            }, 2000);
             const handleAccountChange = (data: any) => {
                 if (isAccountChangedEvent(data)) {
                     const address = data?.params?.notification?.params?.[0];
                     if (address) {
                         clearTimeout(timeout);
-                        this.stopAccountsChangedListener();
+                        removeNotification?.();
                         resolve(address);
                     }
                 }
             };
-            this.startAccountsChangedListener(handleAccountChange);
+
+            const removeNotification = this._client.onNotification(handleAccountChange);
         });
     }
 
@@ -358,6 +359,26 @@ export class MetaMaskAdapter extends Adapter {
      * @param addresses - Optional list of addresses to include in the session.
      */
     private async createSession(scope: Scope, addresses?: string[]): Promise<void> {
+        let resolvePromise: (value: string) => void;
+        const waitForAccountChangedPromise = new Promise<string>((resolve) => {
+            resolvePromise = resolve;
+        });
+
+        // If there are multiple accounts, wait for the first accountChanged event to know which one to use
+        const handleAccountChange = (data: any) => {
+            if (!isAccountChangedEvent(data)) {
+                return;
+            }
+            const selectedAddress = data?.params?.notification?.params?.[0];
+
+            if (selectedAddress) {
+                removeNotification();
+                resolvePromise(selectedAddress);
+            }
+        };
+
+        const removeNotification = this._client.onNotification(handleAccountChange);
+
         const session = await this._client.createSession({
             optionalScopes: {
                 [scope]: {
@@ -370,7 +391,14 @@ export class MetaMaskAdapter extends Adapter {
                 tron_accountChanged_notifications: true,
             },
         });
-        this.updateSession(session);
+
+        // Wait for the accountChanged event to know which one to use, timeout after 2000ms
+        const selectedAddress = await Promise.race([
+            waitForAccountChangedPromise,
+            new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 2000)),
+        ]);
+
+        this.updateSession(session, undefined, selectedAddress);
     }
 
     /**
