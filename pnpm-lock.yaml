@@ -571,6 +571,9 @@ importers:
       '@tronweb3/tronwallet-adapter-binance':
         specifier: workspace:^
         version: link:../binance
+      '@tronweb3/tronwallet-adapter-binance-evm':
+        specifier: workspace:^
+        version: link:../evm/binance
       '@tronweb3/tronwallet-adapter-bitkeep':
         specifier: workspace:^
         version: link:../bitkeep
@@ -592,6 +595,9 @@ importers:
       '@tronweb3/tronwallet-adapter-ledger':
         specifier: workspace:^
         version: link:../ledger
+      '@tronweb3/tronwallet-adapter-metamask-evm':
+        specifier: workspace:^
+        version: link:../evm/metamask
       '@tronweb3/tronwallet-adapter-okxwallet':
         specifier: workspace:^
         version: link:../okxwallet
@@ -604,6 +610,9 @@ importers:
       '@tronweb3/tronwallet-adapter-tronlink':
         specifier: workspace:^
         version: link:../tronlink
+      '@tronweb3/tronwallet-adapter-tronlink-evm':
+        specifier: workspace:^
+        version: link:../evm/tronlink
       '@tronweb3/tronwallet-adapter-trust':
         specifier: workspace:^
         version: link:../trust
