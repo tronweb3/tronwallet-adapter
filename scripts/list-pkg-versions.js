@@ -6,12 +6,13 @@ const path = require('path');
 
 const EVM_PKGS = [
     '@tronweb3/abstract-adapter-evm',
-    '@tronweb3/tronwallet-adapter-metamask',
+    '@tronweb3/tronwallet-adapter-metamask-evm',
     '@tronweb3/tronwallet-adapter-tronlink-evm',
     '@tronweb3/tronwallet-adapter-binance-evm',
 ];
 const DIRS = [
     path.resolve(__dirname, '../packages/adapters'),
+    path.resolve(__dirname, '../packages/adapters/evm'),
     path.resolve(__dirname, '../packages/react'),
     path.resolve(__dirname, '../packages/vue'),
 ];
@@ -19,7 +20,7 @@ const pkgVersions = [];
 const pkgsToBeReleased = [];
 const pkgsNotChanged = [];
 DIRS.forEach((dir) => {
-    const subDirs = fs.readdirSync(dir).filter((pkg) => !pkg.startsWith('.'));
+    const subDirs = fs.readdirSync(dir).filter((pkg) => !pkg.startsWith('.') && pkg !== 'evm');
     subDirs.forEach((pkg) => {
         try {
             const { name, version } = JSON.parse(fs.readFileSync(path.resolve(dir, pkg, 'package.json')));

@@ -23,7 +23,7 @@
     "@tronweb3/tronwallet-abstract-adapter": "latest",
     "@tronweb3/tronwallet-adapter-binance-evm": "latest",
     "@tronweb3/tronwallet-adapter-ledger": "^1.1.11",
-    "@tronweb3/tronwallet-adapter-metamask": "latest",
+    "@tronweb3/tronwallet-adapter-metamask-evm": "^1.0.0",
     "@tronweb3/tronwallet-adapter-react-hooks": "latest",
     "@tronweb3/tronwallet-adapter-react-ui": "latest",
     "@tronweb3/tronwallet-adapter-tronlink-evm": "^1.0.1",
