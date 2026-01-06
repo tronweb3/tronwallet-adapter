@@ -1,28 +1,31 @@
 # @tronweb3/tronwallet-adapters
 
-`@tronweb3/tronwallet-adapters` provides multiple wallet adapters to help developers connect to Tron wallet like [TronLink](https://www.tronlink.org/) with consistent API.
+`@tronweb3/tronwallet-adapters` provides multiple wallet adapters to help developers connect to Tron and EVM wallets like [TronLink](https://www.tronlink.org/), [MetaMask](https://metamask.io/) with consistent API.
 
 ## Supported wallets
 
 As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use this package, or use the individual wallet adapter you want.
 
-| NPM package                                                                                                          | Description                                                    | Source Code                                                                                      |
-| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all the wallet adapters                               | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
-| [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | adapter for [TronLink](https://www.tronlink.org/)              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink)      |
-| [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | adapter for [WalletConnect](https://walletconnect.com/)        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
-| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | adapter for [TokenPocket](https://tokenpocket.pro/)            | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket)   |
-| [`@tronweb3/tronwallet-adapter-bitkeep`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)              | adapter for [BitGet](https://bitget.com/)                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep)       |
-| [`@tronweb3/tronwallet-adapter-okxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | adapter for [Okx Wallet](https://okx.com/)                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet)     |
-| [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | adapter for [Ledger](https://www.ledger.com/)                  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)        |
-| [`@tronweb3/tronwallet-adapter-imtoken`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             | adapter for [imToken](https://token.im/)                       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/imtoken)       |
-| [`@tronweb3/tronwallet-adapter-gatewallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)       | adapter for [gate.io](https://www.gate.io/web3)                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)    |
-| [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | adapter for [FoxWallet](https://foxwallet.com/)                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)     |
-| [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)         |
-| [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
-| [`@tronweb3/tronwallet-adapter-tomowallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | adapter for [Tomo Wallet App](https://tomo.inc/)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)         |
-| [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)                 | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)         |
-| [`@tronweb3/tronwallet-adapter-guarda`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)                 | adapter for [Guarda Wallet Extension](https://guarda.com?install=guarda-extensional)  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)         |
+| NPM package                                                                                                          | Description                                                                          | Source Code                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all the wallet adapters                                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
+| [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | adapter for [TronLink](https://www.tronlink.org/)                                    | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink)      |
+| [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | adapter for [WalletConnect](https://walletconnect.com/)                              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
+| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | adapter for [TokenPocket](https://tokenpocket.pro/)                                  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket)   |
+| [`@tronweb3/tronwallet-adapter-bitkeep`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)             | adapter for [BitGet](https://bitget.com/)                                            | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep)       |
+| [`@tronweb3/tronwallet-adapter-okxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | adapter for [Okx Wallet](https://okx.com/)                                           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet)     |
+| [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | adapter for [Ledger](https://www.ledger.com/)                                        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)        |
+| [`@tronweb3/tronwallet-adapter-imtoken`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             | adapter for [imToken](https://token.im/)                                             | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/imtoken)       |
+| [`@tronweb3/tronwallet-adapter-gatewallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)       | adapter for [gate.io](https://www.gate.io/web3)                                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)    |
+| [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | adapter for [FoxWallet](https://foxwallet.com/)                                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)     |
+| [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home)                       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)         |
+| [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)                        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
+| [`@tronweb3/tronwallet-adapter-tomowallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)       | adapter for [Tomo Wallet App](https://tomo.inc/)                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)    |
+| [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)       |
+| [`@tronweb3/tronwallet-adapter-guarda`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | adapter for [Guarda Wallet Extension](https://guarda.com?install=guarda-extensional) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)        |
+| [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm)   | EVM adapter for [MetaMask](https://metamask.io/)                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)  |
+| [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm)   | EVM adapter for [TronLink](https://www.tronlink.org/)                                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)  |
+| [`@tronweb3/tronwallet-adapter-binance-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance-evm)     | EVM adapter for [Binance Wallet](https://www.binance.com/en/binancewallet)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/binance)   |
 
 ## Usage
 
@@ -333,6 +336,10 @@ try {
 -   **TronLink Doesn't support `disconnect` by DApp**. As TronLinkAdapter doesn't support disconnect by DApp website, call `adapter.disconnect()` won't disconnect from TronLink extension really.
 -   **Auto open TronLink app in mobile browser**. If developers call `connect()` method in mobile browser, it will open DApp in TronLink app to get tronlink wallet.
 
+### EVM adapters
+
+For EVM adapters usage, please refer to the documentation: https://walletadapter.org/docs/guide/evm.html
+
 ### Other adapters
 
 Other adapters `Constructor` config api can be found in their source code `README`.
@@ -350,3 +357,6 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)
 -   [TomoWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)
 -   [BinanceWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)
+-   [MetaMaskEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)
+-   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)
+-   [BinanceEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/binance)
