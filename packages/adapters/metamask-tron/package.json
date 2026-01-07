@@ -43,7 +43,8 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@tronweb3/tronwallet-abstract-adapter": "workspace:^"
+        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
+        "@metamask/multichain-api-client": "^0.10.1"
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
