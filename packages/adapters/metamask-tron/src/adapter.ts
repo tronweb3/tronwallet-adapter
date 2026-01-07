@@ -126,14 +126,18 @@ export class MetaMaskAdapter extends Adapter {
      * @returns A promise that resolves when disconnected.
      */
     async disconnect(): Promise<void> {
-        this.stopAccountsChangedListener();
         if (this.state !== AdapterState.Connected) {
             return;
         }
+
+        this.stopAccountsChangedListener();
+
         this.setAddress(null);
         this.setScope(undefined, false);
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
+
+        await this._client.revokeSession({ scopes: [Scope.MAINNET, Scope.NILE, Scope.SHASTA] });
     }
 
     /**
