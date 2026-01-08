@@ -4,6 +4,7 @@ import HooksDemo from './components/HooksDemo.vue';
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
 import { Adapter } from '@tronweb3/tronwallet-abstract-adapter';
 import {
+    BackpackAdapter,
     BitKeepAdapter,
     LedgerAdapter,
     OkxWalletAdapter,
@@ -13,6 +14,7 @@ import {
     BybitWalletAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-vue-ui';
+const backpack = new BackpackAdapter();
 const tronLink = new TronLinkAdapter();
 const walletConnect = new WalletConnectAdapter({
     network: 'Nile',
@@ -53,7 +55,7 @@ const tokenPocket = new TokenPocketAdapter();
 const bitKeep = new BitKeepAdapter();
 const okxWalletAdapter = new OkxWalletAdapter();
 const bybit = new BybitWalletAdapter();
-const adapters = [tronLink, walletConnect, ledger, tokenPocket, bitKeep, okxWalletAdapter, bybit];
+const adapters = [backpack, tronLink, walletConnect, ledger, tokenPocket, bitKeep, okxWalletAdapter, bybit];
 
 function onAdapterChanged(adapter: Adapter) {
     console.log('[wallet hooks] onAdapterChanged: ', adapter?.name);

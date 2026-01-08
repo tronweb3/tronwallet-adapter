@@ -12,6 +12,7 @@ import {
 import toast from 'react-hot-toast';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Alert } from '@mui/material';
 import {
+    BackpackAdapter,
     TronLinkAdapter,
     TokenPocketAdapter,
     BitKeepAdapter,
@@ -46,6 +47,7 @@ export function App() {
         } else toast.error(e.message);
     }
     const adapters = useMemo(function () {
+        const backpackAdapter = new BackpackAdapter();
         const tronLink1 = new TronLinkAdapter();
         const walletConnect1 = new WalletConnectAdapter({
             network: 'Nile',
@@ -94,7 +96,17 @@ export function App() {
         const okxWalletAdapter = new OkxWalletAdapter();
         const gateAdapter = new GateWalletAdapter();
         const bybitAdapter = new BybitWalletAdapter();
-        return [tronLink1, walletConnect1, ledger, tokenPocket, bitKeep, okxWalletAdapter, gateAdapter, bybitAdapter];
+        return [
+            backpackAdapter,
+            tronLink1,
+            walletConnect1,
+            ledger,
+            tokenPocket,
+            bitKeep,
+            okxWalletAdapter,
+            gateAdapter,
+            bybitAdapter,
+        ];
     }, []);
     function onConnect() {
         console.log('onConnect');
