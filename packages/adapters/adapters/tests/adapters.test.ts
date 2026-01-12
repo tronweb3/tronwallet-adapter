@@ -15,6 +15,7 @@ test('this library should expose all adapters', () => {
     expect(Adapters.TrustAdapter).not.toBeUndefined();
     expect(Adapters.GuardaAdapter).not.toBeUndefined();
     expect(Adapters.BinanceWalletAdapter).not.toBeUndefined();
+    expect(Adapters.MetaMaskAdapter).not.toBeUndefined();
     expect(Adapters.MetaMaskEvmAdapter).not.toBeUndefined();
     expect(Adapters.TronLinkEvmAdapter).not.toBeUndefined();
     expect(Adapters.BinanceEvmAdapter).not.toBeUndefined();
