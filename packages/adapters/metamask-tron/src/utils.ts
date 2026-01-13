@@ -62,6 +62,10 @@ export function isAccountChangedEvent(event: any): boolean {
     return event?.method === 'wallet_notify' && event?.params?.notification?.method === 'metamask_accountsChanged';
 }
 
+export function isSessionChangedEvent(event: any): boolean {
+    return event?.method === 'wallet_sessionChanged';
+}
+
 /**
  * Converts a Tron scope to its corresponding NetworkType.
  * @param scope - The Tron scope string.
