@@ -58,6 +58,22 @@ export class MetaMaskAdapter extends Adapter {
         this._client = getMultichainClient({ transport: this._transport });
         this._checkWalletPromise = this.checkWallet();
         this._selectedAddressOnPageLoadPromise = this.getInitialSelectedAddress();
+        // Auto-restore session on page refresh
+        this._checkWalletPromise.then((walletReady) => {
+            if (walletReady) {
+                this.tryRestoringSession()
+                    .then(() => {
+                        if (this.address) {
+                            this.startListeners();
+                            this.setState(AdapterState.Connected);
+                            this.emit('connect', this.address);
+                        }
+                    })
+                    .catch((error) => {
+                        console.warn('Failed to auto-restore session:', error);
+                    });
+            }
+        });
     }
 
     /** Gets the current connected address. */
