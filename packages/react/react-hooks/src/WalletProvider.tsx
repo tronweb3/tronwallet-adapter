@@ -229,7 +229,7 @@ export const WalletProvider: FC<WalletProviderProps> = function ({
     useEffect(
         function () {
             const canAutoConnect = autoConnect && (!disableAutoConnectOnLoad || hasManuallySetName.current);
-            if (isConnecting.current || !canAutoConnect || !adapter || adapter.state !== AdapterState.Disconnect) {
+            if (isConnecting.current || !canAutoConnect || !adapter) {
                 return;
             }
             (async function connect() {

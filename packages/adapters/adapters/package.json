@@ -44,6 +44,7 @@
     },
     "dependencies": {
         "@tronweb3/tronwallet-adapter-binance": "workspace:^",
+        "@tronweb3/tronwallet-adapter-binance-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bitkeep": "workspace:^",
         "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
@@ -51,10 +52,12 @@
         "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
         "@tronweb3/tronwallet-adapter-imtoken": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger": "workspace:^",
+        "@tronweb3/tronwallet-adapter-metamask-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-okxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-tokenpocket": "workspace:^",
         "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
+        "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
         "@tronweb3/tronwallet-adapter-metamask-tron": "workspace:^"

@@ -58,7 +58,19 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 
 ### API
 
+
 -   `Constructor(config: WalletConnectAdapterConfig)`
+    WalletAdapter will pass the config to [AppKit Modal](https://docs.reown.com/appkit/react/core/options).
+    
+    **Notice**: To keep backward compatibility WalletAdapter retains `web3ModalConfig`. However, only these configurations are currently available:
+    - `web3ModalConfig.themeMode`
+    - `web3ModalConfig.themeVariables`: 
+        - `--wcm-z-index`
+        - `--wcm-font-family`
+    - `web3ModalConfig.explorerRecommendedWalletIds`
+
+    It's recommended to use `themeMode`, `themeVariables` and `featuredWalletIds`.
+
     ```typescript
     interface WalletConnectAdapterConfig {
         /**
@@ -93,47 +105,86 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
          */
         themeVariables?: ThemeVariables;
         /**
-         * WalletConnectModalOptions to WalletConnect.
-         * Only some properties of themeVariables and themeMode are valiable. It's recomended to use `config.themeVariables` and `config.themeMode`.
+         * Control the display of "All Wallets" button.
+         * @default `HIDE` (recommended for Tron as most wallets don't support it)
+         * @see https://docs.reown.com/appkit/react/core/options
          */
-        web3ModalConfig?: WalletConnectWeb3ModalConfig;
+        allWallets?: 'SHOW' | 'HIDE' | 'ONLY_MOBILE';
+        /**
+         * List of featured wallet IDs to display first (in order).
+         * @see https://walletguide.walletconnect.network/ to find wallet IDs
+         */
+        featuredWalletIds?: string[];
+        /**
+         * Whitelist of wallet IDs to include (if set, only these wallets will be shown).
+         */
+        includeWalletIds?: string[];
+        /**
+         * Blacklist of wallet IDs to exclude.
+         */
+        excludeWalletIds?: string[];
+        /**
+         * Custom wallets to add to the list.
+         */
+        customWallets?: any[];
+        /**
+         * Enable Reown cloud analytics.
+         * @default true
+         */
+        enableAnalytics?: boolean;
+        /**
+         * Enable debug logs.
+         * @default false
+         */
+        debug?: boolean;
+        /**
+         * Enable mobile deep linking optimization.
+         * When enabled, automatically configures mobile wallet IDs and settings for better deep linking support.
+         * @default true
+         */
+        enableMobileDeepLink?: boolean;
+        /**
+         * Additional AppKit configuration options.
+         * Any extra properties will be passed directly to createAppKit.
+         */
+        [key: string]: any;
     }
     interface ThemeVariables {
         /**
          * Base font family.
-        */
+         */
         '--w3m-font-family'?: string;
         /**
          * Color used for buttons, icons, labels, etc.
-        */
+         */
         '--w3m-accent'?: string;
         /**
          * The color that blends in with the default colors.
-        */
+         */
         '--w3m-color-mix'?: string;
         /**
          * The percentage on how much “—w3m-color-mix” should blend in.
-        */
+         */
         '--w3m-color-mix-strength'?: number;
         /**
          * The base pixel size for fonts.
-        */
+         */
         '--w3m-font-size-master'?: string;
         /**
          * The base border radius in pixels.
-        */
+         */
         '--w3m-border-radius-master'?: string;
         /**
          * The z-index of the modal.
-        */
+         */
         '--w3m-z-index'?: number;
         /**
-        * The color of the QRCode.
-        */
+         * The color of the QRCode.
+         */
         '--w3m-qr-color'?: string;
     }
     ```
-- `getConnectionStatus(): Promise<{ address: string }>`: Get current connection status. If WalletConnect is connected, the address will be a non-empty value.
+-   `getConnectionStatus(): Promise<{ address: string }>`: Get current connection status. If WalletConnect is connected, the address will be a non-empty value.
 
 ### Caveates
 

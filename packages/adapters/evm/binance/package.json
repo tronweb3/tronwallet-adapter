@@ -1,0 +1,54 @@
+{
+    "name": "@tronweb3/tronwallet-adapter-binance-evm",
+    "version": "1.1.0",
+    "description": "Wallet adapter for Binance wallet app on EVM.",
+    "keywords": [
+        "EVM",
+        "Ethereum Wallet",
+        "Binance Wallet"
+    ],
+    "author": "tronweb3",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tronweb3/tronwallet-adapter"
+    },
+    "license": "MIT",
+    "type": "module",
+    "sideEffects": false,
+    "engines": {
+        "node": ">=16",
+        "pnpm": ">=7"
+    },
+    "main": "./lib/cjs/index.js",
+    "module": "./lib/esm/index.js",
+    "types": "./lib/types/index.d.ts",
+    "exports": {
+        "types": "./lib/types/index.d.ts",
+        "require": "./lib/cjs/index.js",
+        "import": "./lib/esm/index.js"
+    },
+    "files": [
+        "lib",
+        "src",
+        "LICENSE"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "clean": "shx mkdir -p lib && shx rm -rf lib",
+        "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
+        "test": "vitest run",
+        "test:coverage": "jest  --coverage",
+        "build:umd": "node ../../../../scripts/build-umd.js"
+    },
+    "dependencies": {
+        "@binance/w3w-utils": "1.1.6",
+        "@tronweb3/abstract-adapter-evm": "workspace:^"
+    },
+    "devDependencies": {
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
+        "vitest": "3.2.4"
+    }
+}
