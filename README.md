@@ -4,7 +4,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 
 ## Wallet Integrations
 
-### Supported
+### Supported Tron Wallets
 
 | Wallet Name                                         | platform          | version                        |
 | --------------------------------------------------- | ----------------- | ------------------------------ |
@@ -329,6 +329,7 @@ This package contains all wallet adapters for Tron including:
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [Guarda Wallet](https://guarda.com)
+-   [MetaMask](https://metamask.io)
 
 Code example：
 
