@@ -44,6 +44,9 @@
             "path": "./packages/adapters/evm/metamask/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/metamask-tron/tsconfig.all.json"
+        },
+        {
             "path": "./packages/adapters/evm/tronlink/tsconfig.all.json"
         },
         {

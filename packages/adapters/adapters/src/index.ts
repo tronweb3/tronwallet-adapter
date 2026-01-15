@@ -12,6 +12,7 @@ export * from '@tronweb3/tronwallet-adapter-tomowallet';
 export * from '@tronweb3/tronwallet-adapter-trust';
 export * from '@tronweb3/tronwallet-adapter-guarda';
 export * from '@tronweb3/tronwallet-adapter-binance';
+export * from '@tronweb3/tronwallet-adapter-metamask-tron';
 export * from '@tronweb3/tronwallet-adapter-metamask-evm';
 export * from '@tronweb3/tronwallet-adapter-tronlink-evm';
 export * from '@tronweb3/tronwallet-adapter-binance-evm';

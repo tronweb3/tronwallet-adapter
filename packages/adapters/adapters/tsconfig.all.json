@@ -41,6 +41,9 @@
             "path": "../binance/tsconfig.all.json"
         },
         {
+            "path": "../metamask-tron/tsconfig.all.json"
+        },
+        {
             "path": "../guarda/tsconfig.all.json"
         },
         {

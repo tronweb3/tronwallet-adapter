@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.18",
+    "version": "1.2.19",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
@@ -59,7 +59,8 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
-        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
+        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
+        "@tronweb3/tronwallet-adapter-metamask-tron": "workspace:^"
     },
     "devDependencies": {
         "@walletconnect/modal": "^2.6.2",
