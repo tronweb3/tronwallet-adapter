@@ -20,7 +20,6 @@ overrides:
   word-wrap: '>=1.2.4'
   yaml: '>=2.2.2'
   '@babel/traverse': '>=7.23.2'
-  pnpm: '>=7.33.4'
   vconsole: '>=3.15.1'
   '@adobe/css-tools': '>=4.3.2'
   follow-redirects: '>=1.15.6'
@@ -59,10 +58,8 @@ overrides:
   vitest@>=1.0.0 <1.6.1: '>=1.6.1'
   '@vitest/browser@>=2.0.4 <2.1.9': '>=2.1.9'
   vite@>=5.0.0 <=5.4.11: '>=5.4.12'
-  axios@<1.8.3: '>=1.8.3'
   '@babel/runtime@<7.26.10': '>=7.26.10'
   '@babel/helpers@<7.26.10': '>=7.26.10'
-  pnpm@<10.0.0: '>=10.0.0'
   http-proxy-middleware@>=3.0.0 <3.0.5: '>=3.0.5'
   vite@>=6.2.0 <=6.2.6: '>=6.2.7'
   brace-expansion@>=1.0.0 <=1.1.11: '>=1.1.12'
@@ -82,7 +79,8 @@ overrides:
   validator@<13.15.20: '>=13.15.20'
   glob: '>=11.1.0'
   node-forge@<1.3.2: '>=1.3.2'
-  next@>=15.5.0 <15.5.8: '>=15.5.8'
+  pnpm@<10.27.0: '>=10.27.0'
+  h3@<=1.15.4: '>=1.15.5'
 
 importers:
 
@@ -161,8 +159,8 @@ importers:
         specifier: ^13.1.0
         version: 13.3.0(enquirer@2.4.1)
       pnpm:
-        specifier: '>=10.0.0'
-        version: 10.10.0
+        specifier: '>=10.27.0'
+        version: 10.28.0
       prettier:
         specifier: 2.7.1
         version: 2.7.1
@@ -301,10 +299,10 @@ importers:
         version: link:../../packages/adapters/evm/metamask
       '@tronweb3/tronwallet-adapter-react-hooks':
         specifier: latest
-        version: link:../../packages/react/react-hooks
+        version: 1.1.11(bufferutil@4.0.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapter-react-ui':
         specifier: latest
-        version: link:../../packages/react/react-ui
+        version: 1.1.12(bufferutil@4.0.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapter-tronlink-evm':
         specifier: ^1.0.1
         version: link:../../packages/adapters/evm/tronlink
@@ -383,10 +381,10 @@ importers:
         version: link:../../../packages/adapters/abstract-adapter
       '@tronweb3/tronwallet-adapter-react-hooks':
         specifier: latest
-        version: link:../../../packages/react/react-hooks
+        version: 1.1.11(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapter-react-ui':
         specifier: latest
-        version: link:../../../packages/react/react-ui
+        version: 1.1.12(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapters':
         specifier: latest
         version: link:../../../packages/adapters/adapters
@@ -453,10 +451,10 @@ importers:
         version: link:../../../packages/adapters/abstract-adapter
       '@tronweb3/tronwallet-adapter-react-hooks':
         specifier: latest
-        version: link:../../../packages/react/react-hooks
+        version: 1.1.11(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapter-react-ui':
         specifier: latest
-        version: link:../../../packages/react/react-ui
+        version: 1.1.12(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
       '@tronweb3/tronwallet-adapters':
         specifier: latest
         version: link:../../../packages/adapters/adapters
@@ -598,6 +596,9 @@ importers:
       '@tronweb3/tronwallet-adapter-metamask-evm':
         specifier: workspace:^
         version: link:../evm/metamask
+      '@tronweb3/tronwallet-adapter-metamask-tron':
+        specifier: workspace:^
+        version: link:../metamask-tron
       '@tronweb3/tronwallet-adapter-okxwallet':
         specifier: workspace:^
         version: link:../okxwallet
@@ -871,6 +872,25 @@ importers:
       preact:
         specifier: ^10.11.3
         version: 10.23.0
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      jest-environment-jsdom:
+        specifier: ^29.3.1
+        version: 29.7.0(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+
+  packages/adapters/metamask-tron:
+    dependencies:
+      '@metamask/multichain-api-client':
+        specifier: ^0.10.1
+        version: 0.10.1
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
     devDependencies:
       '@testing-library/dom':
         specifier: ^8.20.0
@@ -3053,6 +3073,10 @@ packages:
     resolution: {integrity: sha512-dwZPq8wx9yV3IX2caLi9q9xZBw2XeIoYqdyihDDDpuHVCEiqadJLwqM3zy+uwf6F1QYQ65A8aOMQg1Uw7LMLNg==}
     engines: {node: '>=16.0.0'}
 
+  '@metamask/multichain-api-client@0.10.1':
+    resolution: {integrity: sha512-LsqO2SiDcTgOuXyVYEB0zgBaVNhryhP2tYI3L7tLa7PoeDqMkNIreFhDeu8jM5tPWkCimQvMwCkG3DF4P5dD3A==}
+    engines: {node: ^18.20 || ^20.17 || >=22}
+
   '@metamask/rpc-errors@6.3.1':
     resolution: {integrity: sha512-ugDY7cKjF4/yH5LtBaOIKHw/AiGGSAmzptAUEiAEGr/78LwuzcXAxmzEQfSfMIfI+f9Djr8cttq1pRJJKfTuCg==}
     engines: {node: '>=16.0.0'}
@@ -3974,12 +3998,30 @@ packages:
     resolution: {integrity: sha512-43suyRr/RuJCueRaspSlNKxd0rMt/2VTmq5tkRF/WlxGI4CTEIEYk3NqdKBrVFobfsILOXQBiQg0cI+FF5lxtw==}
     engines: {node: '>=16', pnpm: '>=7'}
 
+  '@tronweb3/tronwallet-adapter-react-hooks@1.1.11':
+    resolution: {integrity: sha512-ED2zs3TCTA3wPAcfkt7cHXENwLH5ob41MRstJh8N4iqwSaB5Z7paadGwGxl1qkjvb5V4rbMRWdRBi17cnaqnVQ==}
+    engines: {node: '>=16', pnpm: '>=7'}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
+
+  '@tronweb3/tronwallet-adapter-react-ui@1.1.12':
+    resolution: {integrity: sha512-+ZkeaW3VfD2KpVHUONJoQKs18SdKx0o6eL/ILEivuvzL16pzc8dzu5fEJq3DSImOll6Wg/xgsu8F4z0oHodotg==}
+    engines: {node: '>=16', pnpm: '>=7'}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
+
   '@tronweb3/tronwallet-adapter-tokenpocket@1.0.6':
     resolution: {integrity: sha512-NOsnAcF1nzVNkRsqSCt9pno5/w7QfH+ZOel9aO9ULW46lG5sSX5rFumqBE+CkK/SZg4wpDNkzvaf85d7vi+0+A==}
     engines: {node: '>=16', pnpm: '>=7'}
 
   '@tronweb3/tronwallet-adapter-tronlink@1.1.12':
     resolution: {integrity: sha512-ArRTfvxhZeUXHQHdOtw7yo8ddKP6k2cafp8lvhfmCgExx04Fgm1b/pR38JdKvNkQCROGzHNgWkwfrheQRMMU6A==}
+    engines: {node: '>=16', pnpm: '>=7'}
+
+  '@tronweb3/tronwallet-adapter-tronlink@1.1.13':
+    resolution: {integrity: sha512-Oq5L0FyBM+g49DCr0DYdSx8xuhiqIlKoBTPNVmCTSDoWnoZpIh0XE33Axm/4OUMO2NHFpQMvP3pFo7QIllOZ/w==}
     engines: {node: '>=16', pnpm: '>=7'}
 
   '@tronweb3/tronwallet-adapter-tronlink@1.1.9':
@@ -5424,8 +5466,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  cookie-es@1.2.1:
-    resolution: {integrity: sha512-ilTPDuxhZX44BSzzRB58gvSY2UevZKQM9fjisn7Z+NJ92CtSU6kO1+22ZN/agbEJANFjK85EiJJbi/gQv18OXA==}
+  cookie-es@1.2.2:
+    resolution: {integrity: sha512-+W7VmiVINB+ywl1HGXJXmrqkOhpKrIiVZV6tQuV54ZyQC7MMuBt81Vc336GMLoHBq5hV/F9eXgt5Mnx0Rha5Fg==}
 
   cookie@0.7.2:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
@@ -5513,6 +5555,9 @@ packages:
     peerDependenciesMeta:
       uWebSockets.js:
         optional: true
+
+  crossws@0.3.5:
+    resolution: {integrity: sha512-ojKiDvcmByhwa8YYqbQI/hg7MEU0NC03+pSdEq4ZUnZR9xXpwk7E43SMNGkn+JxJGPFtNvQ48+vV2p+P1ml5PA==}
 
   crypto-browserify@3.12.0:
     resolution: {integrity: sha512-fz4spIh+znjO2VjL+IdhEpRJ3YN6sMzITSBijk6FK2UvTqruSQW+/cCZTSNsMiZNvUeq0CqurF+dAbyiGOY6Wg==}
@@ -5697,6 +5742,9 @@ packages:
 
   destr@2.0.3:
     resolution: {integrity: sha512-2N3BOUU4gYMpTP24s5rF5iP7BDr7uNTCs4ozw3kf/eKfvWSIu93GEBi5m427YoyJoeOzQ5smuu4nNAPGb8idSQ==}
+
+  destr@2.0.5:
+    resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
 
   detect-browser@5.3.0:
     resolution: {integrity: sha512-53rsFbGdwMwlF7qvCt0ypLM5V5/Mbl0szB7GPN8y9NCcbknYOeVVXdrXEq+90IwAfrrzt6Hd+u2E2ntakICU8w==}
@@ -6409,8 +6457,8 @@ packages:
     resolution: {integrity: sha512-GGTKBX4SD7Wdb8mqeDLni2oaRGYQWjWHGKPQ24ZMnUtKfcsVoiv4uX8+LJr1K6U5VW2Lu1BwJnj7uiori0YtRw==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
-  h3@1.12.0:
-    resolution: {integrity: sha512-Zi/CcNeWBXDrFNlV0hUBJQR9F7a96RjMeAZweW/ZWkR9fuXrMcvKnSA63f/zZ9l0GgQOZDVHGvXivNN9PWOwhA==}
+  h3@1.15.5:
+    resolution: {integrity: sha512-xEyq3rSl+dhGX2Lm0+eFQIAzlDN6Fs0EcC4f7BNUmzaRX/PTzeuM+Tr2lHB8FoXggsQIeXLj8EDVgs5ywxyxmg==}
 
   happy-dom@20.0.10:
     resolution: {integrity: sha512-6umCCHcjQrhP5oXhrHQQvLB0bwb1UzHAHdsXy+FjtKoYjUhmNZsQL8NivwM1vDvNEChJabVrUYxUnp/ZdYmy2g==}
@@ -7563,11 +7611,6 @@ packages:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
 
-  mime@3.0.0:
-    resolution: {integrity: sha512-jSCU7/VB1loIWBZe14aEYHU/+1UMEHoaO7qxCOVJOw9GgH72VAWppxNcjU+x9a2k3GSIBXNKxXQFqRvvZ7vr3A==}
-    engines: {node: '>=10.0.0'}
-    hasBin: true
-
   mimic-fn@2.1.0:
     resolution: {integrity: sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==}
     engines: {node: '>=6'}
@@ -7732,6 +7775,9 @@ packages:
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
 
+  node-mock-http@1.0.4:
+    resolution: {integrity: sha512-8DY+kFsDkNXy1sJglUfuODx1/opAGJGyrTuFqEoN90oRc2Vk0ZbD4K2qmKXBBEhZQzdKHIVfEJpDU8Ak2NJEvQ==}
+
   node-releases@2.0.18:
     resolution: {integrity: sha512-d9VeXT4SJ7ZeOqGX6R5EM022wpL+eWPooLI+5UpWn2jCT1aosUQEhQP214x33Wkwx3JQMvIm+tIoVOdodFS40g==}
 
@@ -7807,9 +7853,6 @@ packages:
 
   ofetch@1.3.4:
     resolution: {integrity: sha512-KLIET85ik3vhEfS+3fDlc/BAZiAp+43QEC/yCo5zkNoY2YaKvNkOaFr/6wCFgFH1kuYQM5pMNi0Tg8koiIemtw==}
-
-  ohash@1.1.3:
-    resolution: {integrity: sha512-zuHHiGTYTA1sYJ/wZN+t5HKZaH23i4yI1HMwbuXm24Nid7Dv0KcuRlKoNKS9UNfAVSBlnGLcuQrnOKWOZoEGaw==}
 
   on-exit-leak-free@0.2.0:
     resolution: {integrity: sha512-dqaz3u44QbRXQooZLTUKU41ZrzYrcvLISVgbrzbyCMxpmSLJvZ3ZamIJIZ29P6OhZIkNIQKosdeM6t1LYbA9hg==}
@@ -8043,8 +8086,8 @@ packages:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
 
-  pnpm@10.10.0:
-    resolution: {integrity: sha512-1hXbJG/nDyXc/qbY1z3ueCziPiJF48T2+Igkn7VoFJMYY33Kc8LFyO8qTKDVZX+5VnGIv6tH9WbR7mzph4FcOQ==}
+  pnpm@10.28.0:
+    resolution: {integrity: sha512-Bd9x0UIfITmeBT/eVnzqNNRG+gLHZXFEG/wceVbpjjYwiJgtlARl/TRIDU2QoGaLwSNi+KqIAApk6D0LDke+SA==}
     engines: {node: '>=18.12'}
     hasBin: true
 
@@ -9007,6 +9050,9 @@ packages:
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
 
+  ufo@1.6.3:
+    resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
+
   uint8arrays@3.1.0:
     resolution: {integrity: sha512-ei5rfKtoRO8OyOIor2Rz5fhzjThwIHJZ3uyDPnDHTXbP0aMQ1RN/6AI5B5d9dBxJOU+BvOAk7ZQ1xphsX8Lrog==}
 
@@ -9024,9 +9070,6 @@ packages:
 
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
-
-  unenv@1.10.0:
-    resolution: {integrity: sha512-wY5bskBQFL9n3Eca5XnhH6KbUo/tfvkwm9OpcdCvLaeA7piBNbavbOKJySEwQ1V0RH6HvNlSAFRTpvTqgKRQXQ==}
 
   unfetch@4.2.0:
     resolution: {integrity: sha512-F9p7yYCn6cIW9El1zi0HI6vqpeIvBsr3dSuRO6Xuppb1u5rXpCPmMvLSyECLhybr9isec8Ohl0hPekMVrEinDA==}
@@ -12215,6 +12258,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@metamask/multichain-api-client@0.10.1': {}
+
   '@metamask/rpc-errors@6.3.1':
     dependencies:
       '@metamask/utils': 9.1.0
@@ -13323,6 +13368,15 @@ snapshots:
 
   '@tronweb3/google-protobuf@3.21.2': {}
 
+  '@tronweb3/tronwallet-abstract-adapter@1.1.10(bufferutil@4.0.7)(utf-8-validate@6.0.3)':
+    dependencies:
+      eventemitter3: 4.0.7
+      tronweb: 6.0.0(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
   '@tronweb3/tronwallet-abstract-adapter@1.1.10(bufferutil@4.0.8)(utf-8-validate@6.0.3)':
     dependencies:
       eventemitter3: 4.0.7
@@ -13383,6 +13437,50 @@ snapshots:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.6
       '@tronweb3/tronwallet-adapter-tronlink': 1.1.9
 
+  '@tronweb3/tronwallet-adapter-react-hooks@1.1.11(bufferutil@4.0.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-tronlink': 1.1.13(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@tronweb3/tronwallet-adapter-react-hooks@1.1.11(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-tronlink': 1.1.13(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@tronweb3/tronwallet-adapter-react-ui@1.1.12(bufferutil@4.0.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-react-hooks': 1.1.11(bufferutil@4.0.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@tronweb3/tronwallet-adapter-react-ui@1.1.12(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      '@tronweb3/tronwallet-adapter-react-hooks': 1.1.11(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@6.0.3)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
   '@tronweb3/tronwallet-adapter-tokenpocket@1.0.6(bufferutil@4.0.8)(utf-8-validate@6.0.3)':
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.9(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -13393,6 +13491,22 @@ snapshots:
       - utf-8-validate
 
   '@tronweb3/tronwallet-adapter-tronlink@1.1.12(bufferutil@4.0.8)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@tronweb3/tronwallet-adapter-tronlink@1.1.13(bufferutil@4.0.7)(utf-8-validate@6.0.3)':
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.7)(utf-8-validate@6.0.3)
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - utf-8-validate
+
+  '@tronweb3/tronwallet-adapter-tronlink@1.1.13(bufferutil@4.0.8)(utf-8-validate@6.0.3)':
     dependencies:
       '@tronweb3/tronwallet-abstract-adapter': 1.1.10(bufferutil@4.0.8)(utf-8-validate@6.0.3)
     transitivePeerDependencies:
@@ -15867,7 +15981,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cookie-es@1.2.1: {}
+  cookie-es@1.2.2: {}
 
   cookie@0.7.2:
     optional: true
@@ -15992,6 +16106,10 @@ snapshots:
       which: 2.0.2
 
   crossws@0.2.4: {}
+
+  crossws@0.3.5:
+    dependencies:
+      uncrypto: 0.1.3
 
   crypto-browserify@3.12.0:
     dependencies:
@@ -16158,6 +16276,8 @@ snapshots:
       minimalistic-assert: 1.0.1
 
   destr@2.0.3: {}
+
+  destr@2.0.5: {}
 
   detect-browser@5.3.0: {}
 
@@ -17106,20 +17226,17 @@ snapshots:
   graphql@16.9.0:
     optional: true
 
-  h3@1.12.0:
+  h3@1.15.5:
     dependencies:
-      cookie-es: 1.2.1
-      crossws: 0.2.4
+      cookie-es: 1.2.2
+      crossws: 0.3.5
       defu: 6.1.4
-      destr: 2.0.3
+      destr: 2.0.5
       iron-webcrypto: 1.2.1
-      ohash: 1.1.3
+      node-mock-http: 1.0.4
       radix3: 1.1.2
-      ufo: 1.5.4
+      ufo: 1.6.3
       uncrypto: 0.1.3
-      unenv: 1.10.0
-    transitivePeerDependencies:
-      - uWebSockets.js
 
   happy-dom@20.0.10:
     dependencies:
@@ -18685,7 +18802,7 @@ snapshots:
       crossws: 0.2.4
       defu: 6.1.4
       get-port-please: 3.1.2
-      h3: 1.12.0
+      h3: 1.15.5
       http-shutdown: 1.2.2
       jiti: 1.21.6
       mlly: 1.7.1
@@ -18903,8 +19020,6 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  mime@3.0.0: {}
-
   mimic-fn@2.1.0: {}
 
   mimic-fn@4.0.0: {}
@@ -19054,6 +19169,8 @@ snapshots:
 
   node-int64@0.4.0: {}
 
+  node-mock-http@1.0.4: {}
+
   node-releases@2.0.18: {}
 
   node-releases@2.0.19: {}
@@ -19156,8 +19273,6 @@ snapshots:
       destr: 2.0.3
       node-fetch-native: 1.6.4
       ufo: 1.5.4
-
-  ohash@1.1.3: {}
 
   on-exit-leak-free@0.2.0: {}
 
@@ -19403,7 +19518,7 @@ snapshots:
 
   pngjs@5.0.0: {}
 
-  pnpm@10.10.0: {}
+  pnpm@10.28.0: {}
 
   pony-cause@2.1.11: {}
 
@@ -20531,6 +20646,8 @@ snapshots:
 
   ufo@1.5.4: {}
 
+  ufo@1.6.3: {}
+
   uint8arrays@3.1.0:
     dependencies:
       multiformats: 9.9.0
@@ -20551,14 +20668,6 @@ snapshots:
   undici-types@5.26.5: {}
 
   undici-types@6.19.8: {}
-
-  unenv@1.10.0:
-    dependencies:
-      consola: 3.2.3
-      defu: 6.1.4
-      mime: 3.0.0
-      node-fetch-native: 1.6.4
-      pathe: 1.1.2
 
   unfetch@4.2.0: {}
 
@@ -20584,7 +20693,7 @@ snapshots:
       anymatch: 3.1.3
       chokidar: 3.6.0
       destr: 2.0.3
-      h3: 1.12.0
+      h3: 1.15.5
       listhen: 1.7.2
       lru-cache: 10.4.3
       mri: 1.2.0

@@ -20,6 +20,7 @@ import {
     BybitWalletAdapter,
     LedgerAdapter,
     WalletConnectAdapter,
+    MetaMaskAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { tronWeb } from './tronweb';
 import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
@@ -94,7 +95,18 @@ export function App() {
         const okxWalletAdapter = new OkxWalletAdapter();
         const gateAdapter = new GateWalletAdapter();
         const bybitAdapter = new BybitWalletAdapter();
-        return [tronLink1, walletConnect1, ledger, tokenPocket, bitKeep, okxWalletAdapter, gateAdapter, bybitAdapter];
+        const metaMaskAdapter = new MetaMaskAdapter();
+        return [
+            tronLink1,
+            metaMaskAdapter,
+            walletConnect1,
+            ledger,
+            tokenPocket,
+            bitKeep,
+            okxWalletAdapter,
+            gateAdapter,
+            bybitAdapter,
+        ];
     }, []);
     function onConnect() {
         console.log('onConnect');

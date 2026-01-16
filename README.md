@@ -4,7 +4,7 @@ This repository contains wallet adapters and components for Tron DApps. With out
 
 ## Wallet Integrations
 
-### Supported
+### Supported Tron Wallets
 
 | Wallet Name                                         | platform          | version                        |
 | --------------------------------------------------- | ----------------- | ------------------------------ |
@@ -46,6 +46,9 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [Binance](https://www.binance.com/en/binancewallet) | Android           | >=3.2.4                        |
 |                                                     | iOS               | >=3.2.3                        |
 |                                                     | Browser Extension | Not Support                    |
+| [MetaMask](https://metamask.io/)                    | Android           | Not Support                    |
+|                                                     | iOS               | Not Support                    |
+|                                                     | Browser Extension | >=13.14.0                      |
 
 ### Supported EVM Wallets
 
@@ -233,6 +236,7 @@ tronwallet-adapter
 |   |   ├─bybit # adapter for Bybit Wallet
 |   |   ├─trust # adapter for Trust Wallet
 |   |   ├─tomowallet # adapter for Tomo Wallet
+|   |   ├─metamask-tron # adapter for MetaMask Wallet
 |   |   ├─binance # adapter for Binance Wallet
 |   |   ├─evm # adapters for EVM compatible Wallet
 |   |   |   ├─abstract-adapter
@@ -277,14 +281,15 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)       | Adapter for Tomo Wallet App(iOS and Android)                     |
 | [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | Adapter for Binance Wallet App(iOS and Android)                  |
 | [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | Adapter for Guarda Wallet Extension                              |
+| [`@tronweb3/tronwallet-adapter-metamask-tron`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron)               | Adapter for MetaMask Wallet                              |
 
 ### EvmWallet Adapters
-| package                                                                                                                  | description                                                      |
-| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| [`@tronweb3/tronwallet-adapter-binance-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance-evm)           | Adapter for Binance extention and app|
-| [`@tronweb3/tronwallet-adapter-metamask-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm)           | Adapter for MetaMask extention and app|
-| [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm)           | Adapter for TronLink extention|
 
+| package                                                                                                                | description                            |
+| ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| [`@tronweb3/tronwallet-adapter-binance-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance-evm)   | Adapter for Binance extention and app  |
+| [`@tronweb3/tronwallet-adapter-metamask-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm) | Adapter for MetaMask extention and app |
+| [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm) | Adapter for TronLink extention         |
 
 ### React Components
 
@@ -324,6 +329,7 @@ This package contains all wallet adapters for Tron including:
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [Guarda Wallet](https://guarda.com)
+-   [MetaMask](https://metamask.io)
 
 Code example：
 
@@ -507,7 +513,7 @@ pnpm example
 > As the repo uses `pnpm` to manage workspace, please install `Nodejs` and `pnpm` first.
 > The following is required:
 >
-> -   Nodejs = 18.20.2
+> -   Nodejs = 20.18.0
 > -   pnpm = 9.6.0
 
 ## Which package should developers use ?
@@ -528,7 +534,7 @@ Welcome to contribute your idea!
     ```bash
     git clone https://github.com/tronweb3/tronwallet-adapter.git
     ```
-2. Install Nodejs@18.20.2 and pnpm@9.6.0
+2. Install Nodejs@20.18.0 and pnpm@9.6.0
 3. Install dependencies
     ```bash
     pnpm install
