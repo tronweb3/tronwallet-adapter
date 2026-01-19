@@ -44,7 +44,7 @@
     },
     "dependencies": {
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@metamask/multichain-api-client": "^0.10.1"
+        "@metamask/multichain-api-client": "0.11.0"
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
