@@ -9,8 +9,13 @@ import { WalletItem } from '../WalletItem.js';
 type ModalProps = PropsWithChildren<{
     visible: boolean;
     onClose: () => void;
+    openUrlWhenWalletNotFoundSync?: boolean;
 }>;
-export const WalletSelectModal: FC<ModalProps> = function ({ visible, onClose }) {
+export const WalletSelectModal: FC<ModalProps> = function ({
+    visible,
+    onClose,
+    openUrlWhenWalletNotFoundSync = false,
+}) {
     const nodeRef = useRef(null);
     const { wallets, select } = useWallet();
     const [fadeIn, setFadeIn] = useState(false);
@@ -26,10 +31,16 @@ export const WalletSelectModal: FC<ModalProps> = function ({ visible, onClose })
 
     const onWalletClick = useCallback(
         (wallet: Wallet) => {
+            if (openUrlWhenWalletNotFoundSync && wallet.state === AdapterState.NotFound) {
+                if (wallet.adapter.url) {
+                    window.open(wallet.adapter.url, '_blank');
+                }
+                return;
+            }
             select(wallet.adapter.name);
             onClose();
         },
-        [select, onClose]
+        [select, onClose, openUrlWhenWalletNotFoundSync]
     );
     function show() {
         setRender(true);
