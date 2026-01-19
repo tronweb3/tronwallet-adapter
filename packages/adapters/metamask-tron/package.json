@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-metamask-tron",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Wallet adapter for MetaMask Extension and App Wallet on TRON.",
     "keywords": [
         "TRON",
@@ -47,8 +47,8 @@
         "@metamask/multichain-api-client": "0.11.0"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "jest-environment-jsdom": "^29.3.1",
-        "shx": "^0.3.4"
+        "@testing-library/dom": "10.4.0",
+        "jest-environment-jsdom": "29.7.0",
+        "shx": "0.3.4"
     }
 }
