@@ -1,4 +1,4 @@
-# TronWallet CND Demo
+# TronWallet CDN Demo
 This project shows how to use Tronwallet Adapter with vanilla js.
 
 ## Usage
