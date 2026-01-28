@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:walletadapter.org)",
+      "Bash(pnpm --filter @tronweb3/tronwallet-adapter-backpack build:*)",
+      "Bash(pnpm build:adapters:*)",
+      "Bash(pnpm build:ts:*)",
+      "Bash(pnpm --filter @tronweb3/tronwallet-adapter-backpack test)"
+    ]
+  }
+}
