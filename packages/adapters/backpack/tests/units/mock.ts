@@ -30,9 +30,9 @@ export class MockBackpackProvider implements BackpackTronProvider {
             case 'tron_signTransaction':
                 if (!this._connected) throw new Error('Not connected');
                 return { txID: 'test_tx_id', signature: ['test_signature'] };
-            case 'eth_chainId':
+            case 'tron_chainId':
                 return '0x2b6653dc';
-            case 'wallet_switchEthereumChain':
+            case 'tron_switchChain':
                 return null;
             default:
                 throw new Error(`Unknown method: ${args.method}`);

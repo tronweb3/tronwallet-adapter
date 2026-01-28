@@ -245,8 +245,8 @@ export class BackpackAdapter extends Adapter {
 
             try {
                 await wallet.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId }],
+                    method: 'tron_switchChain',
+                    params: { chainId },
                 });
                 this.emit('chainChanged', { chainId });
             } catch (error: any) {
@@ -263,7 +263,7 @@ export class BackpackAdapter extends Adapter {
             const wallet = this._checkConnected();
 
             try {
-                const chainId = (await wallet.request({ method: 'eth_chainId' })) as string;
+                const chainId = (await wallet.request({ method: 'tron_chainId' })) as string;
                 return {
                     networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
                     chainId,

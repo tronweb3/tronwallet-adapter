@@ -294,7 +294,7 @@ describe('BackpackAdapter - switchChain()', () => {
         provider.request = jest.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
-            if (args.method === 'wallet_switchEthereumChain') return Promise.resolve(null);
+            if (args.method === 'tron_switchChain') return Promise.resolve(null);
             return Promise.reject(new Error('Unknown method'));
         });
 
@@ -328,7 +328,7 @@ describe('BackpackAdapter - network()', () => {
         provider.request = jest.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
-            if (args.method === 'eth_chainId') return Promise.resolve('0x2b6653dc');
+            if (args.method === 'tron_chainId') return Promise.resolve('0x2b6653dc');
             return Promise.reject(new Error('Unknown method'));
         });
 
