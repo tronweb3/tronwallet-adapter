@@ -10,18 +10,27 @@
 import {
     Adapter,
     AdapterState,
+    NetworkType,
     WalletConnectionError,
     WalletDisconnectedError,
     WalletError,
+    WalletGetNetworkError,
     WalletNotFoundError,
     WalletReadyState,
     WalletSignMessageError,
     WalletSignTransactionError,
     WalletSwitchChainError,
     type AdapterName,
+    type Network,
     type SignedTransaction,
     type Transaction,
 } from '@tronweb3/tronwallet-abstract-adapter';
+
+const chainIdNetworkMap: Record<string, NetworkType> = {
+    '0x2b6653dc': NetworkType.Mainnet,
+    '0x94a9059e': NetworkType.Shasta,
+    '0xcd8690dc': NetworkType.Nile,
+};
 
 /**
  * Backpack TRON Wallet Adapter
@@ -85,14 +94,14 @@ export class BackpackAdapter extends Adapter {
         if (tron && typeof tron.request === 'function') {
             this._provider = tron;
             this._setReadyState(WalletReadyState.Found);
-            this._setState(AdapterState.Loading);
+            this._checkExistingConnection();
             return;
         }
 
         if (tronWeb && typeof tronWeb.request === 'function') {
             this._provider = tronWeb;
             this._setReadyState(WalletReadyState.Found);
-            this._setState(AdapterState.Loading);
+            this._checkExistingConnection();
             return;
         }
 
@@ -104,7 +113,7 @@ export class BackpackAdapter extends Adapter {
             if (nameMatch || rdnsMatch) {
                 this._provider = provider;
                 this._setReadyState(WalletReadyState.Found);
-                this._setState(AdapterState.Loading);
+                this._checkExistingConnection();
                 window.removeEventListener('TIP6963:announceProvider', handleAnnounce as EventListener);
             }
         };
@@ -160,6 +169,7 @@ export class BackpackAdapter extends Adapter {
                     throw new WalletConnectionError('No address returned from Backpack wallet.');
                 }
                 this._setState(AdapterState.Connected);
+                this._listenProviderEvents();
                 this.emit('connect', this._address);
             } catch (error: any) {
                 if (error instanceof WalletError) {
@@ -176,6 +186,8 @@ export class BackpackAdapter extends Adapter {
     }
 
     async disconnect(): Promise<void> {
+        this._stopListenProviderEvents();
+
         if (this._state !== AdapterState.Connected) {
             return;
         }
@@ -266,19 +278,43 @@ export class BackpackAdapter extends Adapter {
         try {
             if (this._provider && typeof this._provider.switchChain === 'function') {
                 await this._provider.switchChain(chainId);
-                this.emit('chainChanged', chainId);
+                this.emit('chainChanged', { chainId });
             } else if (this._provider && typeof this._provider.request === 'function') {
                 await this._provider.request({
                     method: 'tron_switchChain',
                     params: { chainId },
                 });
-                this.emit('chainChanged', chainId);
+                this.emit('chainChanged', { chainId });
             } else {
                 throw new WalletSwitchChainError('Chain switching not supported.');
             }
         } catch (error: any) {
             this.emit('error', error);
             throw new WalletSwitchChainError(error?.message || 'Failed to switch chain.', error);
+        }
+    }
+
+    async network(): Promise<Network> {
+        try {
+            if (this._state !== AdapterState.Connected) {
+                throw new WalletDisconnectedError();
+            }
+
+            if (this._provider?.request) {
+                const chainId = await this._provider.request({ method: 'tron_chainId' });
+                return {
+                    networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
+                    chainId,
+                    fullNode: '',
+                    solidityNode: '',
+                    eventServer: '',
+                };
+            }
+
+            throw new WalletGetNetworkError('Network info not available');
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
         }
     }
 
@@ -293,6 +329,64 @@ export class BackpackAdapter extends Adapter {
         if (this._readyState !== state) {
             this._readyState = state;
             this.emit('readyStateChanged', state);
+        }
+    }
+
+    private _listenProviderEvents(): void {
+        this._stopListenProviderEvents();
+        if (this._provider?.on) {
+            this._provider.on('accountsChanged', this._onAccountsChanged);
+            this._provider.on('chainChanged', this._onChainChanged);
+        }
+    }
+
+    private _stopListenProviderEvents(): void {
+        if (this._provider?.removeListener) {
+            this._provider.removeListener('accountsChanged', this._onAccountsChanged);
+            this._provider.removeListener('chainChanged', this._onChainChanged);
+        }
+    }
+
+    private _onAccountsChanged = (accounts: string[]) => {
+        const prevAddress = this._address;
+        if (!accounts || accounts.length === 0) {
+            this._address = null;
+            this._setState(AdapterState.Disconnect);
+            this.emit('accountsChanged', '', prevAddress || '');
+            this.emit('disconnect');
+        } else {
+            this._address = accounts[0];
+            this._setState(AdapterState.Connected);
+            this.emit('accountsChanged', this._address, prevAddress || '');
+            if (!prevAddress && this._address) {
+                this.emit('connect', this._address);
+            }
+        }
+    };
+
+    private _onChainChanged = (chainId: string) => {
+        this.emit('chainChanged', { chainId });
+    };
+
+    private async _checkExistingConnection(): Promise<void> {
+        try {
+            if (!this._provider?.request) return;
+
+            const accounts = await this._provider.request({
+                method: 'tron_accounts',
+            });
+
+            if (accounts && accounts.length > 0 && accounts[0]) {
+                const address = accounts[0];
+                this._address = address;
+                this._setState(AdapterState.Connected);
+                this._listenProviderEvents();
+                this.emit('connect', address);
+            } else {
+                this._setState(AdapterState.Disconnect);
+            }
+        } catch {
+            this._setState(AdapterState.Disconnect);
         }
     }
 }
