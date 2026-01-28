@@ -43,6 +43,7 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
+        "@tronweb3/tronwallet-adapter-backpack": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bitkeep": "workspace:^",

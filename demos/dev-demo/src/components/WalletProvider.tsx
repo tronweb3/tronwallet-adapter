@@ -19,6 +19,7 @@ import {
   GuardaAdapter,
   BinanceWalletAdapter,
   MetaMaskAdapter,
+  BackpackAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
@@ -57,6 +58,7 @@ const Context = createContext<WalletContextType>({
 export default function WalletProvider({ children }: PropsWithChildren) {
   const adapters = useMemo(() => {
     return [
+      new BackpackAdapter(),
       new TomoWalletAdapter(),
       new TronLinkAdapter(),
       new TokenPocketAdapter(),
