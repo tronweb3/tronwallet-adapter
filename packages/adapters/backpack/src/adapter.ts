@@ -1,19 +1,10 @@
-/**
- * Backpack TRON Wallet Adapter
- *
- * This adapter integrates Backpack wallet with the TronWallet Adapter system.
- * Backpack implements TIP-1193, TIP-1102, and TIP-6963 standards.
- *
- * @packageDocumentation
- */
-
 import {
     Adapter,
     AdapterState,
+    isInBrowser,
     NetworkType,
     WalletConnectionError,
     WalletDisconnectedError,
-    WalletError,
     WalletGetNetworkError,
     WalletNotFoundError,
     WalletReadyState,
@@ -21,10 +12,18 @@ import {
     WalletSignTransactionError,
     WalletSwitchChainError,
     type AdapterName,
+    type BaseAdapterConfig,
     type Network,
     type SignedTransaction,
     type Transaction,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import {
+    getBackpackProvider,
+    isInBackpackApp,
+    openBackpack,
+    supportBackpack,
+    type BackpackTronProvider,
+} from './utils.js';
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
     '0x2b6653dc': NetworkType.Mainnet,
@@ -32,27 +31,64 @@ const chainIdNetworkMap: Record<string, NetworkType> = {
     '0xcd8690dc': NetworkType.Nile,
 };
 
-/**
- * Backpack TRON Wallet Adapter
- *
- * Connects to Backpack wallet via window.tron or window.tronWeb
- * Supports TIP-1193, TIP-1102, and TIP-6963 standards
- */
+export interface BackpackAdapterConfig extends BaseAdapterConfig {
+    /**
+     * Timeout in milliseconds for checking if Backpack wallet exists.
+     * Default is 2000ms
+     */
+    checkTimeout?: number;
+    /**
+     * Set if open Backpack app using DeepLink on mobile.
+     * Default is true.
+     */
+    openAppWithDeeplink?: boolean;
+}
+
+export const BackpackAdapterName = 'Backpack' as AdapterName<'Backpack'>;
+
 export class BackpackAdapter extends Adapter {
-    readonly name = 'Backpack' as AdapterName<'Backpack'>;
+    readonly name = BackpackAdapterName;
     readonly url = 'https://backpack.app';
     readonly icon =
         'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDU1IDgwIiBmaWxsPSJub25lIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTMyLjcxIDYuMjkwMjZDMzUuNjE3OCA2LjI5MDI2IDM4LjM0NTIgNi42ODAwNSA0MC44NzA1IDcuNDAyOTZDMzguMzk4MiAxLjY0MDg1IDMzLjI2NDkgMCAyNy41NTE5IDBDMjEuODI3NyAwIDE2LjY4NTUgMS42NDcyOSAxNC4yMTg4IDcuNDM2OTJMMTYuNzI1NSA2LjY4ODU2IDE5LjQ0MTIgNi4yOTAyNiAyMi4zMzkgNi4yOTAyNkgzMi43MVpNMjEuNjczOSAxMi4wNzUyQzcuODY2NzcgMTIuMDc1MiAwIDIyLjkzNzEgMCAzNi4zMzZWNTAuMUMwIDUxLjQzOTkgMS4xMTkyOSA1Mi41IDIuNSA1Mi41SDUyLjVDNTMuODgwNyA1Mi41IDU1IDUxLjQzOTkgNTUgNTAuMVYzNi4zMzZDNTUgMjIuOTM3MSA0NS44NTIxIDEyLjA3NTIgMzIuMDQ0OSAxMi4wNzUySDIxLjY3MzlaTTI3LjQ4MDUgMzYuNDU1MUMzMi4zMTMgMzYuNDU1MSAzNi4yMzA1IDMyLjUzNzYgMzYuMjMwNSAyNy43MDUxQzM2LjIzMDUgMjIuODcyNiAzMi4zMTMgMTguOTU1MSAyNy40ODA5IDE4Ljk1NTFDMjIuNjQ4IDE4Ljk1NTEgMTguNzMwNSAyMi44NzI2IDE4LjczMDUgMjcuNzA1MUMxOC43MzA1IDMyLjUzNzYgMjIuNjQ4IDM2LjQ1NTEgMjcuNDgwNSAzNi40NTUxWk0wIDYwLjU5MDFDMCA1OS4yNTAzIDEuMTE5MjkgNTguMTY0MSAyLjUgNTguMTY0MUg1Mi41QzUzLjg4MDcgNTguMTY0MSA1NSA1OS4yNTAzIDU1IDYwLjU5MDFWNzUuMTQ2NkM1NSA3Ny44MjY0IDUyLjc2MTQgNzkuOTk4OCA1MCA3OS45OTg4SDVDMi4yMzg1NyA3OS45OTg4IDAgNzcuODI2NCAwIDc1LjE0NjZWNjAuNTkwMVoiIGZpbGw9IiNFMzNFM0YiLz48L3N2Zz4=';
 
+    config: Required<BackpackAdapterConfig>;
+    private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
     private _state: AdapterState = AdapterState.Loading;
-    private _address: string | null = null;
     private _connecting = false;
-    private _provider: any = null;
-    private _readyState: WalletReadyState = WalletReadyState.Loading;
+    private _wallet: BackpackTronProvider | null = null;
+    private _address: string | null = null;
 
-    constructor() {
+    constructor(config: BackpackAdapterConfig = {}) {
         super();
-        this._detectProvider();
+        const { checkTimeout = 2000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = true } = config;
+
+        if (typeof checkTimeout !== 'number') {
+            throw new Error('[BackpackAdapter] config.checkTimeout should be a number');
+        }
+
+        this.config = {
+            checkTimeout,
+            openUrlWhenWalletNotFound,
+            openAppWithDeeplink,
+        };
+
+        if (!isInBrowser()) {
+            this._readyState = WalletReadyState.NotFound;
+            this._setState(AdapterState.NotFound);
+            return;
+        }
+
+        if (supportBackpack()) {
+            this._readyState = WalletReadyState.Found;
+            this._updateWallet();
+        } else {
+            this._checkWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
+        }
     }
 
     get state(): AdapterState {
@@ -75,108 +111,54 @@ export class BackpackAdapter extends Adapter {
         return this._connecting;
     }
 
-    /**
-     * Detect Backpack provider
-     * Checks for window.tron (TIP-1193) or window.tronWeb (compatibility)
-     * Also listens for TIP-6963 announcements
-     */
-    private _detectProvider(): void {
-        if (typeof window === 'undefined') {
-            this._setReadyState(WalletReadyState.NotFound);
-            this._setState(AdapterState.NotFound);
-            return;
-        }
-
-        // Check for direct provider injection
-        const tron = (window as any).tron;
-        const tronWeb = (window as any).tronWeb;
-
-        if (tron && typeof tron.request === 'function') {
-            this._provider = tron;
-            this._setReadyState(WalletReadyState.Found);
-            this._checkExistingConnection();
-            return;
-        }
-
-        if (tronWeb && typeof tronWeb.request === 'function') {
-            this._provider = tronWeb;
-            this._setReadyState(WalletReadyState.Found);
-            this._checkExistingConnection();
-            return;
-        }
-
-        // Listen for TIP-6963 provider announcements
-        const handleAnnounce = (event: CustomEvent) => {
-            const { info, provider } = event.detail;
-            const nameMatch = info.name?.toLowerCase() === 'backpack';
-            const rdnsMatch = info.rdns?.toLowerCase() === 'app.backpack';
-            if (nameMatch || rdnsMatch) {
-                this._provider = provider;
-                this._setReadyState(WalletReadyState.Found);
-                this._checkExistingConnection();
-                window.removeEventListener('TIP6963:announceProvider', handleAnnounce as EventListener);
-            }
-        };
-
-        window.addEventListener('TIP6963:announceProvider', handleAnnounce as EventListener);
-
-        // Request providers to announce themselves
-        window.dispatchEvent(new CustomEvent('TIP6963:requestProvider'));
-
-        // If still no provider after a short delay, mark as not found
-        setTimeout(() => {
-            if (!this._provider) {
-                this._setReadyState(WalletReadyState.NotFound);
-                this._setState(AdapterState.NotFound);
-            }
-        }, 100);
-    }
-
-    async connect(options?: Record<string, unknown>): Promise<void> {
+    async connect(): Promise<void> {
         try {
+            this._checkIfOpenBackpack();
+
             if (this.connected || this._connecting) {
                 return;
             }
 
-            if (!this._provider) {
-                this._detectProvider();
+            await this._checkWallet();
 
-                if (!this._provider) {
-                    throw new WalletNotFoundError('Backpack wallet not found. Please install Backpack wallet.');
+            if (this._state === AdapterState.NotFound) {
+                if (this.config.openUrlWhenWalletNotFound && isInBrowser()) {
+                    window.open(this.url, '_blank');
                 }
+                throw new WalletNotFoundError();
+            }
+
+            if (!this._wallet) {
+                throw new WalletNotFoundError();
             }
 
             this._connecting = true;
-            this._setState(AdapterState.Loading);
 
             try {
-                // Try using connect() method first
-                if (typeof this._provider.connect === 'function') {
-                    await this._provider.connect();
-                }
-
-                // Then request accounts (TIP-1102: eth_requestAccounts)
-                const accounts = await this._provider.request({
+                const accounts = (await this._wallet.request({
                     method: 'tron_requestAccounts',
-                });
+                })) as string[];
 
                 if (!accounts || accounts.length === 0) {
                     throw new WalletConnectionError('No accounts returned from Backpack wallet.');
                 }
 
-                this._address = accounts[0];
-                if (!this._address) {
+                const address = accounts[0];
+                if (!address) {
                     throw new WalletConnectionError('No address returned from Backpack wallet.');
                 }
+
+                this._setAddress(address);
                 this._setState(AdapterState.Connected);
                 this._listenProviderEvents();
-                this.emit('connect', this._address);
             } catch (error: any) {
-                if (error instanceof WalletError) {
-                    throw error;
+                if (error?.code === 4001) {
+                    throw new WalletConnectionError('The user rejected connection.');
                 }
                 throw new WalletConnectionError(error?.message || 'Failed to connect to Backpack wallet.', error);
             }
+
+            this.emit('connect', this._address!);
         } catch (error: any) {
             this.emit('error', error);
             throw error;
@@ -193,28 +175,21 @@ export class BackpackAdapter extends Adapter {
         }
 
         try {
-            if (this._provider && typeof this._provider.disconnect === 'function') {
-                await this._provider.disconnect();
+            if (this._wallet?.disconnect) {
+                await this._wallet.disconnect();
             }
-
-            this._address = null;
-            this._setState(AdapterState.Disconnect);
-            this.emit('disconnect');
-        } catch (error: any) {
-            this.emit('error', error);
-            throw new WalletDisconnectedError(error?.message || 'Failed to disconnect from Backpack wallet.', error);
+        } catch {
+            // Ignore disconnect errors
         }
-    }
 
-    async multiSign(..._args: any[]): Promise<any> {
-        throw new Error('Multi-sign method not implemented.');
+        this._setAddress(null);
+        this._setState(AdapterState.Disconnect);
+        this.emit('disconnect');
     }
 
     async signMessage(message: string, privateKey?: string): Promise<string> {
         try {
-            if (this._state !== AdapterState.Connected || !this._address) {
-                throw new WalletDisconnectedError();
-            }
+            const wallet = this._checkConnected();
 
             if (privateKey) {
                 throw new WalletSignMessageError(
@@ -223,16 +198,10 @@ export class BackpackAdapter extends Adapter {
             }
 
             try {
-                // Try using signMessage() method first
-                if (typeof this._provider.signMessage === 'function') {
-                    return await this._provider.signMessage(message);
-                }
-
-                // Fallback to request() method
-                return await this._provider.request({
+                return (await wallet.request({
                     method: 'tron_signMessage',
                     params: { message },
-                });
+                })) as string;
             } catch (error: any) {
                 throw new WalletSignMessageError(error?.message || 'Failed to sign message.', error);
             }
@@ -244,9 +213,7 @@ export class BackpackAdapter extends Adapter {
 
     async signTransaction(transaction: Transaction, privateKey?: string): Promise<SignedTransaction> {
         try {
-            if (this._state !== AdapterState.Connected || !this._address) {
-                throw new WalletDisconnectedError();
-            }
+            const wallet = this._checkConnected();
 
             if (privateKey) {
                 throw new WalletSignTransactionError(
@@ -255,16 +222,10 @@ export class BackpackAdapter extends Adapter {
             }
 
             try {
-                // Try using signTransaction() method first
-                if (typeof this._provider.signTransaction === 'function') {
-                    return await this._provider.signTransaction(transaction);
-                }
-
-                // Fallback to request() method
-                return await this._provider.request({
+                return (await wallet.request({
                     method: 'tron_signTransaction',
                     params: { transaction },
-                });
+                })) as SignedTransaction;
             } catch (error: any) {
                 throw new WalletSignTransactionError(error?.message || 'Failed to sign transaction.', error);
             }
@@ -274,34 +235,35 @@ export class BackpackAdapter extends Adapter {
         }
     }
 
+    async multiSign(..._args: unknown[]): Promise<unknown> {
+        throw new Error('Multi-sign method not implemented for Backpack wallet.');
+    }
+
     async switchChain(chainId: string): Promise<void> {
         try {
-            if (this._provider && typeof this._provider.switchChain === 'function') {
-                await this._provider.switchChain(chainId);
-                this.emit('chainChanged', { chainId });
-            } else if (this._provider && typeof this._provider.request === 'function') {
-                await this._provider.request({
-                    method: 'tron_switchChain',
-                    params: { chainId },
+            const wallet = this._checkConnected();
+
+            try {
+                await wallet.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId }],
                 });
                 this.emit('chainChanged', { chainId });
-            } else {
-                throw new WalletSwitchChainError('Chain switching not supported.');
+            } catch (error: any) {
+                throw new WalletSwitchChainError(error?.message || 'Failed to switch chain.', error);
             }
         } catch (error: any) {
             this.emit('error', error);
-            throw new WalletSwitchChainError(error?.message || 'Failed to switch chain.', error);
+            throw error;
         }
     }
 
     async network(): Promise<Network> {
         try {
-            if (this._state !== AdapterState.Connected) {
-                throw new WalletDisconnectedError();
-            }
+            const wallet = this._checkConnected();
 
-            if (this._provider?.request) {
-                const chainId = await this._provider.request({ method: 'tron_chainId' });
+            try {
+                const chainId = (await wallet.request({ method: 'eth_chainId' })) as string;
                 return {
                     networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
                     chainId,
@@ -309,84 +271,148 @@ export class BackpackAdapter extends Adapter {
                     solidityNode: '',
                     eventServer: '',
                 };
+            } catch (error: any) {
+                throw new WalletGetNetworkError(error?.message || 'Failed to get network info.', error);
             }
-
-            throw new WalletGetNetworkError('Network info not available');
         } catch (error: any) {
             this.emit('error', error);
             throw error;
         }
     }
 
-    private _setState(state: AdapterState): void {
-        if (this._state !== state) {
-            this._state = state;
-            this.emit('stateChanged', state);
+    private _checkConnected(): BackpackTronProvider {
+        if (this._state !== AdapterState.Connected || !this._wallet) {
+            throw new WalletDisconnectedError();
+        }
+        return this._wallet;
+    }
+
+    private _checkIfOpenBackpack(): void {
+        if (this.config.openAppWithDeeplink === false) {
+            return;
+        }
+        if (openBackpack()) {
+            throw new WalletNotFoundError();
         }
     }
 
-    private _setReadyState(state: WalletReadyState): void {
-        if (this._readyState !== state) {
-            this._readyState = state;
-            this.emit('readyStateChanged', state);
+    private _checkPromise: Promise<boolean> | null = null;
+
+    private _checkWallet(): Promise<boolean> {
+        if (this._readyState === WalletReadyState.Found) {
+            return Promise.resolve(true);
         }
+        if (this._checkPromise) {
+            return this._checkPromise;
+        }
+
+        const interval = 100;
+        const maxTimes = Math.floor(this.config.checkTimeout / interval);
+        let times = 0;
+        let timer: ReturnType<typeof setInterval>;
+
+        this._checkPromise = new Promise((resolve) => {
+            const check = () => {
+                times++;
+                const isSupport = supportBackpack();
+                if (isSupport || times > maxTimes) {
+                    timer && clearInterval(timer);
+                    this._readyState = isSupport ? WalletReadyState.Found : WalletReadyState.NotFound;
+                    this._updateWallet();
+                    this.emit('readyStateChanged', this._readyState);
+                    resolve(isSupport);
+                }
+            };
+            timer = setInterval(check, interval);
+            check();
+        });
+
+        return this._checkPromise;
     }
 
-    private _listenProviderEvents(): void {
-        this._stopListenProviderEvents();
-        if (this._provider?.on) {
-            this._provider.on('accountsChanged', this._onAccountsChanged);
-            this._provider.on('chainChanged', this._onChainChanged);
-        }
-    }
+    private _updateWallet(): void {
+        const provider = getBackpackProvider();
 
-    private _stopListenProviderEvents(): void {
-        if (this._provider?.removeListener) {
-            this._provider.removeListener('accountsChanged', this._onAccountsChanged);
-            this._provider.removeListener('chainChanged', this._onChainChanged);
-        }
-    }
+        if (provider) {
+            this._wallet = provider;
+            this._listenProviderEvents();
 
-    private _onAccountsChanged = (accounts: string[]) => {
-        const prevAddress = this._address;
-        if (!accounts || accounts.length === 0) {
-            this._address = null;
-            this._setState(AdapterState.Disconnect);
-            this.emit('accountsChanged', '', prevAddress || '');
-            this.emit('disconnect');
+            // Check for existing connection
+            this._checkExistingConnection();
         } else {
-            this._address = accounts[0];
-            this._setState(AdapterState.Connected);
-            this.emit('accountsChanged', this._address, prevAddress || '');
-            if (!prevAddress && this._address) {
-                this.emit('connect', this._address);
-            }
+            this._wallet = null;
+            this._setAddress(null);
+            this._setState(AdapterState.NotFound);
         }
-    };
-
-    private _onChainChanged = (chainId: string) => {
-        this.emit('chainChanged', { chainId });
-    };
+    }
 
     private async _checkExistingConnection(): Promise<void> {
-        try {
-            if (!this._provider?.request) return;
+        if (!this._wallet) return;
 
-            const accounts = await this._provider.request({
+        try {
+            const accounts = (await this._wallet.request({
                 method: 'tron_accounts',
-            });
+            })) as string[];
 
             if (accounts && accounts.length > 0 && accounts[0]) {
-                const address = accounts[0];
-                this._address = address;
+                this._setAddress(accounts[0]);
                 this._setState(AdapterState.Connected);
-                this._listenProviderEvents();
-                this.emit('connect', address);
             } else {
                 this._setState(AdapterState.Disconnect);
             }
         } catch {
             this._setState(AdapterState.Disconnect);
+        }
+    }
+
+    private _listenProviderEvents(): void {
+        this._stopListenProviderEvents();
+        if (this._wallet?.on) {
+            this._wallet.on('accountsChanged', this._onAccountsChanged);
+            this._wallet.on('chainChanged', this._onChainChanged);
+        }
+    }
+
+    private _stopListenProviderEvents(): void {
+        if (this._wallet?.removeListener) {
+            this._wallet.removeListener('accountsChanged', this._onAccountsChanged);
+            this._wallet.removeListener('chainChanged', this._onChainChanged);
+        }
+    }
+
+    private _onAccountsChanged = (accounts: unknown) => {
+        const accountList = accounts as string[];
+        const prevAddress = this._address;
+
+        if (!accountList || accountList.length === 0) {
+            this._setAddress(null);
+            this._setState(AdapterState.Disconnect);
+            this.emit('accountsChanged', '', prevAddress || '');
+            this.emit('disconnect');
+        } else {
+            const newAddress = accountList[0];
+            this._setAddress(newAddress);
+            this._setState(AdapterState.Connected);
+            this.emit('accountsChanged', newAddress, prevAddress || '');
+            if (!prevAddress && newAddress) {
+                this.emit('connect', newAddress);
+            }
+        }
+    };
+
+    private _onChainChanged = (chainData: unknown) => {
+        const chainId = typeof chainData === 'string' ? chainData : (chainData as { chainId?: string })?.chainId || '';
+        this.emit('chainChanged', { chainId });
+    };
+
+    private _setAddress(address: string | null): void {
+        this._address = address;
+    }
+
+    private _setState(state: AdapterState): void {
+        if (this._state !== state) {
+            this._state = state;
+            this.emit('stateChanged', state);
         }
     }
 }
