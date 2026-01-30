@@ -1,6 +1,12 @@
 import { defineComponent, provide, readonly, ref } from 'vue';
 import { WalletSelectModal } from './Modal/WalletSelectModal.js';
 export const WalletModalProvider = defineComponent({
+    props: {
+        openUrlWhenWalletNotFoundSync: {
+            type: Boolean,
+            default: false,
+        },
+    },
     setup(props, { slots }) {
         const visible = ref(false);
         function setVisible(v: boolean) {
@@ -13,7 +19,11 @@ export const WalletModalProvider = defineComponent({
         return () => (
             <>
                 {slots.default ? slots.default() : ''}
-                <WalletSelectModal visible={visible.value} onClose={() => setVisible(false)}></WalletSelectModal>
+                <WalletSelectModal
+                    visible={visible.value}
+                    onClose={() => setVisible(false)}
+                    openUrlWhenWalletNotFoundSync={props.openUrlWhenWalletNotFoundSync}
+                ></WalletSelectModal>
             </>
         );
     },
