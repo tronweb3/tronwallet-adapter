@@ -84,5 +84,6 @@ interface OnekeyAdapterConfig {
 -   Only wallet that imported by mnemonic can be used on TRON network.
 -   Onekey Extension doesn't implement `multiSign()` and `switchChain()`.
 -   Onekey Extension only support: `accountsChanged`,`connect`,`disconnect` events.
+-   Deeplink is not supported.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

@@ -153,12 +153,12 @@ export class OnekeyAdapter extends Adapter {
                 if (!res) {
                     throw new WalletConnectionError('Request connect error.');
                 }
-                if (res.code === 4000) {
+                if (res.code === 4001) {
                     throw new WalletConnectionError(
                         'The same DApp has already initiated a request to connect to onekey wallet, and the pop-up window has not been closed.'
                     );
                 }
-                if (res.code === 4001) {
+                if (res.code === 4000) {
                     throw new WalletConnectionError('The user rejected connection.');
                 }
             } catch (error: any) {
