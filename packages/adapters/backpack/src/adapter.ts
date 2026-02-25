@@ -5,6 +5,7 @@ import {
     NetworkType,
     WalletConnectionError,
     WalletDisconnectedError,
+    WalletError,
     WalletGetNetworkError,
     WalletNotFoundError,
     WalletReadyState,
@@ -17,13 +18,7 @@ import {
     type SignedTransaction,
     type Transaction,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import {
-    getBackpackProvider,
-    isInBackpackApp,
-    openBackpack,
-    supportBackpack,
-    type BackpackTronProvider,
-} from './utils.js';
+import { getBackpackProvider, openBackpack, supportBackpack, type BackpackTronProvider } from './utils.js';
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
     '0x2b6653dc': NetworkType.Mainnet,
@@ -54,7 +49,7 @@ export class BackpackAdapter extends Adapter {
 
     config: Required<BackpackAdapterConfig>;
     private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
-    private _state: AdapterState = AdapterState.Loading;
+    private _state: AdapterState = isInBrowser() ? AdapterState.Loading : AdapterState.NotFound;
     private _connecting = false;
     private _wallet: BackpackTronProvider | null = null;
     private _address: string | null = null;
@@ -72,12 +67,6 @@ export class BackpackAdapter extends Adapter {
             openUrlWhenWalletNotFound,
             openAppWithDeeplink,
         };
-
-        if (!isInBrowser()) {
-            this._readyState = WalletReadyState.NotFound;
-            this._setState(AdapterState.NotFound);
-            return;
-        }
 
         if (supportBackpack()) {
             this._readyState = WalletReadyState.Found;
@@ -239,49 +228,65 @@ export class BackpackAdapter extends Adapter {
         throw new Error('Multi-sign method not implemented for Backpack wallet.');
     }
 
+    /**
+     * Switch to target chain. If current chain is the same as target chain, the call will success immediately.
+     * Available chainIds:
+     * - Mainnet: 0x2b6653dc
+     * - Shasta: 0x94a9059e
+     * - Nile: 0xcd8690dc
+     * @param chainId chainId
+     */
     async switchChain(chainId: string): Promise<void> {
         try {
             const wallet = this._checkConnected();
-
-            try {
-                await wallet.request({
-                    method: 'tron_switchChain',
-                    params: { chainId },
-                });
-                this.emit('chainChanged', { chainId });
-            } catch (error: any) {
-                throw new WalletSwitchChainError(error?.message || 'Failed to switch chain.', error);
-            }
+            await wallet.request({
+                method: 'tron_switchChain',
+                params: { chainId: `tron:${parseInt(chainId, 16).toString()}` },
+            });
+            this.emit('chainChanged', { chainId });
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err =
+                error instanceof WalletError
+                    ? error
+                    : new WalletSwitchChainError(
+                          /tron:\d+/.test(error.message)
+                              ? error.message.replace(
+                                    /tron:(\d+)/,
+                                    (_: string, p1: string) => `0x${parseInt(p1, 10).toString(16)}`
+                                )
+                              : error?.message || 'Failed to switch chain.',
+                          error
+                      );
+
+            this.emit('error', err);
+            throw err;
         }
     }
 
     async network(): Promise<Network> {
         try {
             const wallet = this._checkConnected();
-
-            try {
-                const chainId = (await wallet.request({ method: 'tron_chainId' })) as string;
-                return {
-                    networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
-                    chainId,
-                    fullNode: '',
-                    solidityNode: '',
-                    eventServer: '',
-                };
-            } catch (error: any) {
-                throw new WalletGetNetworkError(error?.message || 'Failed to get network info.', error);
-            }
+            const res = (await wallet.request({ method: 'tron_chainId' })) as string;
+            const chainId = '0x' + Number.parseInt(res.split(':')[1]).toString(16);
+            return {
+                networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
+                chainId,
+                fullNode: '',
+                solidityNode: '',
+                eventServer: '',
+            };
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err =
+                error instanceof WalletError
+                    ? error
+                    : new WalletGetNetworkError(error?.message || 'Failed to get network.', error);
+            this.emit('error', err);
+            throw err;
         }
     }
 
     private _checkConnected(): BackpackTronProvider {
-        if (this._state !== AdapterState.Connected || !this._wallet) {
+        if (!this._wallet || !this.connected) {
             throw new WalletDisconnectedError();
         }
         return this._wallet;
@@ -348,20 +353,19 @@ export class BackpackAdapter extends Adapter {
 
     private async _checkExistingConnection(): Promise<void> {
         if (!this._wallet) return;
-
         try {
             const accounts = (await this._wallet.request({
                 method: 'tron_accounts',
             })) as string[];
-
             if (accounts && accounts.length > 0 && accounts[0]) {
                 this._setAddress(accounts[0]);
                 this._setState(AdapterState.Connected);
+                this.emit('accountsChanged', accounts[0], '');
             } else {
                 this._setState(AdapterState.Disconnect);
             }
-        } catch {
-            this._setState(AdapterState.Disconnect);
+        } catch (e: any) {
+            console.log(`[BackpackAdapter] request accounts error: `, e);
         }
     }
 

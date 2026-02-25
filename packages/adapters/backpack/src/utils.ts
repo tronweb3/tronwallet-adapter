@@ -2,6 +2,7 @@ import { isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface BackpackTronProvider {
     isBackpack?: boolean;
+    accounts: string[];
     request: (args: { method: string; params?: unknown }) => Promise<unknown>;
     on?: (event: string, handler: (...args: unknown[]) => void) => void;
     removeListener?: (event: string, handler: (...args: unknown[]) => void) => void;
