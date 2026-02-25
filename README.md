@@ -278,9 +278,10 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-foxwallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | Adapter for FoxWallet App(iOS and Android)                       |
 | [`@tronweb3/tronwallet-adapter-bybit`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | Adapter for Bybit Wallet App(iOS and Android) and Extension      |
 | [`@tronweb3/tronwallet-adapter-trust`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | Adapter for TrustWallet Extension                                |
-| [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)       | Adapter for Tomo Wallet App(iOS and Android)                     |
-| [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | Adapter for Binance Wallet App(iOS and Android)                  |
-| [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | Adapter for Guarda Wallet Extension                              |
+| [`@tronweb3/tronwallet-adapter-tomowallet`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)                 | Adapter for Tomo Wallet App(iOS and Android)                                |
+| [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance) | Adapter for Binance Wallet App(iOS and Android)    |
+| [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)       | Adapter for Guarda Wallet Extension    |
+| [`@tronweb3/tronwallet-adapter-onekey`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-onekey)       | Adapter for OneKey Extension    |
 | [`@tronweb3/tronwallet-adapter-metamask-tron`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron)               | Adapter for MetaMask Wallet                              |
 
 ### EvmWallet Adapters
@@ -329,6 +330,7 @@ This package contains all wallet adapters for Tron including:
 -   [Tomo](https://tomo.inc/)
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [Guarda Wallet](https://guarda.com)
+-   [OneKey Wallet](https://onekey.so)
 -   [MetaMask](https://metamask.io)
 
 Code example：

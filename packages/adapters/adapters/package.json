@@ -59,6 +59,7 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
+        "@tronweb3/tronwallet-adapter-onekey": "workspace:^"
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
         "@tronweb3/tronwallet-adapter-metamask-tron": "workspace:^"
     },
