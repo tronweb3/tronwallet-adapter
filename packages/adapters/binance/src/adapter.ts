@@ -19,15 +19,6 @@ import type {
     BaseAdapterConfig,
 } from '@tronweb3/tronwallet-abstract-adapter';
 
-declare global {
-    interface Window {
-        binancew3w?: {
-            tron: any;
-        };
-        isBinance: boolean;
-    }
-}
-
 export interface BinanceWalletAdapterConfig extends BaseAdapterConfig {
     /**
      * Timeout in millisecond for checking if Binance Wallet exists.
