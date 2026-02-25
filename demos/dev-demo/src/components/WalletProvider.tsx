@@ -19,6 +19,7 @@ import {
   GuardaAdapter,
   BinanceWalletAdapter,
   OnekeyAdapter,
+  MetaMaskAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
@@ -72,6 +73,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new GuardaAdapter(),
       new OnekeyAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
+      new MetaMaskAdapter() as any,
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
@@ -126,6 +128,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
   }
 
   function onDisconnect() {
+    console.log('[DevDemo] disconnect event');
     setConnectionState((preState) => ({
       ...preState,
       connected: false,

@@ -46,9 +46,10 @@
     },
     "devDependencies": {
         "@vue/test-utils": "^2.4.3",
+        "happy-dom": "^20.0.10",
         "jsdom": "^23.0.1",
         "shx": "^0.3.4",
-        "vitest": "^1.0.2",
+        "vitest": "^2.0.4",
         "vue": "3.4.15"
     }
 }

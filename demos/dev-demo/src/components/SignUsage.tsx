@@ -1,6 +1,6 @@
 import { Box, Input, Link, Snackbar, Stack, styled, Typography } from '@mui/material';
 import { Button } from './common';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SuccessIcon from './SuccessIcon';
 import ErrorIcon from './ErrorIcon';
 import { useWallet } from './WalletProvider';
@@ -93,8 +93,15 @@ export default function SignUsage() {
     if (!adapter) {
       return;
     }
-    const res = await adapter.signMessage(message);
-    setSignature(res);
+    let res;
+    try {
+      res = await adapter.signMessage(message);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+
+    setSignature(res as any);
     setSuccess(true);
     setOpen(true);
     setTitle('Sign Message');
@@ -114,7 +121,13 @@ export default function SignUsage() {
       return;
     }
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
-    const signedTransaction = await adapter.signTransaction(transaction);
+    let signedTransaction: any;
+    try {
+      signedTransaction = await adapter.signTransaction(transaction);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
     const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
     setSuccess(res.result);
     setOpen(true);
@@ -145,7 +158,7 @@ export default function SignUsage() {
             <>
               Success! The signature is{' '}
               <i>
-                {signature.slice(0, 6)}...{signature.slice(-6)}
+                {signature?.slice(0, 6)}...{signature?.slice(-6)}
               </i>
             </>
           ) : (
@@ -158,6 +171,11 @@ export default function SignUsage() {
       return <InformAlertText>{success ? 'Success! The signature is valid' : 'Failed to verify the signature'}</InformAlertText>;
     }
   }, [title, success, signature, connectionState.chainId, connectionState.address]);
+
+  const [isReceiverError, setIsReceiverError] = useState(false);
+  useEffect(() => {
+    setIsReceiverError(!!receiver && !tronWeb.isAddress(receiver));
+  }, [receiver, setIsReceiverError]);
   return (
     <UsageBox background="linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)">
       <UsageTitle>Sign Usage</UsageTitle>
@@ -168,8 +186,8 @@ export default function SignUsage() {
       <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage}>
         Verify Signed Message
       </Button>
-      <MessageInput placeholder="Receiver Address" disableUnderline={true} value={receiver} onChange={(e) => setReceiver(e.target.value)} />
-      <Button disabled={!connectionState.connected} onClick={onTransfer}>
+      <MessageInput placeholder="Receiver Address" disableUnderline={!isReceiverError} value={receiver} onChange={(e) => setReceiver(e.target.value)} error={isReceiverError} />
+      <Button disabled={!connectionState.connected || isReceiverError} onClick={onTransfer}>
         Transfer
       </Button>
       <InformAlert open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>

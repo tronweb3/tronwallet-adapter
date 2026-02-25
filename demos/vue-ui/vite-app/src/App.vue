@@ -11,6 +11,7 @@ import {
     TronLinkAdapter,
     WalletConnectAdapter,
     BybitWalletAdapter,
+    MetaMaskAdapter,
 } from '@tronweb3/tronwallet-adapters';
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-vue-ui';
 const tronLink = new TronLinkAdapter();
@@ -53,7 +54,8 @@ const tokenPocket = new TokenPocketAdapter();
 const bitKeep = new BitKeepAdapter();
 const okxWalletAdapter = new OkxWalletAdapter();
 const bybit = new BybitWalletAdapter();
-const adapters = [tronLink, walletConnect, ledger, tokenPocket, bitKeep, okxWalletAdapter, bybit];
+const metaMaskAdapter = new MetaMaskAdapter();
+const adapters = [tronLink, walletConnect, ledger, tokenPocket, bitKeep, okxWalletAdapter, bybit, metaMaskAdapter];
 
 function onAdapterChanged(adapter: Adapter) {
     console.log('[wallet hooks] onAdapterChanged: ', adapter?.name);

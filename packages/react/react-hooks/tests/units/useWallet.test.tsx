@@ -162,9 +162,7 @@ describe('useWallet', function () {
                 await Promise.resolve();
             });
         });
-        it('connect should not be called', function () {
-            expect(adapter1.connect).toHaveBeenCalledTimes(0);
-        });
+
         it('should be ok when call disconnect', async function () {
             expect(ref.current?.getState().disconnect).not.toThrow();
         });

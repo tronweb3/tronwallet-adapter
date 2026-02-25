@@ -127,5 +127,6 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 ### Caveats
 
 -   `multiSign()` and `switchChain(chainId: string)` are not supported.
+-   `signMessage` only supports strings with a buffer length less than 226.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

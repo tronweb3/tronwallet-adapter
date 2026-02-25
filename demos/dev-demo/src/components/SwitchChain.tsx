@@ -1,16 +1,18 @@
-import type { SelectChangeEvent} from "@mui/material";
-import { Button, colors, MenuItem, Select, styled, Typography } from "@mui/material";
-import { UsageBox, UsageTitle } from "./SignUsage";
-import { useState } from "react";
-import { CHAIN_ID } from "../config";
-import { useWallet } from "./WalletProvider";
+import type { SelectChangeEvent } from '@mui/material';
+import { Button, MenuItem, Select, styled, Typography } from '@mui/material';
+import { UsageBox, UsageTitle } from './SignUsage';
+import { useState } from 'react';
+import { CHAIN_ID } from '../config';
+import { useWallet } from './WalletProvider';
+import { Button as CustomButton } from './common';
+import type { WalletConnectAdapter } from '@tronweb3/tronwallet-adapters';
 
 const Description = styled(Typography)({
   color: 'white',
   fontSize: '14px',
   lineHeight: '16px',
   marginTop: '10px',
-  flex: '1 0 auto'
+  flex: '1 0 auto',
 });
 
 const ChainSelect = styled(Select)({
@@ -40,9 +42,9 @@ const ChainSelect = styled(Select)({
     color: 'white',
   },
 
-  "@media (max-width: 780px)": {
-    margin: '50px 0 0'
-  }
+  '@media (max-width: 780px)': {
+    margin: '50px 0 0',
+  },
 });
 const menuProps = {
   PaperProps: {
@@ -92,7 +94,7 @@ const SwitchChainButton = styled(Button)({
   },
 });
 export default function SwitchChain() {
-  const { adapter } = useWallet();
+  const { adapter, selectedAdapterName } = useWallet();
   const [chainId, setChainId] = useState<string>(CHAIN_ID.Nile);
 
   function handleChange(e: SelectChangeEvent<unknown>) {
@@ -103,16 +105,24 @@ export default function SwitchChain() {
     if (!adapter) return;
     await adapter.switchChain(chainId);
   }
-  return <UsageBox background=" linear-gradient(211deg, #84E2FF 1.72%, #99BDFF 32.91%, #99BDFF 74.22%, #B0A5FF 98.46%)">
-    <UsageTitle>Switch Chain</UsageTitle>
-    <Description variant="body1">
-      You can switch chain by click the button.
-    </Description>
-    <ChainSelect size="small" variant="standard" disableUnderline  value={chainId} onChange={handleChange} MenuProps={menuProps}
-      inputProps={{ height: '55px'}}
-    >
-      {Items}
-    </ChainSelect>
-    <SwitchChainButton onClick={handleSwitchChain}>Switch Chain to {chainId}</SwitchChainButton>
-  </UsageBox>
+
+  async function handleGetWalletConnectConnectionStatus() {
+    const status = await (adapter as WalletConnectAdapter).getConnectionStatus();
+    console.log('[DevDemo] WalletConnect status: ', status);
+  }
+  return (
+    <UsageBox background=" linear-gradient(211deg, #84E2FF 1.72%, #99BDFF 32.91%, #99BDFF 74.22%, #B0A5FF 98.46%)">
+      <UsageTitle>Switch Chain</UsageTitle>
+      <Description variant="body1">You can switch chain by click the button.</Description>
+      {selectedAdapterName === 'WalletConnect' && (
+        <CustomButton margin="0 0 20px" onClick={handleGetWalletConnectConnectionStatus}>
+          Get WalletConnect Status
+        </CustomButton>
+      )}
+      <ChainSelect size="small" variant="standard" disableUnderline value={chainId} onChange={handleChange} MenuProps={menuProps} inputProps={{ height: '55px' }}>
+        {Items}
+      </ChainSelect>
+      <SwitchChainButton onClick={handleSwitchChain}>Switch Chain to {chainId}</SwitchChainButton>
+    </UsageBox>
+  );
 }

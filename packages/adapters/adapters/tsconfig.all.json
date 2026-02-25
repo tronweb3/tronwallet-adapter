@@ -41,10 +41,22 @@
             "path": "../binance/tsconfig.all.json"
         },
         {
+            "path": "../metamask-tron/tsconfig.all.json"
+        },
+        {
             "path": "../guarda/tsconfig.all.json"
         },
         {
             "path": "../onekey/tsconfig.all.json"
+        },
+        {
+            "path": "../evm/metamask/tsconfig.all.json"
+        },
+        {
+            "path": "../evm/tronlink/tsconfig.all.json"
+        },
+        {
+            "path": "../evm/binance/tsconfig.all.json"
         },
         {
             "path": "./tsconfig.cjs.json"

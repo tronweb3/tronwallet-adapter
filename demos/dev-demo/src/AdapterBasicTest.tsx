@@ -5,14 +5,14 @@ import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
 import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
-import { MetaMaskAdapter } from '@tronweb3/tronwallet-adapter-metamask';
+import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
 
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskAdapter(), new TronLinkEvmAdapter()], []);
+  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter()], []);
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
@@ -141,7 +141,7 @@ function InfoShow({ label, value }: { label: string; value: ReactNode }) {
         </Typography>
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
-        <Typography gutterBottom>{value}</Typography>
+        <div>{value}</div>
       </Grid2>
     </Grid2>
   );
@@ -388,7 +388,10 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
       <Select labelId="demo-simple-select-label" id="demo-simple-select" value={selectedChainId} size="small" onChange={(e) => setSelectedChainId(e.target.value as Chain['chainId'])}>
         <MenuItem value={'0x1'}>Ethereum Mainnet</MenuItem>
         <MenuItem value={'0x38'}>BSC Mainnet</MenuItem>
+        <MenuItem value={'0x61'}>BSC Testnet</MenuItem>
         <MenuItem value={'0x2105'}>Base Mainnet</MenuItem>
+        <MenuItem value={'0xc7'}>BitTorrent Chain Mainnet</MenuItem>
+        <MenuItem value={'0x405'}>BitTorrent Chain Donau</MenuItem>
         <MenuItem value={'0xa4b1'}>Arbitrum One</MenuItem>
         <MenuItem value={'0x539'}>Localhost Test</MenuItem>
       </Select>

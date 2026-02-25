@@ -18,7 +18,7 @@
         "@tronweb3/tronwallet-adapter-guarda": "^1.0.0",
         "@tronweb3/tronwallet-adapter-imtoken": "^1.0.3",
         "@tronweb3/tronwallet-adapter-ledger": "^1.1.8",
-        "@tronweb3/tronwallet-adapter-metamask": "^1.0.1",
+        "@tronweb3/tronwallet-adapter-metamask-evm": "^1.0.0",
         "@tronweb3/tronwallet-adapter-okxwallet": "^1.0.2",
         "@tronweb3/tronwallet-adapter-tokenpocket": "1.0.6",
         "@tronweb3/tronwallet-adapter-tomowallet": "^1.0.1",

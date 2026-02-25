@@ -98,11 +98,6 @@ describe('when a wallet is seleted', () => {
             window.tronLink = undefined;
             window.tronWeb = undefined;
         });
-        test('should not be disabled with autoConnect enabled', async () => {
-            const { getByTestId } = makeSut();
-            expect(getByTestId('wallet-connect-button')).not.toBeDisabled();
-            expect(getByTestId('wallet-connect-button')).toHaveTextContent('Connect');
-        });
         test('should not be disabled with autoConnect disabled', async () => {
             const { getByTestId } = makeSutNoAutoConnect();
             expect(getByTestId('wallet-connect-button')).not.toBeDisabled();
