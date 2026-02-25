@@ -68,6 +68,9 @@
             "path": "./packages/vue/vue-hooks/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/backpack/tsconfig.all.json"
+        },
+        {
             "path": "./packages/adapters/binance/tsconfig.all.json"
         },
         {

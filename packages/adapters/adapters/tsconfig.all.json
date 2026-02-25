@@ -38,6 +38,9 @@
             "path": "../tomowallet/tsconfig.all.json"
         },
         {
+            "path": "../backpack/tsconfig.all.json"
+        },
+        {
             "path": "../binance/tsconfig.all.json"
         },
         {
