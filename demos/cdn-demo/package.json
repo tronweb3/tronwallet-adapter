@@ -3,9 +3,7 @@
     "private": true,
     "version": "0.0.3",
     "type": "module",
-    "scripts": {
-        "dev": "serve"
-    },
+    "scripts": {},
     "dependencies": {
         "@tronweb3/abstract-adapter-evm": "^1.0.1",
         "@tronweb3/tronwallet-abstract-adapter": "^1.1.6",
@@ -29,8 +27,5 @@
         "@tronweb3/tronwallet-adapters": "1.2.1",
         "@walletconnect/modal": "^2.6.2",
         "@walletconnect/sign-client": "^2.1.4"
-    },
-    "devDependencies": {
-        "serve": "^14.2.4"
     }
 }
