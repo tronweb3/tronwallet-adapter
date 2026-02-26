@@ -18,7 +18,7 @@ import {
   TrustAdapter,
   GuardaAdapter,
   BinanceWalletAdapter,
-  OnekeyAdapter,
+  OneKeyAdapter,
   MetaMaskAdapter,
   BackpackAdapter,
 } from '@tronweb3/tronwallet-adapters';
@@ -73,7 +73,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new BinanceWalletAdapter(),
       new LedgerAdapter(),
       new GuardaAdapter(),
-      new OnekeyAdapter(),
+      new OneKeyAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
       new MetaMaskAdapter() as any,
     ];

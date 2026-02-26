@@ -23,7 +23,7 @@ import type {
     TronLinkWallet,
 } from '@tronweb3/tronwallet-adapter-tronlink';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import { openOnekeyWallet, supportOnekey } from './utils.js';
+import { supportOneKey } from './utils.js';
 
 declare global {
     interface Window {
@@ -33,29 +33,23 @@ declare global {
     }
 }
 
-export interface OnekeyAdapterConfig extends BaseAdapterConfig {
+export interface OneKeyAdapterConfig extends BaseAdapterConfig {
     /**
      * Timeout in millisecond for checking if OneKey wallet exists.
      * Default is 2 * 1000ms
      */
     checkTimeout?: number;
-
-    /**
-     * Set if open app using DeepLink.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
 }
 
-export const OnekeyAdapterName = 'OneKey' as AdapterName<'OneKey'>;
+export const OneKeyAdapterName = 'OneKey' as AdapterName<'OneKey'>;
 
-export class OnekeyAdapter extends Adapter {
-    name = OnekeyAdapterName;
+export class OneKeyAdapter extends Adapter {
+    name = OneKeyAdapterName;
     url = 'https://onekey.so/download';
     icon =
         'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNi42NjY2NyIgZmlsbD0iIzQ0RDYyQyIvPgo8cGF0aCBkPSJNMTcuNDQ1NyA2Ljc4MzJMMTIuOTk0NSA2Ljc4MzJMMTIuMjEzNiA5LjE0NDQ2SDE0LjY4NTlMMTQuNjg1OSAxNC4xMTgySDE3LjQ0NTdWNi43ODMyWiIgZmlsbD0iYmxhY2siLz4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMS4wNzY0IDIwLjEzNzhDMjEuMDc2NCAyMi45NDEzIDE4LjgwMzcgMjUuMjE0MSAxNi4wMDAxIDI1LjIxNDFDMTMuMTk2NiAyNS4yMTQxIDEwLjkyMzggMjIuOTQxMyAxMC45MjM4IDIwLjEzNzhDMTAuOTIzOCAxNy4zMzQyIDEzLjE5NjYgMTUuMDYxNSAxNi4wMDAxIDE1LjA2MTVDMTguODAzNyAxNS4wNjE1IDIxLjA3NjQgMTcuMzM0MiAyMS4wNzY0IDIwLjEzNzhaTTE4Ljc3MTggMjAuMTM3OEMxOC43NzE4IDIxLjY2ODUgMTcuNTMwOSAyMi45MDk1IDE2LjAwMDEgMjIuOTA5NUMxNC40NjkzIDIyLjkwOTUgMTMuMjI4NCAyMS42Njg1IDEzLjIyODQgMjAuMTM3OEMxMy4yMjg0IDE4LjYwNyAxNC40NjkzIDE3LjM2NiAxNi4wMDAxIDE3LjM2NkMxNy41MzA5IDE3LjM2NiAxOC43NzE4IDE4LjYwNyAxOC43NzE4IDIwLjEzNzhaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K';
 
-    config: Required<OnekeyAdapterConfig>;
+    config: Required<OneKeyAdapterConfig>;
 
     private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
     private _state: AdapterState = AdapterState.Loading;
@@ -63,17 +57,16 @@ export class OnekeyAdapter extends Adapter {
     private _wallet: TronLinkWallet | null;
     private _address: string | null;
 
-    constructor(config: OnekeyAdapterConfig = {}) {
+    constructor(config: OneKeyAdapterConfig = {}) {
         super();
-        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = false } = config;
+        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true } = config;
 
         if (typeof checkTimeout !== 'number') {
-            throw new Error('[OnekeyAdapter] config.checkTimeout should be a number');
+            throw new Error('[OneKeyAdapter] config.checkTimeout should be a number');
         }
 
         this.config = {
             checkTimeout,
-            openAppWithDeeplink,
             openUrlWhenWalletNotFound,
         };
         this._connecting = false;
@@ -85,7 +78,7 @@ export class OnekeyAdapter extends Adapter {
             this.setState(AdapterState.NotFound);
             return;
         }
-        if (supportOnekey()) {
+        if (supportOneKey()) {
             this._readyState = WalletReadyState.Found;
             this._updateWallet();
         } else {
@@ -136,7 +129,6 @@ export class OnekeyAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            this.checkIfopenOnekeyWallet();
             if (this.connected || this.connecting) return;
             await this._checkWallet();
             if (this.state === AdapterState.NotFound) {
@@ -255,7 +247,6 @@ export class OnekeyAdapter extends Adapter {
     }
 
     private async checkAndGetWallet() {
-        this.checkIfopenOnekeyWallet();
         await this._checkWallet();
         if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
         const wallet = this._wallet;
@@ -315,16 +306,6 @@ export class OnekeyAdapter extends Adapter {
             this.emit('disconnect');
         }
     };
-
-    private checkIfopenOnekeyWallet() {
-        if (this.config.openAppWithDeeplink === false) {
-            return;
-        }
-        if (openOnekeyWallet()) {
-            throw new WalletNotFoundError();
-        }
-    }
-
     private _checkPromise: Promise<boolean> | null = null;
     /**
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
@@ -344,7 +325,7 @@ export class OnekeyAdapter extends Adapter {
         this._checkPromise = new Promise((resolve) => {
             const check = () => {
                 times++;
-                const isSupport = supportOnekey();
+                const isSupport = supportOneKey();
                 if (isSupport || times > maxTimes) {
                     timer && clearInterval(timer);
                     this._readyState = isSupport ? WalletReadyState.Found : WalletReadyState.NotFound;
@@ -362,7 +343,7 @@ export class OnekeyAdapter extends Adapter {
     private _updateWallet = () => {
         let state = this.state;
         let address = this.address;
-        if (supportOnekey()) {
+        if (supportOneKey()) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this._wallet = window.$onekey!.tron;
             this._listenEvent();

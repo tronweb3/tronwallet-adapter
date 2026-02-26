@@ -5,11 +5,11 @@ This package provides an adapter to enable TRON DApps to connect to the [OneKey 
 ## Demo
 
 ```typescript
-import { OnekeyAdapter } from '@tronweb3/tronwallet-adapter-onekey';
+import { OneKeyAdapter } from '@tronweb3/tronwallet-adapter-onekey';
 
-const adapter = new OnekeyAdapter();
+const adapter = new OneKeyAdapter();
 
-// connect to Onekey
+// connect to OneKey
 await adapter.connect();
 
 // then you can get address
@@ -33,10 +33,10 @@ await window.$onekey.tron.tronWeb.trx.sendRawTransaction(signedTransaction);
 
 ### API
 
--   `constructor(config: OnekeyAdapterConfig)`
+-   `constructor(config: OneKeyAdapterConfig)`
 
 ```typescript
-interface OnekeyAdapterConfig {
+interface OneKeyAdapterConfig {
     /**
      * Set if open Wallet's website when wallet is not installed.
      * Default is true.
@@ -44,16 +44,10 @@ interface OnekeyAdapterConfig {
     openUrlWhenWalletNotFound?: boolean;
 
     /**
-     * Timeout in millisecond for checking if Onekey is supported.
+     * Timeout in millisecond for checking if OneKey is supported.
      * Default is 2 * 1000ms
      */
     checkTimeout?: number;
-
-    /**
-     * Set if open Onekey app using DeepLink on mobile devices.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
 }
 ```
 
@@ -82,8 +76,8 @@ interface OnekeyAdapterConfig {
 ### Caveats
 
 -   Only wallet that imported by mnemonic can be used on TRON network.
--   Onekey Extension doesn't implement `multiSign()` and `switchChain()`.
--   Onekey Extension only support: `accountsChanged`,`connect`,`disconnect` events.
+-   OneKey Extension doesn't implement `multiSign()` and `switchChain()`.
+-   OneKey Extension only support: `accountsChanged`,`connect`,`disconnect` events.
 -   Deeplink is not supported.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

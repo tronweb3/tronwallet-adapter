@@ -1,4 +1,4 @@
-import { OnekeyAdapter } from '../../src/index.js';
+import { OneKeyAdapter } from '../../src/index.js';
 
 window.open = jest.fn();
 beforeEach(function () {
@@ -9,11 +9,11 @@ beforeEach(function () {
     window.tron = undefined;
 });
 
-describe('OnekeyAdapter', function () {
+describe('OneKeyAdapter', function () {
     describe('#adapter()', function () {
         test('constructor', () => {
-            const adapter = new OnekeyAdapter();
-            expect(adapter.name).toEqual('Onekey');
+            const adapter = new OneKeyAdapter();
+            expect(adapter.name).toEqual('OneKey');
             expect(adapter).toHaveProperty('icon');
             expect(adapter).toHaveProperty('url');
             expect(adapter).toHaveProperty('readyState');
