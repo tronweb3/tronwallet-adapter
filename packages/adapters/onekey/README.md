@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-onekey`
 
-This package provides an adapter to enable TRON DApps to connect to the [OneKey extension](https://chrome.google.com/webstore/detail/jnmbobjmhlngoefaiojfljckilhhlhcj).
+This package provides an adapter to enable TRON DApps to connect to the [OneKey extension](https://chrome.google.com/webstore/detail/jnmbobjmhlngoefaiojfljckilhhlhcj) and OneKey app wallet.
 
 ## Demo
 

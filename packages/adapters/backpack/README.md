@@ -1,6 +1,6 @@
 # @tronweb3/tronwallet-adapter-backpack
 
-Backpack wallet adapter for [TronWallet Adapter](https://github.com/tronweb3/tronwallet-adapter).
+Backpack wallet adapter for Backpack Wallet extension and App wallet.
 
 ## Installation
 
@@ -162,4 +162,4 @@ MIT
 -   [Backpack Wallet](https://www.backpack.app)
 -   [TronWallet Adapter](https://github.com/tronweb3/tronwallet-adapter)
 -   [Documentation](https://walletadapter.org/)
--   [TRON Wallet Integration Standards](https://github.com/tronprotocol/tips)
+-   [TRON Wallet Integration Standards](https://walletadapter.org/docs/new-wallet-support/wallet.html#wallet-integration-standards)
