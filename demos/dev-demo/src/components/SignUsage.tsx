@@ -7,6 +7,8 @@ import { useWallet } from './WalletProvider';
 import { CHAIN_ID, TRONSCAN_URL } from '../config';
 import { tronWeb } from '../tronweb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import type { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapters';
+import { BinanceWalletAdapterName } from '@tronweb3/tronwallet-adapters';
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
@@ -122,14 +124,28 @@ export default function SignUsage() {
     }
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
     let signedTransaction: any;
-    try {
-      signedTransaction = await adapter.signTransaction(transaction);
-    } catch (e) {
-      console.log(e);
-      return;
+    // try {
+    //   signedTransaction = await adapter.signTransaction(transaction);
+    // } catch (e) {
+    //   console.log(e);
+    //   return;
+    // }
+    // const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+
+    if (adapter.name === BinanceWalletAdapterName) {
+      const res = await (adapter as BinanceWalletAdapter).signAndSendTransaction(transaction);
+      console.log('binance signAndSendTransaction: ', res);
+      setSuccess(true);
+    } else {
+      try {
+        signedTransaction = await adapter.signTransaction(transaction);
+      } catch (e) {
+        console.log(e);
+        return;
+      }
+      const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+      setSuccess(res.result);
     }
-    const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-    setSuccess(res.result);
     setOpen(true);
     setTitle('Transfer');
   };

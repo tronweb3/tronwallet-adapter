@@ -19,11 +19,7 @@ const tronWeb = new TronWeb({
 });
 
 // create a send TRX transaction
-const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(
-    targetAddress,
-    100,
-    adapter.address
-);
+const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
 // using adapter to sign the transaction
 const signedTransaction = await adapter.signTransaction(unSignedTransaction);
 // broadcast the transaction
@@ -51,6 +47,20 @@ interface BinanceWalletAdapterConfig {
 }
 ```
 
+-   `signAndSendTransaction`
+    This method will sign and broadcast the transaction with Binance selected network. There is no need to call `tronWeb.trx.sendRawTransaction()` after this method.
+    **Note:** The `unSignedTransaction` must be created with `Mainnet` network.
+
+    ```typescript
+    const tronWeb = new TronWeb({
+        fullHost: 'https://api.trongrid.io',
+        privateKey: '',
+    });
+    const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
+    // using adapter to sign the transaction
+    const signedTransaction = await adapter.signAndSendTransaction(unSignedTransaction);
+    ```
+
 -   `network()` method is supported to get current network information. The type of returned value is `Network` as follows:
 
     ```typescript
@@ -77,8 +87,8 @@ interface BinanceWalletAdapterConfig {
 
 -   Binance Wallet App doesn't implement `multiSign()` and `switchChain()`.
 -   Binance Wallet App supports the following events:
-    - `connect`
-    - `disconnect`
-    - `accountsChanged`
+    -   `connect`
+    -   `disconnect`
+    -   `accountsChanged`
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

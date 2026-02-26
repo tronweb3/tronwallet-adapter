@@ -86,7 +86,7 @@ const AdapterBasicUsage: React.FC = () => {
         <BasicInfoWrap>
           <AdapterSelect />
           <ConnectionState />
-          <ConnectButton onClick={connectionState.connected ? disconnect : connect} disabled={connectionState.connecting}>
+          <ConnectButton onClick={connectionState.connected ? disconnect : connect}>
             {connectionState.connected ? <LinkOffIcon /> : <LinkIcon />}
             <span style={{ marginLeft: '10px' }}>{connectionState.connected ? 'Disconnect' : 'Connect'}</span>
           </ConnectButton>

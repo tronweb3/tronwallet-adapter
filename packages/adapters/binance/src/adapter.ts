@@ -30,9 +30,12 @@ export interface BinanceWalletAdapterConfig extends BaseAdapterConfig {
 export const BinanceWalletAdapterName = 'Binance Wallet' as AdapterName<'Binance Wallet'>;
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
-    '0x2b6653dc': NetworkType.Mainnet,
+    CT_195: NetworkType.Mainnet,
     '0x94a9059e': NetworkType.Shasta,
     '0xcd8690dc': NetworkType.Nile,
+};
+const chainIdMap: Record<string, string> = {
+    CT_195: '0x2b6653dc',
 };
 
 export class BinanceWalletAdapter extends Adapter {
@@ -104,7 +107,7 @@ export class BinanceWalletAdapter extends Adapter {
                 const chainId = this._provider.getChainId();
                 return {
                     networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
-                    chainId,
+                    chainId: chainIdMap[chainId],
                     fullNode: '',
                     solidityNode: '',
                     eventServer: '',
@@ -177,6 +180,25 @@ export class BinanceWalletAdapter extends Adapter {
             if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
             try {
                 return await this._provider.signTransaction(transaction);
+            } catch (error: any) {
+                throw new WalletSignTransactionError(error?.message, error);
+            }
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Sign transaction and broadcast the signed transaction with Binance wallet selected network.
+     * @param transaction
+     * @returns
+     */
+    async signAndSendTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        try {
+            if (!this.connected) throw new WalletDisconnectedError();
+            try {
+                return await this._provider.signAndSendTransaction(transaction);
             } catch (error: any) {
                 throw new WalletSignTransactionError(error?.message, error);
             }
