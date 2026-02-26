@@ -328,7 +328,7 @@ describe('BackpackAdapter - network()', () => {
         provider.request = jest.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
-            if (args.method === 'tron_chainId') return Promise.resolve('0x2b6653dc');
+            if (args.method === 'tron_chainId') return Promise.resolve('tron:728126428');
             return Promise.reject(new Error('Unknown method'));
         });
 
