@@ -5,6 +5,14 @@ const path = require('path');
 
 const exec = (cmd) => execSync(cmd, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
 
+function sanitizeRef(ref) {
+    // Allow only safe characters for a git ref.
+    if (!/^[a-zA-Z0-9_./-]+$/.test(ref)) {
+        throw new Error(`Invalid BASE_REF provided: ${ref}`);
+    }
+    return ref;
+}
+
 function getWorkspacePackages() {
     try {
         const output = exec('pnpm m ls --json --depth=1');
@@ -17,7 +25,8 @@ function getWorkspacePackages() {
 
 function getChangedFiles(baseRef) {
     try {
-        const output = exec(`git diff --name-only ${baseRef}...HEAD`);
+        const sanitizedRef = sanitizeRef(baseRef);
+        const output = exec(`git diff --name-only ${sanitizedRef}...HEAD`);
         return output
             .split('\n')
             .filter(Boolean)

@@ -31,11 +31,13 @@ export const BinanceWalletAdapterName = 'Binance Wallet' as AdapterName<'Binance
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
     CT_195: NetworkType.Mainnet,
+    '0x2b6653dc': NetworkType.Mainnet,
     '0x94a9059e': NetworkType.Shasta,
     '0xcd8690dc': NetworkType.Nile,
 };
 const chainIdMap: Record<string, string> = {
     CT_195: '0x2b6653dc',
+    '0x2b6653dc': '0x2b6653dc',
 };
 
 export class BinanceWalletAdapter extends Adapter {
@@ -194,11 +196,22 @@ export class BinanceWalletAdapter extends Adapter {
      * @param transaction
      * @returns
      */
-    async signAndSendTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    async signAndSendTransaction(transaction: Transaction): Promise<{
+        signature: string;
+        txHash: string;
+        transaction: SignedTransaction;
+        wcResult?: { result: boolean; txid: string };
+    }> {
         try {
             if (!this.connected) throw new WalletDisconnectedError();
             try {
-                return await this._provider.signAndSendTransaction(transaction);
+                const res = await this._provider.signAndSendTransaction(transaction);
+                try {
+                    res.transaction = JSON.parse(res.transaction);
+                } catch (e) {
+                    console.error(`[BinanceWalletAdapter] parse transaction error: ${e}`);
+                }
+                return res;
             } catch (error: any) {
                 throw new WalletSignTransactionError(error?.message, error);
             }
