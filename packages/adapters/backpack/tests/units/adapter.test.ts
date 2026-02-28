@@ -5,18 +5,19 @@ import {
     WalletNotFoundError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { BackpackAdapter } from '../../src/adapter.js';
-import { MockBackpackProvider, installMockBackpack, uninstallMockBackpack } from './mock.js';
-import { wait, CHECK_TIMEOUT } from './utils.js';
+import { installMockBackpack, uninstallMockBackpack } from './mock.js';
+import { CHECK_TIMEOUT } from './utils.js';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 
-window.open = jest.fn();
+window.open = vi.fn();
 
 beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     uninstallMockBackpack();
 });
 
 afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
     uninstallMockBackpack();
 });
 
@@ -69,7 +70,7 @@ describe('BackpackAdapter - Wallet Detection', () => {
         uninstallMockBackpack();
         const adapter = new BackpackAdapter();
         expect(adapter.state).toEqual(AdapterState.Loading);
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await Promise.resolve();
         expect(adapter.state).toEqual(AdapterState.NotFound);
         expect(adapter.connected).toEqual(false);
@@ -80,7 +81,7 @@ describe('BackpackAdapter - Wallet Detection', () => {
         provider._setConnected(false);
         provider._setAddress('');
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await Promise.resolve();
         expect(adapter.state).toEqual(AdapterState.Disconnect);
         expect(adapter.connected).toEqual(false);
@@ -91,7 +92,7 @@ describe('BackpackAdapter - Wallet Detection', () => {
         const provider = installMockBackpack(address);
         provider._setConnected(true);
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await Promise.resolve();
         expect(adapter.state).toEqual(AdapterState.Connected);
         expect(adapter.connected).toEqual(true);
@@ -103,14 +104,14 @@ describe('BackpackAdapter - connect()', () => {
     test('should throw WalletNotFoundError when Backpack is not installed', async () => {
         uninstallMockBackpack();
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await expect(adapter.connect()).rejects.toThrow(WalletNotFoundError);
     });
 
     test('should open wallet URL when wallet not found and openUrlWhenWalletNotFound is true', async () => {
         uninstallMockBackpack();
         const adapter = new BackpackAdapter({ openUrlWhenWalletNotFound: true });
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         try {
             await adapter.connect();
         } catch (e) {
@@ -122,10 +123,10 @@ describe('BackpackAdapter - connect()', () => {
     test('should throw WalletConnectionError when user rejects connection', async () => {
         const provider = installMockBackpack();
         provider._setConnected(false);
-        provider.request = jest.fn().mockRejectedValue({ code: 4001, message: 'User rejected' });
+        provider.request = vi.fn().mockRejectedValue({ code: 4001, message: 'User rejected' });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await expect(adapter.connect()).rejects.toThrow(WalletConnectionError);
     });
 
@@ -134,12 +135,12 @@ describe('BackpackAdapter - connect()', () => {
         const provider = installMockBackpack();
         provider._setConnected(true);
         provider._setAddress(address);
-        provider.request = jest.fn().mockResolvedValue([address]);
+        provider.request = vi.fn().mockResolvedValue([address]);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
-        const onConnect = jest.fn();
+        const onConnect = vi.fn();
         adapter.on('connect', onConnect);
 
         await adapter.connect();
@@ -154,11 +155,11 @@ describe('BackpackAdapter - connect()', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        const requestMock = jest.fn().mockResolvedValue([address]);
+        const requestMock = vi.fn().mockResolvedValue([address]);
         provider.request = requestMock;
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await Promise.resolve();
 
         // Already connected from initialization (tron_accounts was called)
@@ -180,13 +181,13 @@ describe('BackpackAdapter - disconnect()', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockResolvedValue([address]);
+        provider.request = vi.fn().mockResolvedValue([address]);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
-        const onDisconnect = jest.fn();
+        const onDisconnect = vi.fn();
         adapter.on('disconnect', onDisconnect);
 
         await adapter.disconnect();
@@ -202,9 +203,9 @@ describe('BackpackAdapter - disconnect()', () => {
         provider._setConnected(false);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
-        const onDisconnect = jest.fn();
+        const onDisconnect = vi.fn();
         adapter.on('disconnect', onDisconnect);
 
         await adapter.disconnect();
@@ -219,7 +220,7 @@ describe('BackpackAdapter - signMessage()', () => {
         provider._setConnected(false);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
         await expect(adapter.signMessage('test message')).rejects.toThrow(WalletDisconnectedError);
     });
@@ -228,7 +229,7 @@ describe('BackpackAdapter - signMessage()', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             if (args.method === 'tron_signMessage') return Promise.resolve('signed_message');
@@ -236,7 +237,7 @@ describe('BackpackAdapter - signMessage()', () => {
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
         const result = await adapter.signMessage('test message');
@@ -250,7 +251,7 @@ describe('BackpackAdapter - signTransaction()', () => {
         provider._setConnected(false);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
         await expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
     });
@@ -260,7 +261,7 @@ describe('BackpackAdapter - signTransaction()', () => {
         const signedTx = { txID: 'test_tx', signature: ['sig'] };
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             if (args.method === 'tron_signTransaction') return Promise.resolve(signedTx);
@@ -268,7 +269,7 @@ describe('BackpackAdapter - signTransaction()', () => {
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
         const result = await adapter.signTransaction({} as any);
@@ -282,7 +283,7 @@ describe('BackpackAdapter - switchChain()', () => {
         provider._setConnected(false);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
         await expect(adapter.switchChain('0x2b6653dc')).rejects.toThrow(WalletDisconnectedError);
     });
@@ -291,7 +292,7 @@ describe('BackpackAdapter - switchChain()', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             if (args.method === 'tron_switchChain') return Promise.resolve(null);
@@ -299,10 +300,10 @@ describe('BackpackAdapter - switchChain()', () => {
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
-        const onChainChanged = jest.fn();
+        const onChainChanged = vi.fn();
         adapter.on('chainChanged', onChainChanged);
 
         await adapter.switchChain('0x2b6653dc');
@@ -316,7 +317,7 @@ describe('BackpackAdapter - network()', () => {
         provider._setConnected(false);
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
 
         await expect(adapter.network()).rejects.toThrow(WalletDisconnectedError);
     });
@@ -325,7 +326,7 @@ describe('BackpackAdapter - network()', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             if (args.method === 'tron_chainId') return Promise.resolve('tron:728126428');
@@ -333,7 +334,7 @@ describe('BackpackAdapter - network()', () => {
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
         const network = await adapter.network();
@@ -348,17 +349,17 @@ describe('BackpackAdapter - Events', () => {
         const newAddress = 'TNewAddress987654321';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             return Promise.reject(new Error('Unknown method'));
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
-        const onAccountsChanged = jest.fn();
+        const onAccountsChanged = vi.fn();
         adapter.on('accountsChanged', onAccountsChanged);
 
         // Simulate accounts changed event from provider
@@ -372,17 +373,17 @@ describe('BackpackAdapter - Events', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             return Promise.reject(new Error('Unknown method'));
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
-        const onDisconnect = jest.fn();
+        const onDisconnect = vi.fn();
         adapter.on('disconnect', onDisconnect);
 
         // Simulate disconnect by emitting empty accounts
@@ -396,17 +397,17 @@ describe('BackpackAdapter - Events', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             return Promise.reject(new Error('Unknown method'));
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
-        const onChainChanged = jest.fn();
+        const onChainChanged = vi.fn();
         adapter.on('chainChanged', onChainChanged);
 
         // Simulate chain changed event from provider
@@ -419,14 +420,14 @@ describe('BackpackAdapter - Events', () => {
         const address = 'TTestAddress123456789';
         const provider = installMockBackpack(address);
         provider._setConnected(true);
-        provider.request = jest.fn().mockImplementation((args) => {
+        provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
             return Promise.reject(new Error('Unknown method'));
         });
 
         const adapter = new BackpackAdapter();
-        jest.advanceTimersByTime(CHECK_TIMEOUT);
+        vi.advanceTimersByTime(CHECK_TIMEOUT);
         await adapter.connect();
 
         // Verify listeners were added

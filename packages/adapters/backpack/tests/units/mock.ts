@@ -31,7 +31,7 @@ export class MockBackpackProvider implements BackpackTronProvider {
                 if (!this._connected) throw new Error('Not connected');
                 return { txID: 'test_tx_id', signature: ['test_signature'] };
             case 'tron_chainId':
-                return '0x2b6653dc';
+                return 'tron:728126428';
             case 'tron_switchChain':
                 return null;
             default:

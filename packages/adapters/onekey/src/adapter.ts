@@ -201,31 +201,6 @@ export class OneKeyAdapter extends Adapter {
         }
     }
 
-    async multiSign(
-        transaction: Transaction,
-        privateKey?: string | false,
-        permissionId?: number
-    ): Promise<SignedTransaction> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-
-            try {
-                return await wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
-                } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
-    }
-
     async signMessage(message: string, privateKey?: string): Promise<string> {
         try {
             const wallet = await this.checkAndGetWallet();

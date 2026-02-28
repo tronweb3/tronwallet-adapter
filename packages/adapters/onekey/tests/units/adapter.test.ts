@@ -1,8 +1,9 @@
 import { OneKeyAdapter } from '../../src/index.js';
+import { vi, describe, test, expect, beforeEach } from 'vitest';
 
-window.open = jest.fn();
+window.open = vi.fn();
 beforeEach(function () {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     global.document = window.document;
     global.navigator = window.navigator;
     window.tronLink = undefined;
