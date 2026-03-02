@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { LedgerWallet } from '../../src/LedgerWallet.js';
 import { LedgerAdapter } from '../../src/adapter.js';
 import {
@@ -7,7 +10,8 @@ import {
     WalletSignTransactionError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { waitFor } from '@testing-library/dom';
-jest.mock('../../src/LedgerWallet.js');
+import { vi } from 'vitest';
+vi.mock('../../src/LedgerWallet.js');
 function addPropertyToLedgerWallet(prop, value) {
     LedgerWallet[prop] = value;
 }
@@ -20,14 +24,14 @@ const LedgerWalletKeyValues = Object.getOwnPropertyNames(LedgerWallet)
     }, {});
 
 beforeAll(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
 });
 
 let navigatorGetter;
 
 beforeEach(() => {
     // @ts-ignore
-    navigatorGetter = jest.spyOn(window, 'navigator', 'get');
+    navigatorGetter = vi.spyOn(window, 'navigator', 'get');
     navigatorGetter.mockReturnValue({
         hid: {},
     });
@@ -54,7 +58,7 @@ describe('constructor()', () => {
         expect(adapter.ledgerUtils).toHaveProperty('getAddress');
     });
     test('constructor() params should pass to LedgerWallet', () => {
-        const _constructor = jest.fn();
+        const _constructor = vi.fn();
         addPropertyToLedgerWallet('_constructor', _constructor);
         const params = { accountNumber: 2 };
         new LedgerAdapter(params);
@@ -63,10 +67,10 @@ describe('constructor()', () => {
 });
 describe('connect()', () => {
     test('should work fine', async () => {
-        const _connect = jest.fn();
+        const _connect = vi.fn();
         addPropertyToLedgerWallet('_connect', _connect);
-        const onConnect = jest.fn();
-        const onStateChanged = jest.fn();
+        const onConnect = vi.fn();
+        const onStateChanged = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('connect', onConnect);
         adapter.on('stateChanged', onStateChanged);
@@ -77,11 +81,11 @@ describe('connect()', () => {
         expect(onStateChanged).toHaveBeenCalled();
     });
     test('should throw error when connect() throw error', async () => {
-        const _connect = jest.fn(async () => {
+        const _connect = vi.fn(async () => {
             throw new Error('connection error');
         });
         addPropertyToLedgerWallet('_connect', _connect);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         expect(adapter.state).toEqual(AdapterState.Disconnect);
         adapter.on('error', onError);
@@ -93,10 +97,10 @@ describe('connect()', () => {
 });
 describe('disconnect()', () => {
     test('should work fine', async () => {
-        const _disconnect = jest.fn();
+        const _disconnect = vi.fn();
         addPropertyToLedgerWallet('_disconnect', _disconnect);
-        const onDisconnect = jest.fn();
-        const onStateChanged = jest.fn();
+        const onDisconnect = vi.fn();
+        const onStateChanged = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('disconnect', onDisconnect);
         adapter.on('stateChanged', onStateChanged);
@@ -111,11 +115,11 @@ describe('disconnect()', () => {
         expect(onDisconnect).toHaveBeenCalledTimes(1);
     });
     test('throw error when disconnect throw error', async () => {
-        const _disconnect = jest.fn(() => {
+        const _disconnect = vi.fn(() => {
             throw new Error('disconnection error');
         });
         addPropertyToLedgerWallet('_disconnect', _disconnect);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);
@@ -128,18 +132,18 @@ describe('disconnect()', () => {
 });
 describe('signMessage()', () => {
     test('should throw error when not connect ledger', async () => {
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.signMessage('message')).rejects.toThrow(WalletDisconnectedError);
         expect(onError).toHaveBeenCalledTimes(1);
     });
     test('should work fine', async () => {
-        const _signPersonalMessage = jest.fn(() => {
+        const _signPersonalMessage = vi.fn(() => {
             return Promise.resolve('signed message');
         });
         addPropertyToLedgerWallet('_signPersonalMessage', _signPersonalMessage);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);
@@ -154,11 +158,11 @@ describe('signMessage()', () => {
     });
 
     test('should throw error when signMessage throw error', async () => {
-        const _signPersonalMessage = jest.fn(() => {
+        const _signPersonalMessage = vi.fn(() => {
             throw new Error('_signPersonalMessage error');
         });
         addPropertyToLedgerWallet('_signPersonalMessage', _signPersonalMessage);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);
@@ -173,18 +177,18 @@ describe('signMessage()', () => {
 
 describe('signTransaction()', () => {
     test('should throw error when not connect ledger', async () => {
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
         expect(onError).toHaveBeenCalledTimes(1);
     });
     test('should work fine', async () => {
-        const _signTransaction = jest.fn(() => {
+        const _signTransaction = vi.fn(() => {
             return Promise.resolve('signed transaction');
         });
         addPropertyToLedgerWallet('_signTransaction', _signTransaction);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);
@@ -199,11 +203,11 @@ describe('signTransaction()', () => {
     });
 
     test('should throw error when signTransaction throw error', async () => {
-        const _signTransaction = jest.fn(() => {
+        const _signTransaction = vi.fn(() => {
             throw new Error('_signTransaction error');
         });
         addPropertyToLedgerWallet('_signTransaction', _signTransaction);
-        const onError = jest.fn();
+        const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);

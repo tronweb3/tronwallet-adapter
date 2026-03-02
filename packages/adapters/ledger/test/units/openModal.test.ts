@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { openConnectingModal, openVerifyAddressModal, openSelectAccountModal } from '../../src/Modal/openModal.js';
 import { waitFor, fireEvent, screen } from '@testing-library/dom';
 import '@testing-library/jest-dom';

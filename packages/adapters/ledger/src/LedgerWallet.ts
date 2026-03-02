@@ -4,6 +4,7 @@ import type Transport from '@ledgerhq/hw-transport';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import type { BaseAdapterConfig, SignedTransaction, Transaction } from '@tronweb3/tronwallet-abstract-adapter';
 import { openConnectingModal, openSelectAccountModal, openVerifyAddressModal } from './Modal/openModal.js';
+import { txCheck } from 'tronweb/utils';
 
 async function wait(timeout: number) {
     return new Promise((resolve) => {
@@ -186,6 +187,9 @@ export class LedgerWallet {
         }
     }
     async signTransaction(transaction: Transaction | SignedTransaction): Promise<SignedTransaction> {
+        if (!txCheck(transaction)) {
+            throw new Error('Invalid transaction');
+        }
         await this.waitForIdle();
         try {
             const index = this.selectedIndex;
