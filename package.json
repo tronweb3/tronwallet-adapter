@@ -26,7 +26,7 @@
     ],
     "packageManager": "pnpm@9.6.0",
     "scripts": {
-        "nuke": "shx rm -rf packages/*/*/node_modules demos/**/node_modules node_modules || true",
+        "nuke": "shx rm -rf packages/*/*/node_modules packages/*/evm/*/node_modules demos/**/node_modules node_modules || true",
         "reinstall": "pnpm run nuke && pnpm install",
         "clean": "pnpm --recursive run clean && shx rm -rf **/*.tsbuildinfo",
         "ts": "pnpm run build:ts",

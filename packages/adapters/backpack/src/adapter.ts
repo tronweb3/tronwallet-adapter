@@ -72,11 +72,7 @@ export class BackpackAdapter extends Adapter {
             this._readyState = WalletReadyState.Found;
             this._updateWallet();
         } else {
-            this._checkWallet().then(() => {
-                if (this.connected) {
-                    this.emit('connect', this.address || '');
-                }
-            });
+            this._checkWallet();
         }
     }
 
@@ -90,10 +86,6 @@ export class BackpackAdapter extends Adapter {
 
     get readyState(): WalletReadyState {
         return this._readyState;
-    }
-
-    get connected(): boolean {
-        return this._state === AdapterState.Connected;
     }
 
     get connecting(): boolean {
@@ -128,11 +120,7 @@ export class BackpackAdapter extends Adapter {
                     method: 'tron_requestAccounts',
                 })) as string[];
 
-                if (!accounts || accounts.length === 0) {
-                    throw new WalletConnectionError('No accounts returned from Backpack wallet.');
-                }
-
-                const address = accounts[0];
+                const address = accounts?.[0];
                 if (!address) {
                     throw new WalletConnectionError('No address returned from Backpack wallet.');
                 }
@@ -249,12 +237,12 @@ export class BackpackAdapter extends Adapter {
                 error instanceof WalletError
                     ? error
                     : new WalletSwitchChainError(
-                          /tron:\d+/.test(error.message)
+                          error?.message
                               ? error.message.replace(
-                                    /tron:(\d+)/,
+                                    /tron:(\d+)/g,
                                     (_: string, p1: string) => `0x${parseInt(p1, 10).toString(16)}`
                                 )
-                              : error?.message || 'Failed to switch chain.',
+                              : 'Failed to switch chain.',
                           error
                       );
 
@@ -357,50 +345,35 @@ export class BackpackAdapter extends Adapter {
             const accounts = (await this._wallet.request({
                 method: 'tron_accounts',
             })) as string[];
-            if (accounts && accounts.length > 0 && accounts[0]) {
-                this._setAddress(accounts[0]);
-                this._setState(AdapterState.Connected);
-                this.emit('accountsChanged', accounts[0], '');
-            } else {
-                this._setState(AdapterState.Disconnect);
-            }
+            this._onAccountsChanged(accounts);
         } catch (e: any) {
-            console.log(`[BackpackAdapter] request accounts error: `, e);
+            console.error(`[BackpackAdapter] check existing connection error: `, e);
+            // On error, assume disconnected
+            this._onAccountsChanged([]);
         }
     }
 
     private _listenProviderEvents(): void {
         this._stopListenProviderEvents();
-        if (this._wallet?.on) {
-            this._wallet.on('accountsChanged', this._onAccountsChanged);
-            this._wallet.on('chainChanged', this._onChainChanged);
-        }
+        this._wallet?.on?.('accountsChanged', this._onAccountsChanged);
+        this._wallet?.on?.('chainChanged', this._onChainChanged);
     }
 
     private _stopListenProviderEvents(): void {
-        if (this._wallet?.removeListener) {
-            this._wallet.removeListener('accountsChanged', this._onAccountsChanged);
-            this._wallet.removeListener('chainChanged', this._onChainChanged);
-        }
+        this._wallet?.removeListener?.('accountsChanged', this._onAccountsChanged);
+        this._wallet?.removeListener?.('chainChanged', this._onChainChanged);
     }
 
-    private _onAccountsChanged = (accounts: unknown) => {
-        const accountList = accounts as string[];
+    private _onAccountsChanged = (accounts: string[]) => {
         const prevAddress = this._address;
-
-        if (!accountList || accountList.length === 0) {
-            this._setAddress(null);
-            this._setState(AdapterState.Disconnect);
-            this.emit('accountsChanged', '', prevAddress || '');
+        const newAddress = accounts?.[0] || null;
+        this._setAddress(newAddress);
+        this._setState(newAddress ? AdapterState.Connected : AdapterState.Disconnect);
+        this.emit('accountsChanged', newAddress || '', prevAddress || '');
+        if (prevAddress && !newAddress) {
             this.emit('disconnect');
-        } else {
-            const newAddress = accountList[0];
-            this._setAddress(newAddress);
-            this._setState(AdapterState.Connected);
-            this.emit('accountsChanged', newAddress, prevAddress || '');
-            if (!prevAddress && newAddress) {
-                this.emit('connect', newAddress);
-            }
+        } else if (!prevAddress && newAddress) {
+            this.emit('connect', newAddress);
         }
     };
 

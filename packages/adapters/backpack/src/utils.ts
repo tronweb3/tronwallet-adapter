@@ -1,20 +1,26 @@
-import { isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
+import { isInBrowser, isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface BackpackTronProvider {
     isBackpack?: boolean;
     accounts: string[];
     request: (args: { method: string; params?: unknown }) => Promise<unknown>;
-    on?: (event: string, handler: (...args: unknown[]) => void) => void;
-    removeListener?: (event: string, handler: (...args: unknown[]) => void) => void;
+    on?(event: 'accountsChanged', handler: (accounts: string[]) => void): void;
+    on?(event: 'chainChanged', handler: (chainData: unknown) => void): void;
+    on?(event: string, handler: (...args: unknown[]) => void): void;
+    removeListener?(event: 'accountsChanged', handler: (accounts: string[]) => void): void;
+    removeListener?(event: 'chainChanged', handler: (chainData: unknown) => void): void;
+    removeListener?(event: string, handler: (...args: unknown[]) => void): void;
     connect?: () => Promise<void>;
     disconnect?: () => Promise<void>;
 }
 
-interface BackpackWindow {
-    backpack?: {
+declare global {
+    interface Window {
+        backpack?: {
+            tron?: BackpackTronProvider;
+        };
         tron?: BackpackTronProvider;
-    };
-    tron?: BackpackTronProvider;
+    }
 }
 
 /**
@@ -22,42 +28,15 @@ interface BackpackWindow {
  * Backpack injects window.backpack.tron or identifies via isBackpack flag
  */
 export function supportBackpack(): boolean {
-    if (typeof window === 'undefined') return false;
-
-    const win = window as unknown as BackpackWindow;
-
-    // Check for Backpack's dedicated namespace
-    if (win.backpack?.tron) {
-        return true;
-    }
-
-    // Check for isBackpack flag on window.tron
-    if (win.tron?.isBackpack) {
-        return true;
-    }
-
-    return false;
+    return isInBrowser() && !!(window.backpack?.tron || window.tron?.isBackpack);
 }
 
 /**
  * Get Backpack provider
  */
 export function getBackpackProvider(): BackpackTronProvider | null {
-    if (typeof window === 'undefined') return null;
-
-    const win = window as unknown as BackpackWindow;
-
-    // Prefer Backpack's dedicated namespace
-    if (win.backpack?.tron) {
-        return win.backpack.tron;
-    }
-
-    // Fallback to window.tron if it's Backpack
-    if (win.tron?.isBackpack) {
-        return win.tron;
-    }
-
-    return null;
+    if (!isInBrowser()) return null;
+    return window.backpack?.tron || (window.tron?.isBackpack ? window.tron : null) || null;
 }
 
 /**
@@ -72,7 +51,7 @@ export function isInBackpackApp(): boolean {
  * Open Backpack app via deep link on mobile
  */
 export function openBackpack(): boolean {
-    if (!isInBackpackApp() && isInMobileBrowser()) {
+    if (isInMobileBrowser() && !isInBackpackApp()) {
         const currentUrl = encodeURIComponent(window.location.href);
         window.location.href = `https://backpack.app/ul/browse/${currentUrl}`;
         return true;
