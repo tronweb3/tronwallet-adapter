@@ -9,6 +9,7 @@ import {
     WalletConnectionError,
     WalletSignTransactionError,
     WalletGetNetworkError,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -51,8 +52,16 @@ export class OneKeyAdapter extends Adapter {
 
     config: Required<OneKeyAdapterConfig>;
 
-    private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
-    private _state: AdapterState = AdapterState.Loading;
+    private _readyState: WalletReadyState = isInBrowser()
+        ? supportOneKey()
+            ? WalletReadyState.Found
+            : WalletReadyState.Loading
+        : WalletReadyState.NotFound;
+    private _state: AdapterState = isInBrowser()
+        ? supportOneKey()
+            ? AdapterState.Disconnect
+            : AdapterState.Loading
+        : AdapterState.NotFound;
     private _connecting: boolean;
     private _wallet: TronLinkWallet | null;
     private _address: string | null;
@@ -72,14 +81,7 @@ export class OneKeyAdapter extends Adapter {
         this._connecting = false;
         this._wallet = null;
         this._address = null;
-
-        if (!isInBrowser()) {
-            this._readyState = WalletReadyState.NotFound;
-            this.setState(AdapterState.NotFound);
-            return;
-        }
-        if (supportOneKey()) {
-            this._readyState = WalletReadyState.Found;
+        if (this.readyState === WalletReadyState.Found) {
             this._updateWallet();
         } else {
             this._checkWallet().then(() => {
@@ -116,14 +118,12 @@ export class OneKeyAdapter extends Adapter {
             if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
             const wallet = this._wallet;
             if (!wallet || !wallet.tronWeb) throw new WalletDisconnectedError();
-            try {
-                return await getNetworkInfoByTronWeb(wallet.tronWeb);
-            } catch (e: any) {
-                throw new WalletGetNetworkError(e?.message, e);
-            }
+            return await getNetworkInfoByTronWeb(wallet.tronWeb);
         } catch (e: any) {
-            this.emit('error', e);
-            throw e;
+            const err =
+                e instanceof WalletError ? e : new WalletGetNetworkError(e?.message || 'Failed to get network', e);
+            this.emit('error', err);
+            throw err;
         }
     }
 
@@ -140,31 +140,30 @@ export class OneKeyAdapter extends Adapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TronLinkWallet;
-            try {
-                const res = await wallet.request({ method: 'tron_requestAccounts' });
-                if (!res) {
-                    throw new WalletConnectionError('Request connect error.');
-                }
-                if (res.code === 4001) {
-                    throw new WalletConnectionError(
-                        'The same DApp has already initiated a request to connect to onekey wallet, and the pop-up window has not been closed.'
-                    );
-                }
-                if (res.code === 4000) {
-                    throw new WalletConnectionError('The user rejected connection.');
-                }
-            } catch (error: any) {
-                throw new WalletConnectionError(error?.message, error);
+            const res = await wallet.request({ method: 'tron_requestAccounts' });
+            if (res?.code === 200) {
+                const address = wallet.tronWeb.defaultAddress?.base58 || '';
+                this.setAddress(address);
+                this.setState(AdapterState.Connected);
+                this._listenEvent();
+                this.connected && this.emit('connect', this.address || '');
+            } else {
+                const message = !res
+                    ? 'Request connect error.'
+                    : res.code === 4000
+                    ? 'The user rejected connection.'
+                    : res.code === 4001
+                    ? 'The same DApp has already initiated a request to connect to onekey wallet, and the pop-up window has not been closed.'
+                    : 'Request connect error.';
+                throw new WalletConnectionError(message);
             }
-
-            const address = wallet.tronWeb.defaultAddress?.base58 || '';
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            this._listenEvent();
-            this.connected && this.emit('connect', this.address || '');
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err =
+                error instanceof WalletError
+                    ? error
+                    : new WalletConnectionError(error?.message || 'Unknown error', error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
@@ -179,75 +178,56 @@ export class OneKeyAdapter extends Adapter {
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
     }
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign((wallet) => wallet.tronWeb.trx.sign(transaction), WalletSignTransactionError);
+    }
 
-    async signTransaction(transaction: Transaction, privateKey?: string): Promise<SignedTransaction> {
+    async signMessage(message: string): Promise<string> {
+        return this._checkAndSign(async (wallet) => wallet.tronWeb.trx.signMessageV2(message), WalletSignMessageError);
+    }
+
+    private async _checkAndSign<T>(
+        action: (wallet: TronLinkWallet) => Promise<T>,
+        ErrorConstructor: typeof WalletSignTransactionError | typeof WalletSignMessageError
+    ): Promise<T> {
         try {
-            const wallet = await this.checkAndGetWallet();
-
+            await this._checkWallet();
+            if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
+            const wallet = this._wallet;
+            if (!wallet || !wallet.tronWeb) throw new WalletDisconnectedError();
             try {
-                return await wallet.tronWeb.trx.sign(transaction, privateKey);
+                return await action(wallet);
             } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
-                } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
-                }
+                throw new ErrorConstructor(error?.message || error || 'Unknown error', error);
             }
         } catch (error: any) {
             this.emit('error', error);
             throw error;
         }
-    }
-
-    async signMessage(message: string, privateKey?: string): Promise<string> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-            try {
-                return await wallet.tronWeb.trx.signMessageV2(message, privateKey);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignMessageError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignMessageError(error, new Error(error));
-                } else {
-                    throw new WalletSignMessageError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
-    }
-
-    private async checkAndGetWallet() {
-        await this._checkWallet();
-        if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
-        const wallet = this._wallet;
-        if (!wallet || !wallet.tronWeb) throw new WalletDisconnectedError();
-        return wallet as TronLinkWallet;
     }
 
     private _listenEvent() {
         this._stopListenEvent();
-        window.addEventListener('message', this.messageHandler);
+        window.addEventListener('message', this._messageHandler);
     }
 
     private _stopListenEvent() {
-        window.removeEventListener('message', this.messageHandler);
+        window.removeEventListener('message', this._messageHandler);
     }
 
-    private messageHandler = (e: TronLinkMessageEvent) => {
+    private _messageHandler = (e: TronLinkMessageEvent) => {
         const message = e.data?.message;
-        if (!message) {
+        if (!message || !message.action) {
             return;
         }
-        if (message.action === 'accountsChanged') {
+        const { action, data } = message;
+        if (action === 'accountsChanged') {
+            // Using a timeout to ensure the wallet's internal state is updated
+            // before we process the event. This is a workaround for potential race conditions.
             setTimeout(() => {
                 const preAddr = this.address || '';
                 if ((this._wallet as TronLinkWallet)?.ready) {
-                    const address = (message.data as AccountsChangedEventData).address;
+                    const address = (data as AccountsChangedEventData).address;
                     this.setAddress(address);
                     this.setState(AdapterState.Connected);
                 } else {
@@ -264,21 +244,6 @@ export class OneKeyAdapter extends Adapter {
                     this.emit('disconnect');
                 }
             }, 200);
-        } else if (message.action === 'connect') {
-            const isCurConnected = this.connected;
-            const preAddress = this.address || '';
-            const address = (this._wallet as TronLinkWallet).tronWeb?.defaultAddress?.base58 || '';
-            this.setAddress(address);
-            this.setState(AdapterState.Connected);
-            if (!isCurConnected) {
-                this.emit('connect', address);
-            } else if (address !== preAddress) {
-                this.emit('accountsChanged', this.address || '', preAddress);
-            }
-        } else if (message.action === 'disconnect') {
-            this.setAddress(null);
-            this.setState(AdapterState.Disconnect);
-            this.emit('disconnect');
         }
     };
     private _checkPromise: Promise<boolean> | null = null;
@@ -316,8 +281,8 @@ export class OneKeyAdapter extends Adapter {
     }
 
     private _updateWallet = () => {
-        let state = this.state;
-        let address = this.address;
+        let state;
+        let address;
         if (supportOneKey()) {
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this._wallet = window.$onekey!.tron;
