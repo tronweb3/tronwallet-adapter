@@ -4,7 +4,6 @@ import type Transport from '@ledgerhq/hw-transport';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import type { BaseAdapterConfig, SignedTransaction, Transaction } from '@tronweb3/tronwallet-abstract-adapter';
 import { openConnectingModal, openSelectAccountModal, openVerifyAddressModal } from './Modal/openModal.js';
-import { txCheck } from 'tronweb/utils';
 
 async function wait(timeout: number) {
     return new Promise((resolve) => {
@@ -174,51 +173,48 @@ export class LedgerWallet {
         this._address = '';
     }
     async signPersonalMessage(message: string) {
-        await this.waitForIdle();
-        try {
-            const index = this.selectedIndex;
-            await this.makeApp();
-            const path = this.getPathForIndex(index);
+        return this._withApp((app, path) => {
             const hex = Buffer.from(message).toString('hex');
-            const res = await this.app!.signPersonalMessage(path, hex);
-            return res;
-        } finally {
-            await this.cleanUp();
-        }
+            return app.signPersonalMessage(path, hex);
+        });
     }
     async signTransaction(transaction: Transaction | SignedTransaction): Promise<SignedTransaction> {
-        if (!txCheck(transaction)) {
-            throw new Error('Invalid transaction');
-        }
+        const signedResponse = await this._withApp((app, path) =>
+            app.signTransaction(path, transaction.raw_data_hex, [])
+        );
+        return this._mergeSignature(transaction, signedResponse);
+    }
+    async signTransactionHash(transaction: Transaction | SignedTransaction): Promise<SignedTransaction> {
+        const signedResponse = await this._withApp((app, path) => app.signTransactionHash(path, transaction.txID));
+        return this._mergeSignature(transaction, signedResponse);
+    }
+
+    private async _withApp<T>(action: (app: Trx, path: string) => Promise<T>): Promise<T> {
         await this.waitForIdle();
         try {
             const index = this.selectedIndex;
             const path = this.getPathForIndex(index);
             await this.makeApp();
-            let signedResponse;
-            try {
-                signedResponse = await this.app!.signTransaction(path, transaction.raw_data_hex, []);
-            } catch (e: any) {
-                if (/Too many bytes to encode/.test(e.message)) {
-                    signedResponse = await this.app!.signTransactionHash(path, transaction.txID);
-                } else {
-                    throw e;
-                }
-            }
-            let signature = (transaction as SignedTransaction).signature;
-            if (Array.isArray(signature)) {
-                if (!signature.includes(signedResponse)) signature.push(signedResponse);
-            } else {
-                signature = [signedResponse];
-            }
-            return {
-                ...transaction,
-                signature,
-            } as SignedTransaction;
+            // this.app is guaranteed to be non-null here by makeApp
+            return await action(this.app!, path);
         } finally {
             await this.cleanUp();
         }
     }
+
+    private _mergeSignature(transaction: Transaction | SignedTransaction, signedResponse: string): SignedTransaction {
+        const originalSignature = (transaction as SignedTransaction).signature;
+        const signature = Array.isArray(originalSignature)
+            ? originalSignature.includes(signedResponse)
+                ? originalSignature
+                : [...originalSignature, signedResponse]
+            : [signedResponse];
+        return {
+            ...transaction,
+            signature,
+        } as SignedTransaction;
+    }
+
     getAccounts = async (from: number, to: number): Promise<Account[]> => {
         if (from < 0) {
             throw new Error('getAccount parameter error: from cannot be smaller than 0.');

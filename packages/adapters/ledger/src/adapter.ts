@@ -10,6 +10,7 @@ import {
     WalletDisconnectionError,
     WalletReadyState,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import { txCheck } from 'tronweb/utils';
 
 import type { Transaction, SignedTransaction, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import type { Account, LedgerUtils, LedgerWalletConfig } from './LedgerWallet.js';
@@ -118,16 +119,20 @@ export class LedgerAdapter extends Adapter {
         }
     }
 
-    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    private async _checkAndSign<T>(
+        action: () => Promise<T>,
+        errorClass: typeof WalletSignMessageError | typeof WalletSignTransactionError,
+        preCheck?: () => void
+    ): Promise<T> {
         try {
             if (this.state !== AdapterState.Connected) {
                 throw new WalletDisconnectedError();
             }
+            if (preCheck) preCheck();
             try {
-                const signedTransaction = await this._wallet.signTransaction(transaction);
-                return signedTransaction;
+                return await action();
             } catch (e: any) {
-                throw new WalletSignTransactionError(e.message);
+                throw new errorClass(e?.message, e);
             }
         } catch (error: any) {
             this.emit('error', error);
@@ -135,20 +140,31 @@ export class LedgerAdapter extends Adapter {
         }
     }
 
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign(
+            () => this._wallet.signTransaction(transaction),
+            WalletSignTransactionError,
+            () => {
+                if (!txCheck(transaction)) {
+                    throw new WalletSignTransactionError('Invalid transaction');
+                }
+            }
+        );
+    }
+
+    async signTransactionHash(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign(
+            () => this._wallet.signTransactionHash(transaction),
+            WalletSignTransactionError,
+            () => {
+                if (!txCheck(transaction)) {
+                    throw new WalletSignTransactionError('Invalid transaction');
+                }
+            }
+        );
+    }
+
     async signMessage(message: string): Promise<string> {
-        try {
-            if (this.state !== AdapterState.Connected) {
-                throw new WalletDisconnectedError();
-            }
-            try {
-                const signedResponse = await this._wallet.signPersonalMessage(message);
-                return signedResponse;
-            } catch (error: any) {
-                throw new WalletSignMessageError(error?.message, error);
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        return this._checkAndSign(() => this._wallet.signPersonalMessage(message), WalletSignMessageError);
     }
 }
