@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-onekey",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "description": "Wallet adapter for OneKey Extension and App wallet.",
     "keywords": [
         "TRON",
