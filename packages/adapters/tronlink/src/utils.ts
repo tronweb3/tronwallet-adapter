@@ -2,10 +2,10 @@ import { isInBrowser, isInMobileBrowser } from '@tronweb3/tronwallet-abstract-ad
 import type { Tron } from './types.js';
 
 export function supportTron() {
-    return !!(window.tron && window.tron.isTronLink);
+    return isInBrowser() && !!(window.tron && window.tron.isTronLink);
 }
 export function supportTronLink() {
-    return !!(supportTron() || window.tronLink || window.tronWeb);
+    return isInBrowser() && !!(supportTron() || window.tronLink || window.tronWeb);
 }
 
 /**
