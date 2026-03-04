@@ -38,6 +38,13 @@ function getChangedFiles(baseRef) {
 }
 
 function getNpmVersion(pkgName) {
+    // Sanitize pkgName to prevent command injection.
+    // A valid npm package name can be scoped or unscoped.
+    // It should only contain alphanumeric characters, dots, underscores, and hyphens.
+    const validPackageNameRegex = /^(@[a-zA-Z0-9-._]+\/)?[a-zA-Z0-9-._]+$/;
+    if (!validPackageNameRegex.test(pkgName)) {
+        throw new Error(`Invalid or potentially malicious package name detected: ${pkgName}`);
+    }
     try {
         return exec(`npm view ${pkgName} version`);
     } catch (e) {
