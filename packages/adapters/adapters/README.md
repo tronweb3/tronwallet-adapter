@@ -24,7 +24,6 @@ As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use 
 | [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)       |
 | [`@tronweb3/tronwallet-adapter-guarda`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | adapter for [Guarda Wallet Extension](https://guarda.com?install=guarda-extensional) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)        |
 | [`@tronweb3/tronwallet-adapter-onekey`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-onekey)               | adapter for [OneKey Wallet](https://onekey.so/download)                              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/onekey)        |
-| [`@tronweb3/tronwallet-adapter-backpack`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-backpack)           | adapter for [Backpack Wallet](https://backpack.app)                                  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/backpack)      |
 | [`@tronweb3/tronwallet-adapter-metamask-tron`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron) | adapter for [MetaMask](https://metamask.io/)                                         | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron) |
 | [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm)   | EVM adapter for [MetaMask](https://metamask.io/)                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)  |
 | [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm)   | EVM adapter for [TronLink](https://www.tronlink.org/)                                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)  |
@@ -361,7 +360,6 @@ Other adapters `Constructor` config api can be found in their source code `READM
 -   [TomoWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)
 -   [BinanceWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)
 -   [OneKeyAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/onekey)
--   [BackpackAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/backpack)
 -   [MetaMaskAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron)
 -   [MetaMaskEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)
 -   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)

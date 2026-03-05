@@ -52,9 +52,6 @@ This repository contains wallet adapters and components for Tron DApps. With out
 | [OneKey](https://onekey.so/)                        | Android           | >=2.69.2                       |
 |                                                     | iOS               | >=2.69.2                       |
 |                                                     | Browser Extension | >=0.10.185                     |
-| [Backpack](https://backpack.app)                    | Android           | >=6.0.0                        |
-|                                                     | iOS               | >=5.20.1                       |
-|                                                     | Browser Extension | >=6.0.0                        |
 
 ### Supported EVM Wallets
 
@@ -245,7 +242,6 @@ tronwallet-adapter
 |   |   ├─metamask-tron # adapter for MetaMask Wallet
 |   |   ├─binance # adapter for Binance Wallet
 |   |   ├─onekey # adapter for OneKey Wallet
-|   |   ├─backpack # adapter for Backpack Wallet
 |   |   ├─evm # adapters for EVM compatible Wallet
 |   |   |   ├─abstract-adapter
 |   |   |   ├─binance
@@ -290,7 +286,6 @@ You can use the `@tronweb3/tronwallet-adapters` package, or add the individual w
 | [`@tronweb3/tronwallet-adapter-binance`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | Adapter for Binance Wallet App(iOS and Android)                  |
 | [`@tronweb3/tronwallet-adapter-guarda`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | Adapter for Guarda Wallet Extension                              |
 | [`@tronweb3/tronwallet-adapter-onekey`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-onekey)               | Adapter for OneKey Wallet                                        |
-| [`@tronweb3/tronwallet-adapter-backpack`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-backpack)           | Adapter for Backpack Wallet                                      |
 | [`@tronweb3/tronwallet-adapter-metamask-tron`](https://www.npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron) | Adapter for MetaMask Wallet                                      |
 
 ### EvmWallet Adapters
@@ -340,7 +335,6 @@ This package contains all wallet adapters for Tron including:
 -   [Binance Wallet](https://www.binance.com/en/binancewallet)
 -   [Guarda Wallet](https://guarda.com)
 -   [OneKey Wallet](https://onekey.so)
--   [Backpack Wallet](https://backpack.app)
 -   [MetaMask](https://metamask.io)
 
 Code example：
