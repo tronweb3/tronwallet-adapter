@@ -1,13 +1,10 @@
-/**
- * @jest-environment node
- */
-import { TronLinkAdapter } from '../../src/adapter.js';
-import { MockTron } from './mock.js';
+import { MockTron, TronLinkAdapter } from './mock.js';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 Object.defineProperty(global, 'performance', {
     writable: true,
 });
 globalThis.window = {
-    open: jest.fn(),
+    open: vi.fn(),
     location: {
         origin: '',
         pathname: '',
@@ -18,7 +15,7 @@ globalThis.window = {
 let adapter: TronLinkAdapter;
 
 beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
     globalThis.navigator = {} as any;
     // @ts-ignore
     globalThis.navigator.userAgent = 'Android';
@@ -26,12 +23,12 @@ beforeEach(() => {
 });
 afterEach(() => {
     globalThis.window.location.href = '';
-    jest.clearAllTimers();
+    vi.clearAllTimers();
 });
 
 describe('when on mobile device browser', () => {
     test('will open TronLink app when tron is undefined ', async () => {
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
         try {
             await adapter.connect();
         } catch {
@@ -43,7 +40,7 @@ describe('when on mobile device browser', () => {
     test('will not open TronLink app when tron exists', async () => {
         globalThis.window.tron = new MockTron();
         adapter = new TronLinkAdapter();
-        jest.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(1000);
         try {
             await adapter.connect();
         } catch {
