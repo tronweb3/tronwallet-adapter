@@ -202,8 +202,8 @@ The `Adapter` class defines the common interface for all adapters of specified w
 
 -   `connect(): Promise<void>`: connect to the wallet.
 -   `disconnect(): Promise<void>`: disconnect to the wallet.
--   `signMessage(message, privateKey?): Promise<string>`: sign a string, return the signature result. An optional `privateKey` can be provided.
--   `signTransaction(transaction, privateKey?)`: sign a transaction, return the signature result of the transaction. An optional `privateKey` can be provided.
+-   `signMessage(message): Promise<string>`: sign a string, return the signature result.
+-   `signTransaction(transaction)`: sign a transaction, return the signature result of the transaction.
 -   `multiSign(transaction, privateKey: string | null, permissionId?)`: sign a multi-sign transaction.
     -   If `privateKey` is not `null`, will use the privateKey to sign rather than TronLink.
     -   If `permissionId` is not provided, will use `0`(OwnerPerssion) as default.
