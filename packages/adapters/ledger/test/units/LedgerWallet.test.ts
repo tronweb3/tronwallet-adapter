@@ -1,6 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
 import Trx from '@ledgerhq/hw-app-trx';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { waitFor } from '@testing-library/dom';
@@ -295,7 +292,7 @@ describe('signMessage() should work fine', () => {
 });
 
 describe('signTransaction() should work fine', () => {
-    test.skip('should work fine when ledger is ok', async () => {
+    test('should work fine when ledger is ok', async () => {
         const _getAddress = vi.fn(() => {
             return {
                 address: 'address',
@@ -312,7 +309,13 @@ describe('signTransaction() should work fine', () => {
         await wallet.connect();
         expect(wallet.address).toEqual('address');
 
-        const transaction = await tronWeb.transactionBuilder.sendTrx('address', 1000, 'address');
+        const account1 = tronWeb.utils.accounts.generateAccount();
+        const account2 = tronWeb.utils.accounts.generateAccount();
+        const transaction = await tronWeb.transactionBuilder.sendTrx(
+            account1.address.base58,
+            1000,
+            account2.address.base58
+        );
         const res = await wallet.signTransaction(transaction);
         expect(res).toEqual({ ...transaction, signature: ['result'] });
         expect(_signTransaction).toHaveBeenCalledTimes(1);

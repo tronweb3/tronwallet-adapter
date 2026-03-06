@@ -164,7 +164,21 @@ export class LedgerAdapter extends Adapter {
         );
     }
 
-    async signMessage(message: string): Promise<string> {
-        return this._checkAndSign(() => this._wallet.signPersonalMessage(message), WalletSignMessageError);
+    /**
+     * Sign a message and optionally convert the signature suffix.
+     *
+     * By default, if the signature ends with '00' or '01', it will be replaced with '1b' or '1c' respectively.
+     * This is required for compatibility with some signature verification logic.
+     *
+     * @param message - The message to sign.
+     * @param options.convertSuffix - Whether to convert the signature suffix. Default is true.
+     * @returns The signature string, with suffix converted if enabled.
+     */
+    async signMessage(message: string, options?: { convertSuffix?: boolean }): Promise<string> {
+        return this._checkAndSign(async () => {
+            const signature = await this._wallet.signPersonalMessage(message);
+            const { convertSuffix = true } = options ?? {};
+            return convertSuffix ? signature.replace(/(00|01)$/, (match) => (match === '00' ? '1b' : '1c')) : signature;
+        }, WalletSignMessageError);
     }
 }

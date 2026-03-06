@@ -1,8 +1,6 @@
-/**
- * @vitest-environment jsdom
- */
 import { LedgerWallet } from '../../src/LedgerWallet.js';
 import { LedgerAdapter } from '../../src/adapter.js';
+import type { Transaction } from '@tronweb3/tronwallet-abstract-adapter';
 import {
     AdapterState,
     WalletDisconnectedError,
@@ -11,11 +9,15 @@ import {
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { waitFor } from '@testing-library/dom';
 import { vi } from 'vitest';
+import { TronWeb } from 'tronweb';
 vi.mock('../../src/LedgerWallet.js');
 function addPropertyToLedgerWallet(prop, value) {
     LedgerWallet[prop] = value;
 }
 
+const tronWeb = new TronWeb({
+    fullHost: 'https://api.nileex.io',
+});
 const LedgerWalletKeyValues = Object.getOwnPropertyNames(LedgerWallet)
     .filter((name) => Reflect.getOwnPropertyDescriptor(LedgerWallet, name).writable)
     .reduce((acc, name) => {
@@ -173,9 +175,42 @@ describe('signMessage()', () => {
             expect(onError).toHaveBeenCalled();
         });
     });
+
+    test('should convert signature suffix by default', async () => {
+        const _signPersonalMessage = vi.fn(() => Promise.resolve('abcdef00'));
+        addPropertyToLedgerWallet('_signPersonalMessage', _signPersonalMessage);
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+        const res = await adapter.signMessage('msg');
+        expect(res.endsWith('1b')).toBe(true);
+    });
+
+    test('should not convert signature suffix when convertSuffix is false', async () => {
+        const _signPersonalMessage = vi.fn(() => Promise.resolve('abcdef01'));
+        addPropertyToLedgerWallet('_signPersonalMessage', _signPersonalMessage);
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+        const res = await adapter.signMessage('msg', { convertSuffix: false });
+        expect(res.endsWith('01')).toBe(true);
+    });
+
+    test('should convert 01 to 1c when convertSuffix is true', async () => {
+        const _signPersonalMessage = vi.fn(() => Promise.resolve('abcdef01'));
+        addPropertyToLedgerWallet('_signPersonalMessage', _signPersonalMessage);
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+        const res = await adapter.signMessage('msg', { convertSuffix: true });
+        expect(res.endsWith('1c')).toBe(true);
+    });
 });
 
-describe('signTransaction()', () => {
+describe('signTransaction()', async () => {
+    let transaction: Transaction;
+    beforeEach(async () => {
+        const account1 = tronWeb.utils.accounts.generateAccount();
+        const account2 = tronWeb.utils.accounts.generateAccount();
+        transaction = await tronWeb.transactionBuilder.sendTrx(account1.address.base58, 1000, account2.address.base58);
+    });
     test('should throw error when not connect ledger', async () => {
         const onError = vi.fn();
         const adapter = new LedgerAdapter();
@@ -196,10 +231,10 @@ describe('signTransaction()', () => {
         await adapter.connect();
         expect(adapter.state).toEqual(AdapterState.Connected);
 
-        const res = await adapter.signTransaction({} as any);
+        const res = await adapter.signTransaction(transaction);
         expect(res).toEqual('signed transaction');
         expect(_signTransaction).toHaveBeenCalledTimes(1);
-        expect(_signTransaction).toHaveBeenCalledWith({});
+        expect(_signTransaction).toHaveBeenCalledWith(transaction);
     });
 
     test('should throw error when signTransaction throw error', async () => {
@@ -212,8 +247,7 @@ describe('signTransaction()', () => {
         adapter.on('error', onError);
         expect(adapter.state).toEqual(AdapterState.Disconnect);
         await adapter.connect();
-        await expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletSignTransactionError);
-        await expect(adapter.signTransaction({} as any)).rejects.toThrow('_signTransaction error');
+        await expect(adapter.signTransaction(transaction)).rejects.toThrow(WalletSignTransactionError);
         waitFor(() => {
             expect(onError).toHaveBeenCalled();
         });
