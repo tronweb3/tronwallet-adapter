@@ -4,6 +4,7 @@
     "compilerOptions": {
         "declaration": true,
         "outDir": "lib/esm",
-        "declarationDir": "lib/types"
+        "declarationDir": "lib/types",
+        "skipLibCheck": true
     }
 }

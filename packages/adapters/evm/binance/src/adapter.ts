@@ -9,14 +9,6 @@ import {
 } from '@tronweb3/abstract-adapter-evm';
 import { getBinanceEvmProvider, openBinanceWithDeeplink, supportBinanceEvm } from './utils.js';
 
-declare global {
-    interface Window {
-        binancew3w?: {
-            tron: any;
-            ethereum: EIP1193Provider;
-        };
-    }
-}
 export interface BinanceEvmAdapterOptions {
     useDeeplink?: boolean;
 }

@@ -388,7 +388,10 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
       <Select labelId="demo-simple-select-label" id="demo-simple-select" value={selectedChainId} size="small" onChange={(e) => setSelectedChainId(e.target.value as Chain['chainId'])}>
         <MenuItem value={'0x1'}>Ethereum Mainnet</MenuItem>
         <MenuItem value={'0x38'}>BSC Mainnet</MenuItem>
+        <MenuItem value={'0x61'}>BSC Testnet</MenuItem>
         <MenuItem value={'0x2105'}>Base Mainnet</MenuItem>
+        <MenuItem value={'0xc7'}>BitTorrent Chain Mainnet</MenuItem>
+        <MenuItem value={'0x405'}>BitTorrent Chain Donau</MenuItem>
         <MenuItem value={'0xa4b1'}>Arbitrum One</MenuItem>
         <MenuItem value={'0x539'}>Localhost Test</MenuItem>
       </Select>
