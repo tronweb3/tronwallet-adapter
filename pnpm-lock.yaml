@@ -773,7 +773,7 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
+        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -792,7 +792,7 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
+        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -5978,8 +5978,8 @@ packages:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
 
-  diff@4.0.4:
-    resolution: {integrity: sha512-X07nttJQkwkfKfvTPG/KSnE2OMdcUCao6+eXF3wmnIQRn2aPAHH3VxDbDOdegkd6JbPsXqShpvEOHfAT+nCNwQ==}
+  diff@8.0.3:
+    resolution: {integrity: sha512-qejHi7bcSD4hQAZE0tNAawRK1ZtafHDmMTMkrrIGgSLl7hTnQHmKCeB45xAcbfTqK2zowkM3j3bHt/4b/ARbYQ==}
     engines: {node: '>=0.3.1'}
 
   diffie-hellman@5.0.3:
@@ -16768,7 +16768,7 @@ snapshots:
 
   diff-sequences@29.6.3: {}
 
-  diff@4.0.4:
+  diff@8.0.3:
     optional: true
 
   diffie-hellman@5.0.3:
@@ -21061,7 +21061,7 @@ snapshots:
       acorn-walk: 8.3.3
       arg: 4.1.3
       create-require: 1.1.1
-      diff: 4.0.4
+      diff: 8.0.3
       make-error: 1.3.6
       typescript: 5.5.4
       v8-compile-cache-lib: 3.0.1
@@ -21080,7 +21080,7 @@ snapshots:
       acorn-walk: 8.3.3
       arg: 4.1.3
       create-require: 1.1.1
-      diff: 4.0.4
+      diff: 8.0.3
       make-error: 1.3.6
       typescript: 5.5.4
       v8-compile-cache-lib: 3.0.1
