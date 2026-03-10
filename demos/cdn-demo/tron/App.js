@@ -12,7 +12,6 @@ const { TomoWalletAdapter } = window['@tronweb3/tronwallet-adapter-tomowallet'];
 const { TrustAdapter } = window['@tronweb3/tronwallet-adapter-trust'];
 const { BinanceWalletAdapter } = window['@tronweb3/tronwallet-adapter-binance'];
 const { LedgerAdapter } = window['@tronweb3/tronwallet-adapter-ledger'];
-const { WalletConnectAdapter } = window['@tronweb3/tronwallet-adapter-walletconnect'];
 
 const tronWeb = new window.TronWeb.TronWeb({
     fullHost: 'https://nile.trongrid.io',
@@ -34,7 +33,6 @@ export default {
             new BinanceWalletAdapter(),
             new GuardaAdapter(),
             new LedgerAdapter(),
-            new WalletConnectAdapter(walletConnectConfig),
         ];
         const queryString = window.location.search || '';
         const params = new URLSearchParams(queryString);
@@ -129,25 +127,4 @@ export default {
         <button @click="handleTransfer" class="wallet-btn">Transfer</button>
       </div>
     </div>`,
-};
-
-const walletConnectConfig = {
-    network: 'Nile',
-    options: {
-        relayUrl: 'wss://relay.walletconnect.com',
-        // example WC app project ID
-        projectId: '',
-        metadata: {
-            name: 'Test DApp',
-            description: 'Test dApp',
-            url: 'https://your-dapp-url.org/',
-            icons: ['https://your-dapp-url.org/mainLogo.svg'],
-        },
-    },
-    web3ModalConfig: {
-        themeMode: 'dark',
-        themeVariables: {
-            '--wcm-z-index': '1000',
-        },
-    },
 };

@@ -26,9 +26,6 @@ import {
 
 declare global {
     interface Window {
-        binancew3w?: {
-            tron: any;
-        };
         isBinance: boolean;
     }
 }

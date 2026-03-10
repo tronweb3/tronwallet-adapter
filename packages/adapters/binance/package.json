@@ -46,7 +46,7 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@binance/w3w-utils": "1.1.6",
+        "@binance/w3w-utils": "1.1.8",
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
