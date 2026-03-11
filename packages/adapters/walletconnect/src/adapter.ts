@@ -101,6 +101,14 @@ export interface WalletConnectAdapterConfig {
     web3ModalConfig?: WalletConnectWeb3ModalConfig;
 }
 
+export interface WalletConnectConnectOptions {
+    /**
+     * Callback to receive the WalletConnect URI for custom QR code rendering.
+     * When provided, the AppKit modal will be skipped.
+     */
+    onUri?: (uri: string) => void;
+}
+
 export class WalletConnectAdapter extends Adapter {
     name = WalletConnectWalletName;
     url = 'https://walletconnect.org';
@@ -116,12 +124,12 @@ export class WalletConnectAdapter extends Adapter {
 
     constructor(config: WalletConnectAdapterConfig) {
         super();
-        config = {
-            ...config,
-        };
         if (!config || typeof config !== 'object') {
             throw new Error(`[WalletconnectAdapter] config is required.`);
         }
+        config = {
+            ...config,
+        };
         if (!config.network) {
             console.error(
                 `[WalletconnectAdapter] config.network must be one of ${NETWORK.join()} or a chainID such as 0x2b6653dc. Use Nile network instead.`
@@ -160,6 +168,13 @@ export class WalletConnectAdapter extends Adapter {
         this._config = config;
     }
 
+    private _getChainId(network: string): WalletConnectChainID | `tron:${string}` {
+        const mapped = WalletConnectChainID[network as `${ChainNetwork}`];
+        if (mapped) return mapped;
+        if (network.startsWith('tron:')) return network as `tron:${string}`;
+        return `tron:${network}`;
+    }
+
     get address() {
         return this._address;
     }
@@ -178,24 +193,24 @@ export class WalletConnectAdapter extends Adapter {
         return this._connecting;
     }
 
-    async connect(): Promise<void> {
+    async connect(options?: WalletConnectConnectOptions): Promise<void> {
         try {
-            if (this.connected) return;
+            if (this.connected || this.connecting) return;
             if (this.state === AdapterState.NotFound) throw new WalletNotFoundError();
             this._connecting = true;
+
+            const { onUri } = options || {};
 
             let address = '';
             try {
                 if (!this._wallet) {
                     this._wallet = new WalletConnectWallet({
                         ...this._config,
-                        network:
-                            WalletConnectChainID[this._config.network as `${ChainNetwork}`] ||
-                            `tron:${this._config.network}`,
+                        network: this._getChainId(this._config.network),
                     });
                 }
 
-                ({ address } = await this._wallet.connect());
+                ({ address } = await this._wallet.connect(onUri ? { onUri } : undefined));
             } catch (error: any) {
                 if (error.message === 'User closed the connection modal') throw new WalletWindowClosedError();
                 throw new WalletConnectionError(error?.message, error);
@@ -212,7 +227,7 @@ export class WalletConnectAdapter extends Adapter {
             this.emit('error', error);
             throw error;
         } finally {
-            // this._connecting = false;
+            this._connecting = false;
         }
     }
 
@@ -257,6 +272,7 @@ export class WalletConnectAdapter extends Adapter {
 
     async signMessage(message: string): Promise<string> {
         try {
+            if (this.state !== AdapterState.Connected) throw new WalletDisconnectedError();
             const wallet = this._wallet;
             if (!wallet) throw new WalletDisconnectedError();
 
@@ -293,7 +309,7 @@ export class WalletConnectAdapter extends Adapter {
     private _disconnected = () => {
         const wallet = this._wallet;
         if (wallet) {
-            wallet.off('disconnected', this._disconnected);
+            wallet.off('disconnect', this._disconnected);
             wallet.off('accountsChanged', this._accountsChanged);
 
             this._address = null;

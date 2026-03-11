@@ -12,7 +12,14 @@ const { resolve } = require('path');
 
 const inputOptions = {
     input: './lib/cjs/index.js',
-    plugins: [commonjs(), nodeResolve(), json(), nodePolyfills()],
+    plugins: [
+        commonjs({
+            ignore: ['worker_threads', 'fs', 'path', 'crypto'],
+        }),
+        nodeResolve({ browser: true, preferBuiltins: false }),
+        json(),
+        nodePolyfills(),
+    ],
     external: ['@walletconnect/sign-client', '@walletconnect/modal'],
 };
 const commonOptions = {

@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-binance",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Wallet adapter for Binance Wallet app on Android and iOS",
     "keywords": [
         "TRON",
@@ -46,9 +46,10 @@
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
-        "@binance/w3w-utils": "1.1.6",
+        "@binance/w3w-utils": "1.1.8",
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
+        "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
+        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },
     "devDependencies": {
         "@testing-library/dom": "8.20.1",
