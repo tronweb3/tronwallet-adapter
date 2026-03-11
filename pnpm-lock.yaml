@@ -664,8 +664,8 @@ importers:
   packages/adapters/binance:
     dependencies:
       '@binance/w3w-utils':
-        specifier: 1.1.6
-        version: 1.1.6
+        specifier: 1.1.8
+        version: 1.1.8
       '@tronweb3/tronwallet-abstract-adapter':
         specifier: workspace:^
         version: link:../abstract-adapter
@@ -773,7 +773,7 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
+        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -792,7 +792,7 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
+        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -1033,8 +1033,8 @@ importers:
         specifier: workspace:^
         version: link:../abstract-adapter
       '@tronweb3/walletconnect-tron':
-        specifier: 4.0.1
-        version: 4.0.1(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)
+        specifier: 4.0.2
+        version: 4.0.2(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)
       '@walletconnect/modal':
         specifier: 2.6.2
         version: 2.6.2(@types/react@18.3.3)(react@18.3.1)
@@ -2260,9 +2260,6 @@ packages:
 
   '@binance/w3w-types@1.1.4':
     resolution: {integrity: sha512-CCnneapNTVY1+RseZNIhExVp3ux8LihcXRkGwmvJtZTTJJIC7xQlTWy9olkAsz+opqWK+heAcyYGmt4RUt1M5g==}
-
-  '@binance/w3w-utils@1.1.6':
-    resolution: {integrity: sha512-NGT629vS9tRlbigtNn9wHtTYNB00oyDcsajO/kpAcDiQn4ktYs7+oTIr/qLvjP8Z3opTXpbooqMPITDY7DI0IA==}
 
   '@binance/w3w-utils@1.1.8':
     resolution: {integrity: sha512-dImFqeqfOHmrZNo0qmyn4G9uMWGzR8jjjRUfesA7zRh6EmR1gpbnQNBUTtw7NZfJ5SEBzDJMwResxzU5ACwkpQ==}
@@ -4167,8 +4164,8 @@ packages:
   '@tronweb3/walletconnect-tron@2.0.0':
     resolution: {integrity: sha512-COAm1zOnCUHKU+rMFsTDYn5PX9fD8z1/QItHNpWo33BBDPk+nZfz0mK7orGpVOpO5IcOG33AsyGxqv/C/gJnTQ==}
 
-  '@tronweb3/walletconnect-tron@4.0.1':
-    resolution: {integrity: sha512-/JGhj7dgNaFHYy5ino7+az+QbFiTGgKkwzEXYkQtYZQJluCp/Ygw3GBE/Y0XpWvU+K6hNh5Rn1aMkuX3sL+xUQ==}
+  '@tronweb3/walletconnect-tron@4.0.2':
+    resolution: {integrity: sha512-ubJHqCYxeS3obAxIdWkGOi2kWfX8CNbWHBmAj9LEiTwB4BAgdBJ3P7T2TwSSIZa6ARvc7zmbFtarFCQ4ckWAKQ==}
     engines: {node: '>=18', pnpm: '>=7'}
 
   '@trufflesuite/uws-js-unofficial@20.30.0-unofficial.0':
@@ -5619,9 +5616,6 @@ packages:
     resolution: {integrity: sha512-jaSIDzP9pZVS4ZfQ+TzvtiWhdpFhE2RDHz8QJkpX9SIpLq88VueF5jJw6t+6CUQcAoA6t+x89MLrWAqpfDE8iQ==}
     engines: {node: '>= 0.8.0'}
 
-  confbox@0.1.7:
-    resolution: {integrity: sha512-uJcB/FKZtBMCJpK8MQji6bJHgu1tixKPxRLeGkNzBoOZzpnZUJm0jm2/sBDWcuBx1dYgxV4JU+g5hmNxCyAmdA==}
-
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
 
@@ -5939,9 +5933,6 @@ packages:
 
   des.js@1.1.0:
     resolution: {integrity: sha512-r17GxjhUCjSRy8aiJpr8/UadFIzMzJGexI3Nmz4ADi9LYSFx4gTBp80+NaX/YsXWWLhpZ7v/v/ubEc/bCNfKwg==}
-
-  destr@2.0.3:
-    resolution: {integrity: sha512-2N3BOUU4gYMpTP24s5rF5iP7BDr7uNTCs4ozw3kf/eKfvWSIu93GEBi5m427YoyJoeOzQ5smuu4nNAPGb8idSQ==}
 
   destr@2.0.5:
     resolution: {integrity: sha512-ugFTXCtDZunbzasqBxrK93Ik/DRYsO6S/fedkWEMKqt04xZ4csmnmwGDBAb07QWNaGMAmnTIemsYZCksjATwsA==}
@@ -7871,9 +7862,6 @@ packages:
     resolution: {integrity: sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==}
     engines: {node: '>=16 || 14 >=14.17'}
 
-  mlly@1.7.1:
-    resolution: {integrity: sha512-rrVRZRELyQzrIUAVMHxP97kv+G786pHmOKzuFII8zDYahFBS7qnHh2AlYSl1GAHhaMPCz6/oHjVMcfFYgFYHgA==}
-
   mlly@1.8.1:
     resolution: {integrity: sha512-SnL6sNutTwRWWR/vcmCYHSADjiEesp5TGQQ0pXyLhW5IoeibRlF/CbSLailbB3CNqJUk9cVJ9dUDnbD7GrcHBQ==}
 
@@ -8295,9 +8283,6 @@ packages:
   pkg-dir@5.0.0:
     resolution: {integrity: sha512-NPE8TDbzl/3YQYY7CSS228s3g2ollTFnc+Qi3tqmqJp9Vg2ovUpixcJEo2HJScN2Ez+kEaal6y70c0ehqJBJeA==}
     engines: {node: '>=10'}
-
-  pkg-types@1.1.3:
-    resolution: {integrity: sha512-+JrgthZG6m3ckicaOB74TwQ+tBWsFl3qVQg7mN8ulwSOElJ7gBhKzj2VkCPnZ4NlF6kEquYU+RIYNVAvzd54UA==}
 
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
@@ -9288,9 +9273,6 @@ packages:
     resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
-
-  ufo@1.5.4:
-    resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
 
   ufo@1.6.3:
     resolution: {integrity: sha512-yDJTmhydvl5lJzBmy/hyOAA0d+aqCBuwl818haVdYCRrWV84o7YyeVm4QlVHStqNrrJSTb6jKuFAVqAFsr+K3Q==}
@@ -11341,13 +11323,6 @@ snapshots:
   '@binance/w3w-types@1.1.4':
     dependencies:
       eventemitter3: 5.0.1
-
-  '@binance/w3w-utils@1.1.6':
-    dependencies:
-      '@binance/w3w-types': 1.1.4
-      eventemitter3: 5.0.1
-      hash.js: 1.1.7
-      js-base64: 3.7.7
 
   '@binance/w3w-utils@1.1.8':
     dependencies:
@@ -13959,7 +13934,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@tronweb3/walletconnect-tron@4.0.1(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)':
+  '@tronweb3/walletconnect-tron@4.0.2(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)':
     dependencies:
       '@reown/appkit': 1.7.20(@types/react@18.3.3)(bufferutil@4.0.8)(react@18.3.1)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)
       '@walletconnect/sign-client': 2.21.7(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.3)(zod@3.22.4)
@@ -16417,8 +16392,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  confbox@0.1.7: {}
-
   confbox@0.1.8: {}
 
   config-chain@1.1.13:
@@ -16746,8 +16719,6 @@ snapshots:
     dependencies:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
-
-  destr@2.0.3: {}
 
   destr@2.0.5: {}
 
@@ -19311,7 +19282,7 @@ snapshots:
       h3: 1.15.5
       http-shutdown: 1.2.2
       jiti: 1.21.6
-      mlly: 1.7.1
+      mlly: 1.8.1
       node-forge: 1.3.3
       pathe: 1.1.2
       std-env: 3.9.0
@@ -19566,13 +19537,6 @@ snapshots:
 
   minipass@7.1.2: {}
 
-  mlly@1.7.1:
-    dependencies:
-      acorn: 8.15.0
-      pathe: 1.1.2
-      pkg-types: 1.1.3
-      ufo: 1.6.3
-
   mlly@1.8.1:
     dependencies:
       acorn: 8.16.0
@@ -19812,7 +19776,7 @@ snapshots:
 
   ofetch@1.3.4:
     dependencies:
-      destr: 2.0.3
+      destr: 2.0.5
       node-fetch-native: 1.6.4
       ufo: 1.6.3
 
@@ -20052,12 +20016,6 @@ snapshots:
   pkg-dir@5.0.0:
     dependencies:
       find-up: 5.0.0
-
-  pkg-types@1.1.3:
-    dependencies:
-      confbox: 0.1.7
-      mlly: 1.7.1
-      pathe: 1.1.2
 
   pkg-types@1.3.1:
     dependencies:
@@ -21186,8 +21144,6 @@ snapshots:
 
   typescript@5.5.4: {}
 
-  ufo@1.5.4: {}
-
   ufo@1.6.3: {}
 
   uint8arrays@3.1.0:
@@ -21234,14 +21190,14 @@ snapshots:
     dependencies:
       anymatch: 3.1.3
       chokidar: 3.6.0
-      destr: 2.0.3
+      destr: 2.0.5
       h3: 1.15.5
       listhen: 1.7.2
       lru-cache: 10.4.3
       mri: 1.2.0
       node-fetch-native: 1.6.4
       ofetch: 1.3.4
-      ufo: 1.5.4
+      ufo: 1.6.3
     optionalDependencies:
       idb-keyval: 6.2.1
     transitivePeerDependencies:

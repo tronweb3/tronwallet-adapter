@@ -43,7 +43,7 @@
     },
     "dependencies": {
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/walletconnect-tron": "4.0.1",
+        "@tronweb3/walletconnect-tron": "4.0.2",
         "@walletconnect/modal": "2.6.2",
         "@walletconnect/types": "2.21.7"
     },
