@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-walletconnect",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "description": "Wallet adapter for WalletConnect wallet.",
     "keywords": [
         "TRON",
@@ -38,11 +38,12 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
+        "test": "echo \"No tests yet\"",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/walletconnect-tron": "4.0.1",
+        "@tronweb3/walletconnect-tron": "4.0.2",
         "@walletconnect/modal": "2.6.2",
         "@walletconnect/types": "2.21.7"
     },

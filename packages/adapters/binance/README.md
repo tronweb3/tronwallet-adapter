@@ -44,21 +44,60 @@ interface BinanceWalletAdapterConfig {
      * Default is 2 * 1000ms
      */
     checkTimeout?: number;
+    /**
+     * Set if use WalletConnect as fallback when Binance Wallet is not found.
+     * Default is false.
+     */
+    useWalletConnectWhenWalletNotFound?: boolean;
+    /**
+     * WalletConnect configuration, required when useWalletConnectWhenWalletNotFound is true.
+     */
+    walletConnectConfig?: WalletConnectAdapterConfig;
+    /**
+     * Callback to receive the WalletConnect URI for custom QR code rendering.
+     * When provided, the AppKit modal will be skipped.
+     * Only used when falling back to WalletConnect.
+     */
+    onWalletConnectUri?: (uri: string) => void;
 }
 ```
 
--   `signAndSendTransaction`
-    This method will sign and broadcast the transaction with Binance selected network. There is no need to call `tronWeb.trx.sendRawTransaction()` after this method.
-    **Note:** The `unSignedTransaction` must be created with `Mainnet` network.
+**Example with WalletConnect fallback:**
+
+```typescript
+import { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapter-binance';
+
+const adapter = new BinanceWalletAdapter({
+    useWalletConnectWhenWalletNotFound: true,
+    walletConnectConfig: {
+        network: 'Nile',
+        options: {
+            projectId: 'your_project_id',
+            metadata: {
+                name: 'Your DApp',
+                description: 'Your DApp Description',
+                url: 'https://your-dapp.com',
+                icons: ['https://your-dapp.com/icon.png'],
+            },
+        },
+    },
+    // Optional: custom QR code rendering
+    onWalletConnectUri: (uri) => {
+        console.log('WalletConnect URI:', uri);
+        // Display your custom QR code here
+    },
+});
+```
+
+-   `setOnWalletConnectUri(callback: ((uri: string) => void) | undefined): void`
+
+    Set the onWalletConnectUri callback for custom QR code rendering. This allows dynamic configuration of the URI handler after adapter initialization.
 
     ```typescript
-    const tronWeb = new TronWeb({
-        fullHost: 'https://api.trongrid.io',
-        privateKey: '',
+    adapter.setOnWalletConnectUri((uri) => {
+        console.log('WalletConnect URI:', uri);
+        // Display your custom QR code here
     });
-    const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
-    // using adapter to sign the transaction
-    const signedTransaction = await adapter.signAndSendTransaction(unSignedTransaction);
     ```
 
 -   `network()` method is supported to get current network information. The type of returned value is `Network` as follows:

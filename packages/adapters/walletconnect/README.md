@@ -184,6 +184,33 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
         '--w3m-qr-color'?: string;
     }
     ```
+
+-   `connect(options?: WalletConnectConnectOptions): Promise<void>`
+
+    Connect to WalletConnect with optional configuration for custom QR code rendering.
+
+    ```typescript
+    interface WalletConnectConnectOptions {
+        /**
+         * Callback to receive the WalletConnect URI for custom QR code rendering.
+         * When provided, the AppKit modal will be skipped.
+         */
+        onUri?: (uri: string) => void;
+    }
+    ```
+
+    **Example with custom QR code:**
+
+    ```typescript
+    await adapter.connect({
+        onUri: (uri) => {
+            console.log('WalletConnect URI:', uri);
+            // Display your custom QR code here
+            // You can use libraries like qrcode to generate QR code from the URI
+        },
+    });
+    ```
+
 -   `getConnectionStatus(): Promise<{ address: string }>`: Get current connection status. If WalletConnect is connected, the address will be a non-empty value.
 
 ### Caveates

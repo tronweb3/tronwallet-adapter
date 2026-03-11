@@ -1,5 +1,6 @@
 import { NetworkType } from '@tronweb3/tronwallet-abstract-adapter';
 import { Scope } from './types.js';
+import { isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 /**
  * Converts a chain ID to its corresponding Tron scope.
@@ -83,4 +84,33 @@ export function scopeToNetworkType(scope: Scope): NetworkType {
         default:
             throw new Error(`Could not determine network type for unsupported scope: ${scope}`);
     }
+}
+
+export function isMetaMaskMobileWebView() {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+
+    // @ts-ignore
+    return Boolean(window.ReactNativeWebView) && Boolean(navigator.userAgent.endsWith('MetaMaskMobile'));
+}
+
+/**
+ * Open MetaMask app with deeplink
+ * @returns true if do the open operation
+ */
+export function openMetaMaskApp() {
+    if (isInMobileBrowser() && !isMetaMaskMobileWebView()) {
+        const { href, protocol } = window.location;
+        const originLink = href.replace(protocol, '').slice(2);
+        const link = `https://link.metamask.io/dapp/${originLink}`;
+        const a = document.createElement('a');
+        a.href = link;
+        a.target = '_self';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return true;
+    }
+    return false;
 }
