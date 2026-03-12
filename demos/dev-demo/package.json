@@ -7,7 +7,6 @@
     "dev": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "ganache": "node scripts/ganache.cjs",
     "build-pages": "vite build --base=/tronwallet-adapter"
   },
   "dependencies": {
@@ -31,7 +30,6 @@
     "buffer": "^6.0.3",
     "ethers": "^6.15.0",
     "events": "^3.3.0",
-    "ganache": "^7.9.0",
     "lit-html": "^3.0.0",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
@@ -45,7 +43,6 @@
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-legacy": "^5.4.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "dotenv": "^16.3.1",
     "typescript": "^5.5.4",
     "vite": "^6.3.5"
   },

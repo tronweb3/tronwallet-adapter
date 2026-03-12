@@ -85,7 +85,6 @@
         "rollup-plugin-polyfill-node": "^0.13.0",
         "shx": "^0.3.4",
         "ts-jest": "^29.0.3",
-        "typedoc": "^0.23.15",
         "typescript": "^5.5.4",
         "typescript-eslint": "^8.24.1",
         "vue-eslint-parser": "^10.4.0"

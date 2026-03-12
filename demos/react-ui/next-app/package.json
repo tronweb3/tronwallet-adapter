@@ -5,8 +5,7 @@
     "scripts": {
         "dev": "PORT=5002 next dev",
         "build": "next build",
-        "start": "PORT=5002 next start",
-        "lint": "next lint"
+        "start": "PORT=5002 next start"
     },
     "dependencies": {
         "@emotion/react": "^11.10.4",
@@ -18,8 +17,6 @@
         "@tronweb3/tronwallet-adapter-react-ui": "latest",
         "@tronweb3/tronwallet-adapters": "latest",
         "@types/node": "18.11.9",
-        "eslint": "^8.23.1",
-        "eslint-config-next": "13.0.5",
         "next": "^15.5.8",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
