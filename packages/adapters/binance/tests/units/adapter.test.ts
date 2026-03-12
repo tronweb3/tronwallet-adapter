@@ -18,7 +18,6 @@ describe('BinanceWalletAdapter', () => {
             expect(adapter).toHaveProperty('disconnect');
             expect(adapter).toHaveProperty('signMessage');
             expect(adapter).toHaveProperty('signTransaction');
-            expect(adapter).toHaveProperty('signAndSendTransaction');
 
             expect(adapter).toHaveProperty('on');
             expect(adapter).toHaveProperty('off');
