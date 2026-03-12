@@ -24,6 +24,12 @@ import {
     type WalletConnectConnectOptions,
 } from '@tronweb3/tronwallet-adapter-walletconnect';
 
+declare global {
+    interface Window {
+        isBinance: boolean;
+    }
+}
+
 export interface BinanceWalletAdapterConfig extends BaseAdapterConfig {
     /**
      * Timeout in millisecond for checking if Binance Wallet exists.
@@ -56,14 +62,9 @@ export interface BinanceWalletAdapterConfig extends BaseAdapterConfig {
 export const BinanceWalletAdapterName = 'Binance Wallet' as AdapterName<'Binance Wallet'>;
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
-    CT_195: NetworkType.Mainnet,
     '0x2b6653dc': NetworkType.Mainnet,
     '0x94a9059e': NetworkType.Shasta,
     '0xcd8690dc': NetworkType.Nile,
-};
-const chainIdMap: Record<string, string> = {
-    CT_195: '0x2b6653dc',
-    '0x2b6653dc': '0x2b6653dc',
 };
 
 export class BinanceWalletAdapter extends Adapter {
@@ -186,7 +187,7 @@ export class BinanceWalletAdapter extends Adapter {
                 const chainId = this._provider.getChainId();
                 return {
                     networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
-                    chainId: chainIdMap[chainId],
+                    chainId,
                     fullNode: '',
                     solidityNode: '',
                     eventServer: '',
