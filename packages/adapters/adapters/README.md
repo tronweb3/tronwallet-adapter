@@ -1,366 +1,152 @@
 # @tronweb3/tronwallet-adapters
 
-`@tronweb3/tronwallet-adapters` provides multiple wallet adapters to help developers connect to Tron and EVM wallets like [TronLink](https://www.tronlink.org/), [MetaMask](https://metamask.io/) with consistent API.
+`@tronweb3/tronwallet-adapters` provides a comprehensive suite of wallet adapters, enabling developers to connect to both **Tron** and **EVM** wallets (such as [TronLink](https://www.tronlink.org/) and [MetaMask](https://metamask.io/)) through a unified and consistent API.
 
-## Supported wallets
+---
 
-As `@tronweb3/tronwallet-adapters` exports adapter of each wallet , you can use this package, or use the individual wallet adapter you want.
+## 📦 Installation
 
-| NPM package                                                                                                          | Description                                                                          | Source Code                                                                                      |
-| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all the wallet adapters                                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
-| [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | adapter for [TronLink](https://www.tronlink.org/)                                    | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink)      |
-| [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | adapter for [WalletConnect](https://walletconnect.com/)                              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
-| [`@tronweb3/tronwallet-adapter-tokenpocket`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket)     | adapter for [TokenPocket](https://tokenpocket.pro/)                                  | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket)   |
-| [`@tronweb3/tronwallet-adapter-bitkeep`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep)             | adapter for [BitGet](https://bitget.com/)                                            | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep)       |
-| [`@tronweb3/tronwallet-adapter-okxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet)         | adapter for [Okx Wallet](https://okx.com/)                                           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet)     |
-| [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | adapter for [Ledger](https://www.ledger.com/)                                        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)        |
-| [`@tronweb3/tronwallet-adapter-imtoken`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-imtoken)             | adapter for [imToken](https://token.im/)                                             | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/imtoken)       |
-| [`@tronweb3/tronwallet-adapter-gatewallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-gatewallet)       | adapter for [gate.io](https://www.gate.io/web3)                                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)    |
-| [`@tronweb3/tronwallet-adapter-foxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-foxwallet)         | adapter for [FoxWallet](https://foxwallet.com/)                                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)     |
-| [`@tronweb3/tronwallet-adapter-bybit`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bybit)                 | adapter for [Bybit Wallet](https://www.bybit.com/en/web3/home)                       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)         |
-| [`@tronweb3/tronwallet-adapter-trust`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust)                 | adapter for [Trust Wallet Extension](https://trustwallet.com)                        | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)         |
-| [`@tronweb3/tronwallet-adapter-tomowallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tomowallet)       | adapter for [Tomo Wallet App](https://tomo.inc/)                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)    |
-| [`@tronweb3/tronwallet-adapter-binance`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance)             | adapter for [Binance Wallet App](https://www.binance.com/en/binancewallet)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)       |
-| [`@tronweb3/tronwallet-adapter-guarda`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-guarda)               | adapter for [Guarda Wallet Extension](https://guarda.com?install=guarda-extensional) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)        |
-| [`@tronweb3/tronwallet-adapter-onekey`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-onekey)               | adapter for [OneKey Wallet](https://onekey.so/download)                              | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/onekey)        |
-| [`@tronweb3/tronwallet-adapter-metamask-tron`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron) | adapter for [MetaMask](https://metamask.io/)                                         | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron) |
-| [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm)   | EVM adapter for [MetaMask](https://metamask.io/)                                     | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)  |
-| [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm)   | EVM adapter for [TronLink](https://www.tronlink.org/)                                | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)  |
-| [`@tronweb3/tronwallet-adapter-binance-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance-evm)     | EVM adapter for [Binance Wallet](https://www.binance.com/en/binancewallet)           | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/binance)   |
+This package is a "barrel package" that includes all individual adapters. You can install the entire suite or choose specific adapters to keep your bundle size small.
 
-## Usage
+```bash
+# Install the complete suite
+npm install @tronweb3/tronwallet-abstract-adapter @tronweb3/tronwallet-adapters
 
-> If you are working in a typescript project, you must set `skipLibCheck: true` in `tsconfig.json`.
+# Or install individual adapters as needed
+npm install @tronweb3/tronwallet-abstract-adapter @tronweb3/tronwallet-adapter-tronlink
+npm install @tronweb3/tronwallet-abstract-adapter @tronweb3/tronwallet-adapter-walletconnect
+```
+
+---
+
+## 🔌 Supported Wallets
+
+Each adapter offers a consistent interface. You can use this collective package or import individual ones.
+
+| Wallet | NPM Package | Description | Source |
+| :--- | :--- | :--- | :--- |
+| **All-in-One** | [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters) | Includes all adapters below | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters) |
+| **TronLink** | [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink) | Adapter for [TronLink](https://www.tronlink.org/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink) |
+| **WalletConnect**| [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | Adapter for [WalletConnect](https://walletconnect.com/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
+| **MetaMask** | [`@tronweb3/tronwallet-adapter-metamask-tron`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron) | Tron support via [MetaMask](https://metamask.io/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron) |
+| **Ledger** | [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger) | Hardware wallet support | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger) |
+| **OKX Wallet** | [`@tronweb3/tronwallet-adapter-okxwallet`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-okxwallet) | Adapter for [OKX Wallet](https://okx.com/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet) |
+| **TokenPocket** | [`@tronweb3/tronwallet-adapter-tokenpocket`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tokenpocket) | Adapter for [TokenPocket](https://tokenpocket.pro/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket) |
+| **BitGet** | [`@tronweb3/tronwallet-adapter-bitkeep`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-bitkeep) | Adapter for [BitGet (BitKeep)](https://bitget.com/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep) |
+| **MetaMask EVM** | [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm) | Native EVM support | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask) |
+
+> ℹ️ For the full list of 15+ supported wallets, visit our [documentation](https://walletadapter.org/docs/guide/wallet-reference.html#supported-wallets-by-adapter).
+
+---
+
+## 🚀 Usage
+
+> **Note**: If you are using TypeScript, ensure `skipLibCheck: true` is set in your `tsconfig.json`.
 
 ### React
 
-You can use `@tronweb3/tronwallet-adapters` in your component. Use `useMemo` to memorize the `adapter` to improve your web performance.
+For React applications, while you can use the adapters directly, we highly recommend using our official **[React Hooks Package](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/react/react-hooks)** for the best developer experience.
 
+#### Manual Usage (Low-level):
 ```tsx
+import { useMemo, useEffect, useState } from 'react';
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 
-function App() {
-    const [readyState, setReadyState] = useState(WalletReadyState.NotFound);
-    const [account, setAccount] = useState('');
-    const [netwok, setNetwork] = useState({});
-    const [signedMessage, setSignedMessage] = useState('');
-
+function WalletInterface() {
     const adapter = useMemo(() => new TronLinkAdapter(), []);
+    const [address, setAddress] = useState(adapter.address);
+
     useEffect(() => {
-        setReadyState(adapter.readyState);
-        setAccount(adapter.address!);
-
-        adapter.on('connect', () => {
-            setAccount(adapter.address!);
-        });
-
-        adapter.on('readyStateChanged', (state) => {
-            setReadyState(state);
-        });
-
-        adapter.on('accountsChanged', (data) => {
-            setAccount(data);
-        });
-
-        adapter.on('chainChanged', (data) => {
-            setNetwork(data);
-        });
-
-        adapter.on('disconnect', () => {
-            // when disconnect from wallet
-        });
+        const onConnect = (addr: string) => setAddress(addr);
+        adapter.on('connect', onConnect);
+        
         return () => {
-            // remove all listeners when components is destroyed
+            adapter.off('connect', onConnect);
             adapter.removeAllListeners();
         };
-    }, []);
-
-    async function sign() {
-        const res = await adapter!.signMessage('helloworld');
-        setSignedMessage(res);
-    }
+    }, [adapter]);
 
     return (
-        <div className="App">
-            <div>readyState: {readyState}</div>
-            <div>current address: {account}</div>
-            <div>current network: {JSON.stringify(netwok)}</div>
-            <button disabled={adapter.connected} onClick={() => adapter.connect()}>
-                Connect to TronLink
-            </button>
-            <button onClick={sign}>sign message</button>
-            <br />
-            SignedMessage: {signedMessage}
-        </div>
+        <button onClick={() => adapter.connect()}>
+            {address ? `Connected: ${address}` : 'Connect TronLink'}
+        </button>
     );
 }
 ```
 
 ### Vue
 
-In Vue, as the `created/mounted` hook just can be executed once, you can init the adapter in `mounted` or `created` hook.
+In Vue 3, the Composition API is the recommended way to initialize and manage the adapter.
 
-```js
-// vue2.x
-export default {
-    created() {
-        this.adapter = new TronLinkAdapter();
-        this.adapter.on('connect', () => {
-            // here you can do something
-        });
-    },
-    beforeDestroy() {
-        this.adapter.removeAllListeners();
-    }
-}
+```vue
+<script setup>
+import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 
-// vue3
-export default {
-    setup() {
-        onMounted(function() {
-            const adapter = new TronLinkAdapter();
-            adapter.on('connect', () => {
-                // here you can do something
-            });
-        });
-        onBeforeUnmount(function() {
-            // remove all listeners when components is destroyed
-            adapter.removeAllListeners();
-        });
-        return {};
-    }
-}
+const address = ref('');
+const adapter = new TronLinkAdapter();
+
+onMounted(() => {
+    adapter.on('connect', (addr) => {
+        address.value = addr;
+    });
+});
+
+onBeforeUnmount(() => {
+    adapter.removeAllListeners();
+});
+
+const connect = () => adapter.connect();
+</script>
+
+<template>
+    <button @click="connect">
+        {{ address || 'Connect Wallet' }}
+    </button>
+</template>
 ```
 
-### Vanilla js usage
+### 🌐 Vanilla JS / CDN
 
-To use adapters without bundle tools like `webpack`, you can install the package and get the `umd` format file.
+For environments without build tools, use our UMD bundle.
 
-1. Add script in your HTML file
-   Put the script in your `head` tag:
-
+1. **Include the script**:
 ```html
-<script src="../node_modules/@tronweb3/tronwallet-adapters/lib/umd/index.js"></script>
+<!-- peer dependency needed for LedgerAdapter -->
+<script type="module">
+    import bufferPolyfill from 'https://cdn.jsdelivr.net/npm/buffer-polyfill@6.0.3/+esm'
+    window.Buffer = bufferPolyfill
+</script>
+<!-- peer dependency needed for WalletConnect -->
+<script src="https://cdn.jsdelivr.net/npm/@walletconnect/sign-client/dist/index.umd.js"></script>
+<!-- adapters bundle -->
+<script src="https://cdn.jsdelivr.net/npm/@tronweb3/tronwallet-adapters/lib/umd/index.js"></script>
 ```
 
-**Note**: You should adjust the relative path according to the position of the HTML file.
-
-2. Get specified adapter
-
+2. **Initialize**:
 ```js
-const { TronLinkAdapter, BitKeepAdapter, WalletConnectAdapter, OkxWalletAdapter } =
-    window['@tronweb3/tronwallet-adapters'];
-const tronlinkAdapter = new TronLinkAdapter({
-    openTronLinkAppOnMobile: true,
-    openUrlWhenWalletNotFound: false,
-    checkTimeout: 3000,
+const { TronLinkAdapter } = window['@tronweb3/tronwallet-adapters'];
+const adapter = new TronLinkAdapter();
+
+adapter.connect().then(() => {
+    console.log('Connected to:', adapter.address);
 });
 ```
 
-A demo with cdn file can be found [here](https://github.com/tronweb3/tronwallet-adapter/tree/main/demos/cdn-demo).
+---
 
-#### WalletConnectAdapter
+## 🛠️ Configuration
 
-If you want to use `WalletConnectAdapter`, you should install another dependency in addition:
-
+### WalletConnect Support
+`WalletConnectAdapter` requires a peer dependency. If you plan to use it, please install:
 ```bash
-npm i @walletconnect/sign-client
+npm install @walletconnect/sign-client
 ```
 
-And add a script tag for `@walletconnect/sign-client` before the adapters `umd` file:
+---
 
-```diff
-+ <script src="../node_modules/@walletconnect/sign-client/dist/index.umd.js"></script>
-<script src="../node_modules/@tronweb3/tronwallet-adapters/lib/umd/index.js"></script>
-```
+## 📘 Documentation
 
-## API Reference
-
-### Adapter
-
-The `Adapter` class defines the common interface for all adapters of specified wallets.
-
-#### Constructor
-
--   `constructor(config)`: adapter constructor method, an optional config is valid. For detailed config type, refer to the following [adapter section](#tronlinkadapter).
-
-#### Properties
-
--   `name`: The name of the adapter.
--   `url`: The website of the adapter's wallet.
--   `icon`: The icon of the adapter's wallet.
--   `readyState`: The wallet's state, which includes three value:
-    -   `Loading`: When adapter is checking if the wallet is available or not.
-    -   `NotFound`: The wallet is not detected in current browser.
-    -   `Found`: The wallet is detected in current browser.
--   `address`: The address of current account when the adapter is connected.
--   `connecting`: Whether the adapter is trying to connect to the wallet.
--   `connected`: Whether the adapter is connected to the wallet.
-
-#### Methods
-
--   `connect(): Promise<void>`: connect to the wallet.
--   `disconnect(): Promise<void>`: disconnect to the wallet.
--   `signMessage(message): Promise<string>`: sign a string, return the signature result.
--   `signTransaction(transaction)`: sign a transaction, return the signature result of the transaction.
--   `multiSign(transaction, privateKey: string | null, permissionId?)`: sign a multi-sign transaction.
-    -   If `privateKey` is not `null`, will use the privateKey to sign rather than TronLink.
-    -   If `permissionId` is not provided, will use `0`(OwnerPerssion) as default.
-    -   Please refer to [here](https://developers.tron.network/docs/multi-signature) for more about Multi-Sign,
--   `switchChain(chainId: string): Promise<void>;`: request wallet to switch chain by `chainId`.
-
-#### Events
-
-`Adapter` extends the `EventEmitter` class in `eventemitter3` package. So you can listen to the events by `adapter.on('connect', function() {})`.
-
-Events are as follows:
-
--   `connect(address)`: Emit when adapter is connected to the wallet. The parameter is the address of current account.
--   `disconnect()`: Emit when adapter is disconnected to the wallet.
--   `readyStateChanged(state: WalletReadyState)`: Emit when wallet's readyState is changed. The parameter is the state of wallet:
-    ```typescript
-    enum WalletReadyState {
-        /**
-         * Adapter will start to check if wallet exists after adapter instance is created.
-         */
-        Loading = 'Loading',
-        /**
-         * When checking ends and wallet is not found, readyState will be NotFound.
-         */
-        NotFound = 'NotFound',
-        /**
-         * When checking ends and wallet is found, readyState will be Found.
-         */
-        Found = 'Found',
-    }
-    ```
--   `accountsChanged(address: string, preAddress: string)`: Emit when users change the current selected account in wallet. The parameter is the address of new account.
--   `chainChanged(chainInfo: ChainInfo)`: Emit when users change the current selected chain in wallet. The parameter is the new network config：
-    ```typescript
-    interface ChainInfo {
-        chainId: string;
-    }
-    ```
--   `error(WalletError)`: Emit when there are some errors when call the adapter's method. The [WalletError Types] is defined as follows.
-
-### WalletError
-
-`WalletError` is a superclass which defines the error when using adapter.
-All error types are extended from this class.
-Developers can check the error type according to the error instance.
-
-```typescript
-try {
-    // do something here
-} catch (error: WalletError) {
-    if (error instanceof WalletNotFoundError) {
-        console.log('Wallet is not found');
-    }
-}
-```
-
-All errors are as follows:
-
--   `WalletNotFoundError`: Occurs when wallet is not installed.
--   `WalletNotSelectedError`: Occurs when connect but there is no selected wallet.
--   `WalletDisconnectedError`: Occurs when wallet is disconnected. Used by some wallets which won't connect automatically when call `signMessage()` or `signTransaction()`.
--   `WalletConnectionError`: Occurs when try to connect a wallet.
--   `WalletDisconnectionError`: Occurs when try to disconnect a wallet.
--   `WalletSignMessageError`: Occurs when call `signMessage()`.
--   `WalletSignTransactionError`: Occurs when call `signTransaction()`.
-
-Following exmaple shows how to get original error info with `WalletError`:
-
-```js
-const adapter = new TronLinkAdapter();
-try {
-    await adapter.connect();
-} catch (e: any) {
-    const originalError = e.error;
-}
-```
-
-<h3 id="tronlinkadapter">TronLinkAdapter</h3>
-
--   `Constructor(config: TronLinkAdapterConfig)`
-    ```typescript
-    interface TronLinkAdapterConfig {
-        /**
-         * Set if open Wallet's website url when wallet is not installed.
-         * Default is true.
-         */
-        openUrlWhenWalletNotFound?: boolean;
-        /**
-         * Timeout in millisecond for checking if TronLink wallet exists.
-         * Default is 30 * 1000ms
-         */
-        checkTimeout?: number;
-        /**
-         * Set if open TronLink app using DeepLink on mobile device.
-         * Default is true.
-         */
-        openTronLinkAppOnMobile?: boolean;
-        /**
-         * The icon of your dapp. Used when open TronLink app in mobile device browsers.
-         * Default is current website icon.
-         */
-        dappIcon?: string;
-        /**
-         * The name of your dapp. Used when open TronLink app in mobile device browsers.
-         * Default is `document.title`.
-         */
-        dappName?: string;
-    }
-    ```
--   `network()` method is supported to get current network information. The type of returned value is `Network` as follows:
-
-    ```typescript
-    export enum NetworkType {
-        Mainnet = 'Mainnet',
-        Shasta = 'Shasta',
-        Nile = 'Nile',
-        /**
-         * When use custom node
-         */
-        Unknown = 'Unknown',
-    }
-
-    export type Network = {
-        networkType: NetworkType;
-        chainId: string;
-        fullNode: string;
-        solidityNode: string;
-        eventServer: string;
-    };
-    ```
-
--   **TronLink Doesn't support `disconnect` by DApp**. As TronLinkAdapter doesn't support disconnect by DApp website, call `adapter.disconnect()` won't disconnect from TronLink extension really.
--   **Auto open TronLink app in mobile browser**. If developers call `connect()` method in mobile browser, it will open DApp in TronLink app to get tronlink wallet.
-
-### EVM adapters
-
-For EVM adapters usage, please refer to the documentation: https://walletadapter.org/docs/guide/evm.html
-
-### Other adapters
-
-Other adapters `Constructor` config api can be found in their source code `README`.
-
--   [TokenPocketAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tokenpocket)
--   [BitGetAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bitkeep)
--   [OkxWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/okxwallet)
--   [WalletConnectAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect)
--   [LedgerAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)
--   [ImTokenAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/imtoken)
--   [GateWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/gatewallet)
--   [FoxWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/foxwallet)
--   [BybitWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/bybit)
--   [GuardaAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/guarda)
--   [TrustAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/trust)
--   [TomoWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tomowallet)
--   [BinanceWalletAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/binance)
--   [OneKeyAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/onekey)
--   [MetaMaskAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron)
--   [MetaMaskEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)
--   [TronLinkEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink)
--   [BinanceEvmAdapter](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/binance)
+- **API Reference**: Detailed class and method documentation is available at [walletadapter.org](https://walletadapter.org/docs/api-reference/adapter.html).
+- **Guide**: Step-by-step integration guides for [React](https://walletadapter.org/docs/guide/react.html), [Vue](https://walletadapter.org/docs/guide/vue.html).
+- **EVM Integration**: Learn how to use MetaMask and other EVM wallets on Tron [here](https://walletadapter.org/docs/guide/evm.html).
