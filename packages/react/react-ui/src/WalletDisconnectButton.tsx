@@ -10,7 +10,7 @@ export const WalletDisconnectButton: FC<ButtonProps> = ({ children, disabled, on
     const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(
         (event) => {
             if (onClick) onClick(event);
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
+
             if (!event.defaultPrevented) disconnect().catch(() => {});
         },
         [onClick, disconnect]

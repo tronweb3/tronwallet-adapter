@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>TronWallet Adapter CDN Demo</title>
         <link rel="stylesheet" href="../tron/index.css"></link>
+        <script type="module">
+            import bufferPolyfill from 'https://cdn.jsdelivr.net/npm/buffer-polyfill@6.0.3/+esm'
+            window.Buffer = bufferPolyfill
+        </script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="https://unpkg.com/tronweb@6.0.4/dist/TronWeb.js"></script>
         <script src="../node_modules/@tronweb3/tronwallet-adapter-tronlink/lib/umd/index.js"></script>

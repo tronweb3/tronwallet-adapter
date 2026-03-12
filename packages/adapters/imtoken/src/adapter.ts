@@ -293,7 +293,6 @@ export class ImTokenAdapter extends Adapter {
         if (supportImToken()) {
             this._wallet = {
                 ready: window.tronWeb?.ready || false,
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 tronWeb: window.tronWeb!,
                 request: () => Promise.resolve(null),
             };

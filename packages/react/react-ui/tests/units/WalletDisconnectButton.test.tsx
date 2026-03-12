@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { FC, PropsWithChildren } from 'react';
 import React, { act } from 'react';
 import { render, waitFor } from '@testing-library/react';

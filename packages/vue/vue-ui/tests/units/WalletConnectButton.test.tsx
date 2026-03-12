@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { WalletConnectButton } from '../../src/WalletConnectButton.js';
 import { WalletSelectButton } from '../../src/WalletSelectButton.js';
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';

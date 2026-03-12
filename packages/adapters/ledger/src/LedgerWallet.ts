@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Trx from '@ledgerhq/hw-app-trx';
 import type Transport from '@ledgerhq/hw-transport';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';

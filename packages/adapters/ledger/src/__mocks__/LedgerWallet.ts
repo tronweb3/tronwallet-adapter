@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-function */
 export class LedgerWallet {
     static _constructor(...args: any[]) {}
     static _connect(...args: any[]) {}

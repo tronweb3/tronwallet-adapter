@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 const { execSync } = require('child_process');
 const pkg = require('../package.json');
 const { exit } = require('process');

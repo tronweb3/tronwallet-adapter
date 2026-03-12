@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-undef
 module.exports = (path, options) => {
     return options.defaultResolver(path, {
         ...options,

@@ -360,7 +360,6 @@ export class GateWalletAdapter extends Adapter {
         let state = this.state;
         let address = this.address;
         if (supportGateWallet()) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this._wallet = isGateApp ? window.gatewallet!.tronLink : window.gatewallet!.tron;
             this._listenEvent();
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;

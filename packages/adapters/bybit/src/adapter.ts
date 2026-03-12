@@ -357,7 +357,6 @@ export class BybitWalletAdapter extends Adapter {
         let state = this.state;
         let address = this.address;
         if (supportBybitWallet()) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this._wallet = window.bybitWallet!.tronLink;
             this._listenEvent();
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;

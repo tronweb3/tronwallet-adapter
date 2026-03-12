@@ -320,7 +320,6 @@ export class FoxWalletAdapter extends Adapter {
         let state = this.state;
         let address = this.address;
         if (supportFoxWallet()) {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             this._wallet = window.foxwallet!.tronLink;
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;
             state = address ? AdapterState.Connected : AdapterState.Disconnect;

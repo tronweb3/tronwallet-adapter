@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { describe, test, vi, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 

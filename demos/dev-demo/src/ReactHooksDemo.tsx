@@ -53,7 +53,7 @@ function ReactHooksDemoWrap({ children }: any) {
     </WalletProvider>
   );
 }
-function _ReactHooksDemo() {
+function InternalReactHooksDemo() {
   const { wallets, address, wallet, connected, select, connect, signMessage, disconnect } = useWallet();
   const [messageToSign, setMessageToSign] = useState('Adapter');
   const [signedMessage, setSignedMessage] = useState('');
@@ -153,7 +153,7 @@ function _ReactHooksDemo() {
 export function ReactHooksDemo() {
   return (
     <ReactHooksDemoWrap>
-      <_ReactHooksDemo />
+      <InternalReactHooksDemo />
     </ReactHooksDemoWrap>
   );
 }

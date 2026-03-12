@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
 import { WalletModalProvider } from '../../src/WalletModalProvider.js';
 import { MockTronLink } from './MockTronLink.js';
