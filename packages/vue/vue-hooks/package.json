@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-vue-hooks",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "A `useWallet()` hook to make it easy to interact with Tron wallets.",
     "keywords": [
         "TRON",
