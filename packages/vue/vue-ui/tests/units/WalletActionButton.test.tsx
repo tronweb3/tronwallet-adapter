@@ -1,14 +1,15 @@
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
 import { MockTronLink } from './MockTronLink.js';
 import { WalletActionButton } from '../../src/WalletActionButton/WalletActionButton.js';
-import { afterEach, vi } from 'vitest';
+import { afterEach, vi, beforeEach, describe, test, expect } from 'vitest';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
-import { defineComponent, nextTick } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
 import { WalletSelectButton } from '../../src/WalletSelectButton.js';
 import { WalletItem } from '../../src/WalletItem.js';
-import { WalletSelectModal } from '../../src/index.js';
+import { WalletModalProvider, WalletSelectModal } from '../../src/index.js';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
+import { WalletProvider } from './WalletProvider.js';
+
 async function wait() {
     await nextTick();
 }

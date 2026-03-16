@@ -130,7 +130,7 @@ export class BinanceEvmAdapter extends Adapter {
             provider.on('chainChanged', (chainId) => {
                 this.emit('chainChanged', chainId);
             });
-        } catch (e) {
+        } catch {
             //
         }
     }

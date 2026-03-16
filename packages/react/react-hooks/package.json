@@ -38,7 +38,7 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "jest"
+        "test": "vitest run"
     },
     "peerDependencies": {
         "react": "*",
@@ -49,13 +49,17 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@types/jest": "^27.5.2",
-        "@types/react": "^18.3.3",
-        "@types/react-dom": "^18.3.0",
-        "jest-localstorage-mock": "^2.4.22",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "shx": "^0.3.4",
-        "typescript": "^5.5.4"
+        "@testing-library/react": "16.3.2",
+        "@types/react": "18.3.3",
+        "@types/react-dom": "18.3.0",
+        "@vitejs/plugin-react": "5.2.0",
+        "@vitest/browser": "3.2.4",
+        "@vitest/ui": "3.2.4",
+        "eventemitter3": "5.0.4",
+        "happy-dom": "20.8.3",
+        "react": "18.3.1",
+        "react-dom": "18.3.1",
+        "shx": "0.3.4",
+        "vitest": "3.2.4"
     }
 }

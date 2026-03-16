@@ -1,5 +1,4 @@
 import type { ReqestAccountsResponse, TronLinkWallet, TronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-jest.useFakeTimers();
 export class MockTronLink implements TronLinkWallet {
     ready: boolean;
 

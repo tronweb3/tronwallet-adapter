@@ -1,27 +1,29 @@
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
 import { MockTronLink } from './MockTronLink.js';
 import { WalletDisconnectButton } from '../../src/WalletDisconnectButton.js';
-import { defineComponent } from 'vue';
+import { h } from 'vue';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
-import { vi } from 'vitest';
+import { vi, beforeEach, describe, test, expect } from 'vitest';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
 
-const Providers = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletDisconnectButton },
-    props: ['className', 'tabIndex', 'style'],
-    template: `<WalletProvider><WalletModalProvider><WalletDisconnectButton v-bind="$props"></WalletDisconnectButton> </WalletModalProvider></WalletProvider>`,
-});
-const NoAutoConnectProviders = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletDisconnectButton },
-    props: ['className', 'tabIndex', 'style'],
-    template: `<WalletProvider :autoConnect="false"><WalletModalProvider><WalletDisconnectButton v-bind="$props"></WalletDisconnectButton></WalletModalProvider></WalletProvider>`,
-});
-const makeSut = (props: any = {}, children = '') => {
-    return mount(Providers, { props, slots: { default: children } });
+import { Providers, NoAutoConnectProviders } from './TestProviders.js';
+const makeSut = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], autoConnect, ...buttonProps } = props;
+    return mount(Providers, {
+        props: { adapters, autoConnect },
+        slots: {
+            default: () => h(WalletDisconnectButton, buttonProps),
+        },
+    });
 };
-const makeSutNoAutoConnect = (props: any = {}, children = '') => {
-    return mount(NoAutoConnectProviders, { props, slots: children ? { default: children } : {} });
+const makeSutNoAutoConnect = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], ...buttonProps } = props;
+    return mount(NoAutoConnectProviders, {
+        props: { adapters },
+        slots: {
+            default: () => h(WalletDisconnectButton, buttonProps),
+        },
+    });
 };
 let container: VueWrapper;
 function getByTestId(id: string) {
@@ -70,7 +72,7 @@ describe('when a wallet is seleted', () => {
             vi.advanceTimersByTime(4000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBe('');
+            expect(el.attributes('disabled')).toBeUndefined();
             expect(el.text()).toContain('Disconnect');
         });
         test('tronlink is connected when antoConnect disabled', async () => {
@@ -78,7 +80,7 @@ describe('when a wallet is seleted', () => {
             vi.advanceTimersByTime(3000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBe('');
+            expect(el.attributes('disabled')).toBeUndefined();
             expect(el.text()).toContain('Disconnect');
         });
     });

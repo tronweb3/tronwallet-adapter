@@ -3,11 +3,8 @@ import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { waitFor } from '@testing-library/dom';
 import { LedgerWallet } from '../../src/LedgerWallet.js';
 import type { Account } from '../../src/LedgerWallet.js';
-import { describe, vi } from 'vitest';
-import { TronWeb } from 'tronweb';
-const tronWeb = new TronWeb({
-    fullHost: 'https://api.nileex.io',
-});
+import { describe, vi, beforeEach, afterEach, test, expect } from 'vitest';
+import { createTestTransaction } from './utils.js';
 
 vi.mock('@ledgerhq/hw-app-trx', () => {
     class Trx {
@@ -103,7 +100,7 @@ describe('ledgerWalelt should work fine', () => {
         });
         addPropertyToTransport('_close', vi.fn());
         const wallet = new LedgerWallet({ selectAccount });
-        expect(wallet.connect()).rejects.toThrow('Errored');
+        await expect(wallet.connect()).rejects.toThrow('Errored');
         await waitFor(() => {
             expect((TransportWebHID as any)._close).toHaveBeenCalledTimes(1);
         });
@@ -209,7 +206,7 @@ describe('constructor config.selectAccount should work fine', () => {
 
 describe('public properties should work fine', () => {
     test('getAccounts() should work fine', async () => {
-        const _getAddress = vi.fn((...params) => {
+        const _getAddress = vi.fn(() => {
             return {
                 address: 'address',
                 publicKey: 'publicKey',
@@ -287,7 +284,7 @@ describe('signMessage() should work fine', () => {
         const wallet = new LedgerWallet({ selectAccount });
         await wallet.connect();
         expect(wallet.address).toEqual('address');
-        expect(wallet.signPersonalMessage('messagetosign')).rejects.toThrow(Error);
+        await expect(wallet.signPersonalMessage('messagetosign')).rejects.toThrow(Error);
     });
 });
 
@@ -309,18 +306,12 @@ describe('signTransaction() should work fine', () => {
         await wallet.connect();
         expect(wallet.address).toEqual('address');
 
-        const account1 = tronWeb.utils.accounts.generateAccount();
-        const account2 = tronWeb.utils.accounts.generateAccount();
-        const transaction = await tronWeb.transactionBuilder.sendTrx(
-            account1.address.base58,
-            1000,
-            account2.address.base58
-        );
+        const transaction = await createTestTransaction();
         const res = await wallet.signTransaction(transaction);
         expect(res).toEqual({ ...transaction, signature: ['result'] });
         expect(_signTransaction).toHaveBeenCalledTimes(1);
         expect(_signTransaction).toHaveBeenLastCalledWith(`44'/195'/${0}'/0/0`, transaction.raw_data_hex, []);
-    });
+    }, 2000);
     test('should throw error when ledger can not sign', async () => {
         const _signTransaction = vi.fn(async () => {
             return Promise.reject(new Error('error'));
@@ -336,6 +327,6 @@ describe('signTransaction() should work fine', () => {
         const wallet = new LedgerWallet({ selectAccount });
         await wallet.connect();
         expect(wallet.address).toEqual('address');
-        expect(wallet.signTransaction({} as any)).rejects.toThrow(Error);
+        await expect(wallet.signTransaction({} as any)).rejects.toThrow(Error);
     });
 });

@@ -201,7 +201,7 @@ export const WalletProvider = defineComponent({
                     setConnecting(true);
                     try {
                         await state.adapter?.connect();
-                    } catch (error) {
+                    } catch {
                         // setName(null);
                     } finally {
                         setConnecting(false);

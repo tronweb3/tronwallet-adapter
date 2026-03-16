@@ -9,7 +9,7 @@ import {
     WalletSwitchChainError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type { TronWeb } from '../../src/types.js';
-import { MockTron, MockTronLink, TronLinkAdapter } from './mock.js';
+import { MockTron, TronLinkAdapter } from './mock.js';
 import { ONE_MINUTE, wait } from './utils.js';
 import { waitFor } from '@testing-library/dom';
 import { describe, test, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest';

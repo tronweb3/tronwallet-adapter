@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { vi, describe, test, expect } from 'vitest';
 
 import type { ButtonProps } from '../../src/Button.js';
 import { Button } from '../../src/Button.js';
@@ -42,18 +42,20 @@ describe('Button', () => {
         expect(img.src).toBe(icon);
     });
     test('onClick prop should work fine', async () => {
-        const spy = jest.fn();
+        const spy = vi.fn();
         makeSut({
             onClick: spy,
             children: 'Button',
         });
         const e = new Event('click');
-        fireEvent.click(screen.getByText('Button'), e);
+        await act(async () => {
+            fireEvent.click(screen.getByText('Button'), e);
+        });
 
-        expect(spy).toBeCalledTimes(1);
+        expect(spy).toHaveBeenCalledTimes(1);
     });
     test('onClick prop should work fine with disabled prop', () => {
-        const spy = jest.fn();
+        const spy = vi.fn();
         const { container } = makeSut({
             onClick: spy,
             disabled: true,
@@ -61,6 +63,6 @@ describe('Button', () => {
         const button = container.querySelector('button')!;
         const e = new Event('click');
         fireEvent.click(button, e);
-        expect(spy).toBeCalledTimes(0);
+        expect(spy).toHaveBeenCalledTimes(0);
     });
 });

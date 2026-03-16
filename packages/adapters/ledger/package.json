@@ -45,14 +45,16 @@
         "@ledgerhq/hw-app-trx": "6.29.2",
         "@ledgerhq/hw-transport": "6.27.1",
         "@ledgerhq/hw-transport-webhid": "6.27.1",
+        "@testing-library/jest-dom": "5.17.0",
         "@tronweb3/tronwallet-abstract-adapter": "workspace:",
         "buffer": "6.0.3",
-        "eventemitter3": "5.0.1",
+        "eventemitter3": "5.0.4",
         "preact": "10.23.0",
-        "tronweb": "6.2.1"
+        "tronweb": "6.2.2"
     },
     "devDependencies": {
         "@testing-library/dom": "8.20.0",
+        "@types/testing-library__jest-dom": "5.14.9",
         "shx": "0.3.4",
         "vitest": "3.2.4"
     }

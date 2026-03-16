@@ -29,7 +29,7 @@ export function openTronLink(
             if (link) {
                 defaultDappIcon = new URL(link.getAttribute('href') || '', location.href).toString();
             }
-        } catch (e) {
+        } catch {
             // console.error(e);
         }
         const { origin, pathname, search, hash } = window.location;

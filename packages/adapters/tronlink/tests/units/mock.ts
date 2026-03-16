@@ -22,10 +22,10 @@ export class MockTronWeb implements TronWeb {
     } = { base58: '', hex: '', type: 1, name: '' };
     ready = true;
     trx = {
-        sign(_: unknown): Promise<unknown> {
+        sign(): Promise<unknown> {
             return Promise.resolve('');
         },
-        signMessageV2(_: unknown): Promise<unknown> {
+        signMessageV2(): Promise<unknown> {
             return Promise.resolve('');
         },
         multiSign() {
@@ -41,7 +41,7 @@ export class MockTronWeb implements TronWeb {
         this.defaultAddress.base58 = address;
     }
 
-    toHex(_: string): string {
+    toHex(): string {
         return '';
     }
 }
@@ -69,7 +69,7 @@ export class MockBaseTronLink {
         this._tronWeb.defaultAddress!.base58 = address;
     }
 
-    request(args: { method: any; params: unknown[] | Record<string, unknown> }): Promise<any> {
+    request(): Promise<any> {
         return Promise.reject('No provide request result.');
     }
 }
@@ -160,7 +160,7 @@ export class MockTronLink extends MockBaseTronLink implements TronLinkWallet {
             });
         }
     };
-    request(args: { method: any; params: unknown[] | Record<string, unknown> }): Promise<any> {
+    request(): Promise<any> {
         return {};
     }
 }

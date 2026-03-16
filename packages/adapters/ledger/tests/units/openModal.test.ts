@@ -1,8 +1,6 @@
-/**
- * @vitest-environment jsdom
- */
 import { openConnectingModal, openVerifyAddressModal, openSelectAccountModal } from '../../src/Modal/openModal.js';
 import { waitFor, fireEvent, screen } from '@testing-library/dom';
+import { describe, test, expect } from 'vitest';
 import '@testing-library/jest-dom';
 
 describe('openConnectingModal()', () => {
@@ -80,7 +78,7 @@ describe('openSelectAccountModal()', () => {
 
         const cancelBtnEl = screen.queryByTestId('btn-cancel');
         fireEvent.click(cancelBtnEl);
-        expect(resultPromise).rejects.toThrowError('Operation is canceled.');
+        await expect(resultPromise).rejects.toThrowError('Operation is canceled.');
     });
 
     test('openSelectAccountModal() confirm should work fine', async () => {
@@ -123,7 +121,7 @@ describe('openSelectAccountModal()', () => {
         });
         const confirmBtnEl = screen.queryByTestId('btn-confirm');
         fireEvent.click(confirmBtnEl);
-        expect(resultPromise).resolves.toEqual({
+        await expect(resultPromise).resolves.toEqual({
             address: 'address2',
             path: 'path2',
             index: 1,

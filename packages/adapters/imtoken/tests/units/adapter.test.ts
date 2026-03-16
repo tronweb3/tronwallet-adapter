@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { ImTokenAdapter } from '../../src/adapter.js';
 
 describe('ImTokenAdapter', () => {

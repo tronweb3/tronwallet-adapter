@@ -2,7 +2,7 @@ import React, { act, createRef, forwardRef, useImperativeHandle } from 'react';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
 import { useLocalStorage } from '../../src/useLocalStorage.js';
-import 'jest-localstorage-mock';
+import { vi, describe, beforeEach, afterEach, test, expect } from 'vitest';
 
 type TestRefType = {
     getValue(): string;
@@ -10,9 +10,9 @@ type TestRefType = {
 };
 
 const DEFAULT_VALUE = '123';
-const STORAGE_KEY = 'STORAGE_KEY';
+let STORAGE_KEY = 'STORAGE_KEY';
 const TestComponent = forwardRef(function TestComponent(_props, ref) {
-    const [value, setValue] = useLocalStorage<string | null>(STORAGE_KEY, DEFAULT_VALUE);
+    const [value, setValue] = useLocalStorage<string | any>(STORAGE_KEY, DEFAULT_VALUE);
     useImperativeHandle(
         ref,
         () => ({
@@ -37,18 +37,22 @@ function renderTest() {
 }
 
 beforeEach(function () {
-    localStorage.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
     ref = createRef();
-    root.render(<TestComponent ref={ref} />);
+    STORAGE_KEY = 'STORAGE_KEY_' + Math.random().toString(36).substring(7);
 });
 afterEach(function () {
     act(() => {
         root && root.unmount();
     });
+    if (container && container.parentNode) {
+        container.parentNode.removeChild(container);
+    }
+    container = null;
+    localStorage.clear();
 });
 describe('useLocalStorage', function () {
     describe('get value from localStorage', function () {

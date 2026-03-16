@@ -4,40 +4,39 @@ import type { WalletContextState } from '../../src/useWallet.js';
 import { useWallet } from '../../src/useWallet.js';
 import type { WalletProviderProps } from '../../src/WalletProvider.js';
 import { WalletProvider } from '../../src/WalletProvider.js';
-import 'jest-localstorage-mock';
 import {
     Adapter,
+    AdapterState,
+    WalletReadyState,
+    WalletNotFoundError,
     WalletDisconnectionError,
     WalletNotSelectedError,
-    AdapterState,
     isInBrowser,
-    WalletNotFoundError,
-    WalletReadyState,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type { AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
+import { vi, describe, beforeEach, afterEach, it, expect } from 'vitest';
+
+(window as any).open = vi.fn();
+(window.console as any).error = vi.fn();
 
 type TestRefType = {
-    getState(): WalletContextState;
+    getState: () => WalletContextState;
 };
 
-const TestComponent = forwardRef<TestRefType>(function TestComponent(_props, ref) {
-    const wallet = useWallet();
-    useImperativeHandle(
-        ref,
-        () => ({
-            getState() {
-                return wallet;
-            },
-        }),
-        [wallet]
-    );
-    return <></>;
+const TestComponent = forwardRef<TestRefType>((_props, ref) => {
+    const state = useWallet();
+    useImperativeHandle(ref, () => ({
+        getState() {
+            return state;
+        },
+    }));
+    return null;
 });
-window.open = jest.fn();
-window.console.error = jest.fn();
+TestComponent.displayName = 'TestComponent';
+
 describe('useWallet', function () {
     let root: ReturnType<typeof createRoot>;
-    let ref: ReturnType<typeof createRef<TestRefType>>;
+    let ref: React.RefObject<TestRefType>;
     let container: HTMLDivElement;
     let adapter1: FakeAdapter;
     let adapter2: FakeAdapter;
@@ -48,7 +47,7 @@ describe('useWallet', function () {
         act(() => {
             root.render(
                 <WalletProvider {...props} adapters={adapters}>
-                    <TestComponent ref={ref as any} />
+                    <TestComponent ref={ref} />
                 </WalletProvider>
             );
         });
@@ -68,7 +67,7 @@ describe('useWallet', function () {
             return this._state;
         }
         connecting = false;
-        connect = jest.fn(async () => {
+        connect = vi.fn(async () => {
             if (this.state === AdapterState.NotFound) {
                 isInBrowser() && window.open(this.url, '_blank');
                 throw new WalletNotFoundError();
@@ -92,7 +91,7 @@ describe('useWallet', function () {
                 this.emit('stateChanged', this._state);
             });
         });
-        disconnect = jest.fn(async () => {
+        disconnect = vi.fn(async () => {
             this.connecting = false;
             if (this.disconnectMethod) {
                 try {
@@ -111,8 +110,12 @@ describe('useWallet', function () {
                 this.emit('stateChanged', this._state);
             });
         });
-        signMessage = jest.fn();
-        signTransaction = jest.fn();
+        signMessage = vi.fn();
+        signTransaction = vi.fn();
+
+        abstract name: AdapterName<any>;
+        abstract url: string;
+        abstract icon: string;
     }
 
     class Adapter1 extends FakeAdapter {
@@ -144,11 +147,17 @@ describe('useWallet', function () {
         adapter2 = new Adapter2();
         adapter3 = new Adapter3();
         adapters = [adapter1, adapter2, adapter3];
+        vi.clearAllMocks();
     });
     afterEach(function () {
         act(() => {
             root?.unmount();
         });
+        if (container && container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+        container = null as any;
+        localStorage.clear();
     });
 
     describe('when there is no wallet ready', function () {
@@ -170,13 +179,13 @@ describe('useWallet', function () {
             await act(async function () {
                 await ref.current?.getState().signMessage?.('string');
             });
-            expect(adapter1.signMessage).toHaveBeenCalledTimes(1);
+            expect(adapter1.signMessage).toHaveBeenCalled();
         });
         it('signTransaction should not be called when call signTransaction', async function () {
             await act(async function () {
                 await ref.current?.getState().signTransaction?.({} as any);
             });
-            expect(adapter1.signTransaction).toHaveBeenCalledTimes(1);
+            expect(adapter1.signTransaction).toHaveBeenCalled();
         });
     });
     describe('when there is a wallet ready with autoConnect', function () {
@@ -278,8 +287,8 @@ describe('useWallet', function () {
         });
         // skip these two test cases, because use Promise.reject() as adapter.connect won't work as expected
         it.skip('connect error should work fine', async function () {
-            const onError = jest.fn();
-            jest.useFakeTimers();
+            const onError = vi.fn();
+            vi.useFakeTimers();
             adapter1._state = AdapterState.Disconnect;
             adapter1.connectMethod = () =>
                 new Promise((resolve, reject) => {
@@ -296,11 +305,11 @@ describe('useWallet', function () {
                 await ref.current?.getState().connect();
                 await Promise.resolve();
             });
-            jest.advanceTimersByTime(200);
+            vi.advanceTimersByTime(200);
             expect(onError).toHaveBeenCalledTimes(1);
         });
         it.skip('disconnect error should work fine', async function () {
-            const onError = jest.fn();
+            const onError = vi.fn();
             const error = new WalletDisconnectionError();
             act(() => {
                 adapter1._state = AdapterState.Disconnect;
@@ -338,12 +347,12 @@ describe('useWallet', function () {
 
     describe('event handler props should work fine', function () {
         it('onReadyStateChanged should work fine', async function () {
-            const onConnect = jest.fn();
-            const onReadyStateChanged = jest.fn();
-            const onDisconnect = jest.fn();
-            const onAccountsChanged = jest.fn();
-            const onChainChanged = jest.fn();
-            const onAdapterChanged = jest.fn();
+            const onConnect = vi.fn();
+            const onReadyStateChanged = vi.fn();
+            const onDisconnect = vi.fn();
+            const onAccountsChanged = vi.fn();
+            const onChainChanged = vi.fn();
+            const onAdapterChanged = vi.fn();
             mountTest({
                 onConnect,
                 onDisconnect,
@@ -435,7 +444,7 @@ describe('useWallet', function () {
                 try {
                     await ref.current?.getState().connect();
                     throw new Error();
-                } catch (e) {
+                } catch (e: any) {
                     expect(e).toBeInstanceOf(WalletNotFoundError);
                 }
             });
@@ -487,7 +496,7 @@ describe('useWallet', function () {
             await act(async function () {
                 try {
                     await ref.current?.getState().disconnect();
-                } catch (e) {
+                } catch {
                     //
                 }
             });

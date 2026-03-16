@@ -22,7 +22,7 @@ function scanDir(dir) {
             version: json.version,
             depVersionMap,
         });
-    } catch (e) {
+    } catch {
         //
     }
     fs.readdirSync(dir).forEach((subDir) => {

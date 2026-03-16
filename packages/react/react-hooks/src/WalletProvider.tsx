@@ -1,4 +1,4 @@
-import { WalletNotSelectedError, AdapterState } from '@tronweb3/tronwallet-abstract-adapter';
+import { WalletNotSelectedError } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Adapter,
     WalletError,
@@ -237,7 +237,7 @@ export const WalletProvider: FC<WalletProviderProps> = function ({
                 setConnecting(true);
                 try {
                     await adapter.connect();
-                } catch (error) {
+                } catch {
                     // setName(null);
                 } finally {
                     setConnecting(false);

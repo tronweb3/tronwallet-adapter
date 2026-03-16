@@ -45,7 +45,7 @@ function getNpmVersion(pkgName) {
     }
     try {
         return exec(`npm view ${pkgName} version`);
-    } catch (e) {
+    } catch {
         return null;
     }
 }

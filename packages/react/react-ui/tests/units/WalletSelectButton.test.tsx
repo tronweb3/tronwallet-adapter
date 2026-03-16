@@ -1,29 +1,20 @@
-import type { FC, PropsWithChildren } from 'react';
 import React, { act } from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import 'jest-localstorage-mock';
+import { vi, describe, beforeEach, test, expect } from 'vitest';
 
 import type { ButtonProps } from '../../src/Button.js';
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
-import { MockTronLink } from './MockTronLink.js';
 import { WalletSelectButton } from '../../src/WalletSelectButton.js';
+import { Providers } from './TestProviders.js';
+import { MockTronLink } from './MockTronLink.js';
 
-const Providers: FC<PropsWithChildren> = function (props) {
-    return (
-        <WalletProvider>
-            <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-    );
-};
 const makeSut = (props: ButtonProps = {}) => render(<WalletSelectButton {...props} />, { wrapper: Providers });
 
-window.open = jest.fn();
+(window as any).open = vi.fn();
 beforeEach(() => {
     localStorage.clear();
-    window.tronLink = new MockTronLink();
-    window.tronWeb = window.tronLink.tronWeb;
+    (window as any).tronLink = new MockTronLink();
+    (window as any).tronWeb = (window as any).tronLink.tronWeb;
+    vi.clearAllMocks();
 });
 describe('WalletSelectButton', () => {
     test('should work fine with basic usage', () => {
@@ -35,17 +26,15 @@ describe('WalletSelectButton', () => {
     });
 
     test('should work fine when select', async () => {
-        jest.useFakeTimers();
         const { getByTestId, getByText, queryByTestId } = makeSut({});
-        await waitFor(() => {
-            jest.advanceTimersByTime(500);
-        });
-        act(() => {
+        await act(async () => {
             fireEvent.click(getByTestId('wallet-select-button'));
         });
 
         expect(getByTestId('wallet-select-modal')).toBeInTheDocument();
-        fireEvent.click(getByText('TronLink'));
+        await act(async () => {
+            fireEvent.click(getByText('TronLink'));
+        });
         await waitFor(() => {
             expect(queryByTestId('wallet-select-modal')).toBeNull();
         });

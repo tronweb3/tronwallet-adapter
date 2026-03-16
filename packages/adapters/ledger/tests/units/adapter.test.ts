@@ -8,16 +8,13 @@ import {
     WalletSignTransactionError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { waitFor } from '@testing-library/dom';
-import { vi } from 'vitest';
-import { TronWeb } from 'tronweb';
+import { vi, expect, beforeEach, afterEach, beforeAll, describe, test } from 'vitest';
+import { createTestTransaction } from './utils.js';
 vi.mock('../../src/LedgerWallet.js');
 function addPropertyToLedgerWallet(prop, value) {
     LedgerWallet[prop] = value;
 }
 
-const tronWeb = new TronWeb({
-    fullHost: 'https://api.nileex.io',
-});
 const LedgerWalletKeyValues = Object.getOwnPropertyNames(LedgerWallet)
     .filter((name) => Reflect.getOwnPropertyDescriptor(LedgerWallet, name).writable)
     .reduce((acc, name) => {
@@ -137,7 +134,7 @@ describe('signMessage()', () => {
         const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
-        expect(adapter.signMessage('message')).rejects.toThrow(WalletDisconnectedError);
+        await expect(adapter.signMessage('message')).rejects.toThrow(WalletDisconnectedError);
         expect(onError).toHaveBeenCalledTimes(1);
     });
     test('should work fine', async () => {
@@ -207,15 +204,13 @@ describe('signMessage()', () => {
 describe('signTransaction()', async () => {
     let transaction: Transaction;
     beforeEach(async () => {
-        const account1 = tronWeb.utils.accounts.generateAccount();
-        const account2 = tronWeb.utils.accounts.generateAccount();
-        transaction = await tronWeb.transactionBuilder.sendTrx(account1.address.base58, 1000, account2.address.base58);
+        transaction = await createTestTransaction();
     });
     test('should throw error when not connect ledger', async () => {
         const onError = vi.fn();
         const adapter = new LedgerAdapter();
         adapter.on('error', onError);
-        expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
+        await expect(adapter.signTransaction(transaction)).rejects.toThrow(WalletDisconnectedError);
         expect(onError).toHaveBeenCalledTimes(1);
     });
     test('should work fine', async () => {
