@@ -42,6 +42,6 @@
     },
     "devDependencies": {
         "shx": "0.3.4",
-        "vitest": "0.34.0"
+        "vitest": "3.2.4"
     }
 }
