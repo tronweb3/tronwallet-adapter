@@ -20,7 +20,7 @@ export function TronLinkAdapterDemo() {
   const adapter = useMemo(
     () =>
       new TronLinkAdapter({
-        openTronLinkAppOnMobile: true,
+        openAppWithDeeplink: true,
         openUrlWhenWalletNotFound: false,
         checkTimeout: 3000,
       }),

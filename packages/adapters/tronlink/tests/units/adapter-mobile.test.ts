@@ -49,10 +49,10 @@ describe('when on mobile device browser', () => {
             expect(window.location.href).not.toContain('tronlinkoutside://');
         }
     });
-    test('config.openTronLinkOnMobile should work fine', async () => {
+    test('config.openAppWithDeeplink should work fine', async () => {
         adapter = new TronLinkAdapter({
             checkTimeout: 3000,
-            openTronLinkAppOnMobile: false,
+            openAppWithDeeplink: false,
         });
         try {
             await adapter.connect();

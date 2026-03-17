@@ -49,7 +49,7 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
          * Set if open TronLink app using DeepLink on mobile device.
          * Default is true.
          */
-        openTronLinkAppOnMobile?: boolean;
+        openAppWithDeeplink?: boolean;
         /**
          * The icon of your dapp. Used when open TronLink app in mobile device browsers.
          * Default is current website icon.
