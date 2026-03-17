@@ -132,10 +132,10 @@ export default function SignUsage() {
     // }
     // const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
 
-    if (adapter.name === BinanceWalletAdapterName) {
-      const res = await (adapter as BinanceWalletAdapter).signAndSendTransaction(transaction);
-      console.log('binance signAndSendTransaction: ', res);
-      setSuccess(true);
+    if (adapter.name === 'Todo: BinanceWalletAdapterName') {
+      // const res = await (adapter as BinanceWalletAdapter).signAndSendTransaction(transaction);
+      // console.log('binance signAndSendTransaction: ', res);
+      // setSuccess(true);
     } else {
       try {
         signedTransaction = await adapter.signTransaction(transaction);
