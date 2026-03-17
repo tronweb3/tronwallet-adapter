@@ -2,27 +2,13 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import AdapterSelect from './components/AdapterSelect';
 import ConnectionState from './components/ConnectionState';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import LinkIcon from './components/ConnectedIcon';
 import LinkOffIcon from './components/DisconnectedIcon';
 import { useWallet } from './components/WalletProvider';
 import SignUsage from './components/SignUsage';
 import SwitchChain from './components/SwitchChain';
-import BgImg from './images/bg.png';
 
-const Container = styled('div')({
-  height: '100vh',
-  boxSizing: 'border-box',
-  margin: '0',
-  paddingTop: '100px',
-  display: 'flex',
-  flexDirection: 'column',
-  background: `url(${BgImg}) no-repeat center bottom/100% 100%`,
-  '@media (max-width: 780px)': {
-    paddingTop: '50px',
-    height: 'unset',
-  },
-});
 const Title = styled(Typography)({
   fontFamily: 'Wix Madefor Display, sans-serif',
   fontSize: '40px',
@@ -76,12 +62,12 @@ const ConnectButton = styled(Button)({
     color: '#fff',
   },
 });
-const AdapterBasicUsage: React.FC = () => {
+const TronAdapterDemo: React.FC = () => {
   const { connectionState, connect, disconnect } = useWallet();
 
   return (
-    <Container>
-      <Title>Adapter Basic Use Case</Title>
+    <Box sx={{ paddingTop: '80px', '@media (max-width: 780px)': { paddingTop: '50px' } }}>
+      <Title>Tron Wallet Adapter</Title>
       <MainContent>
         <BasicInfoWrap>
           <AdapterSelect />
@@ -94,8 +80,8 @@ const AdapterBasicUsage: React.FC = () => {
         <SignUsage />
         <SwitchChain />
       </MainContent>
-    </Container>
+    </Box>
   );
 };
 
-export default AdapterBasicUsage;
+export default TronAdapterDemo;
