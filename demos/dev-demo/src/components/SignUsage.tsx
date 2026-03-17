@@ -7,7 +7,7 @@ import { useWallet } from './WalletProvider';
 import { CHAIN_ID, TRONSCAN_URL } from '../config';
 import { tronWeb } from '../tronweb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import type { BinanceWalletAdapter } from '@tronweb3/tronwallet-adapters';
+import type { BinanceWalletAdapter, LedgerAdapter } from '@tronweb3/tronwallet-adapters';
 import { BinanceWalletAdapterName } from '@tronweb3/tronwallet-adapters';
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
@@ -139,6 +139,7 @@ export default function SignUsage() {
     } else {
       try {
         signedTransaction = await adapter.signTransaction(transaction);
+        // signedTransaction = await (adapter as LedgerAdapter).signTransactionHash(transaction);
       } catch (e) {
         console.log(e);
         return;
