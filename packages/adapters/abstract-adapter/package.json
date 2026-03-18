@@ -38,7 +38,7 @@
     },
     "dependencies": {
         "eventemitter3": "4.0.7",
-        "tronweb": "6"
+        "tronweb": "6.2.2"
     },
     "devDependencies": {
         "shx": "0.3.4",
