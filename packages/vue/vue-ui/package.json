@@ -63,6 +63,7 @@
         "@vue/babel-plugin-jsx": "1.4.0",
         "@vue/test-utils": "2.4.6",
         "shx": "0.3.4",
+        "typescript": "5.8.2",
         "vite": "6.3.5",
         "vitest": "3.2.4",
         "vue": "3.4.15"
