@@ -285,21 +285,21 @@ export class TronLinkAdapter extends Adapter {
         }
     }
 
-    async signTransaction(transaction: Transaction, privateKey?: string): Promise<SignedTransaction> {
-        return this._checkAndSign(
-            (wallet) => wallet.tronWeb.trx.sign(transaction, privateKey),
-            WalletSignTransactionError
-        );
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign((wallet) => wallet.tronWeb.trx.sign(transaction), WalletSignTransactionError);
     }
 
-    async multiSign(
-        transaction: Transaction,
-        privateKey?: string | false,
-        permissionId?: number
-    ): Promise<SignedTransaction> {
+    /**
+     *
+     * @param transaction transaction to be signed
+     * @param _, false to use tronWeb.trx.multiSign
+     * @param permissionId permissionId for multiSign
+     * @returns
+     */
+    async multiSign(transaction: Transaction, _?: false, permissionId?: number): Promise<SignedTransaction> {
         // multiSign is a transaction signing operation, so it uses WalletSignTransactionError
         return this._checkAndSign(
-            (wallet) => wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId),
+            (wallet) => wallet.tronWeb.trx.multiSign(transaction, _, permissionId),
             WalletSignTransactionError
         );
     }
