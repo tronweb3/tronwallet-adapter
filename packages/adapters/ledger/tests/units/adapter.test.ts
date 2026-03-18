@@ -247,4 +247,77 @@ describe('signTransaction()', async () => {
             expect(onError).toHaveBeenCalled();
         });
     });
+
+    test('should use hash sign when "Too many bytes to encode" error occurs', async () => {
+        const _signTransaction = vi.fn(() => {
+            throw new Error('Too many bytes to encode');
+        });
+        const _signTransactionHash = vi.fn(() => {
+            return Promise.resolve('signed by hash');
+        });
+        addPropertyToLedgerWallet('_signTransaction', _signTransaction);
+        addPropertyToLedgerWallet('_signTransactionHash', _signTransactionHash);
+
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+
+        const res = await adapter.signTransaction(transaction);
+        expect(res).toEqual('signed by hash');
+        expect(_signTransaction).toHaveBeenCalledTimes(1);
+        expect(_signTransactionHash).toHaveBeenCalledTimes(1);
+        expect(_signTransactionHash).toHaveBeenCalledWith(transaction);
+    });
+
+    test('should throw error when "Too many bytes to encode" occurs and fallbackToHashSign is false', async () => {
+        const _signTransaction = vi.fn(() => {
+            throw new Error('Too many bytes to encode');
+        });
+        const _signTransactionHash = vi.fn();
+        addPropertyToLedgerWallet('_signTransaction', _signTransaction);
+        addPropertyToLedgerWallet('_signTransactionHash', _signTransactionHash);
+
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+
+        await expect(adapter.signTransaction(transaction, { fallbackToHashSign: false })).rejects.toThrow(
+            WalletSignTransactionError
+        );
+        expect(_signTransaction).toHaveBeenCalledTimes(1);
+        expect(_signTransactionHash).not.toHaveBeenCalled();
+    });
+});
+
+describe('signTransactionHash()', async () => {
+    let transaction: Transaction;
+    beforeEach(async () => {
+        transaction = await createTestTransaction();
+    });
+    test('should throw error when not connect ledger', async () => {
+        const onError = vi.fn();
+        const adapter = new LedgerAdapter();
+        adapter.on('error', onError);
+        await expect(adapter.signTransactionHash(transaction)).rejects.toThrow(WalletDisconnectedError);
+        expect(onError).toHaveBeenCalledTimes(1);
+    });
+    test('should work fine', async () => {
+        const _signTransactionHash = vi.fn(() => {
+            return Promise.resolve('signed transaction hash');
+        });
+        addPropertyToLedgerWallet('_signTransactionHash', _signTransactionHash);
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+        const res = await adapter.signTransactionHash(transaction);
+        expect(res).toEqual('signed transaction hash');
+        expect(_signTransactionHash).toHaveBeenCalledTimes(1);
+        expect(_signTransactionHash).toHaveBeenCalledWith(transaction);
+    });
+    test('should throw error when signTransactionHash throw error', async () => {
+        const _signTransactionHash = vi.fn(() => {
+            throw new Error('signTransactionHash error');
+        });
+        addPropertyToLedgerWallet('_signTransactionHash', _signTransactionHash);
+        const adapter = new LedgerAdapter();
+        await adapter.connect();
+        await expect(adapter.signTransactionHash(transaction)).rejects.toThrow(WalletSignTransactionError);
+    });
 });

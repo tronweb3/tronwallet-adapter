@@ -140,9 +140,27 @@ export class LedgerAdapter extends Adapter {
         }
     }
 
-    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    /**
+     * Sign a transaction.
+     * @param transaction - The transaction to sign.
+     * @param options.fallbackToHashSign - Whether to use hash signing when the transaction is too large. Default is true.
+     */
+    async signTransaction(
+        transaction: Transaction,
+        options: { fallbackToHashSign?: boolean } = {}
+    ): Promise<SignedTransaction> {
+        const { fallbackToHashSign = true } = options;
         return this._checkAndSign(
-            () => this._wallet.signTransaction(transaction),
+            async () => {
+                try {
+                    return await this._wallet.signTransaction(transaction);
+                } catch (e: any) {
+                    if (fallbackToHashSign && /Too many bytes to encode/.test(e?.message)) {
+                        return await this._wallet.signTransactionHash(transaction);
+                    }
+                    throw e;
+                }
+            },
             WalletSignTransactionError,
             () => {
                 if (!txCheck(transaction)) {
@@ -152,6 +170,10 @@ export class LedgerAdapter extends Adapter {
         );
     }
 
+    /**
+     * Sign a transaction by its hash.
+     * @param transaction - The transaction to sign.
+     */
     async signTransactionHash(transaction: Transaction): Promise<SignedTransaction> {
         return this._checkAndSign(
             () => this._wallet.signTransactionHash(transaction),

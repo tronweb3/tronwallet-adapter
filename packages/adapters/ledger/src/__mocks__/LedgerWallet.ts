@@ -5,6 +5,7 @@ export class LedgerWallet {
     static _disconnect(...args: any[]) {}
     static _signPersonalMessage(...args: any[]) {}
     static _signTransaction(...args: any[]) {}
+    static _signTransactionHash(...args: any[]) {}
     static _getAccounts(...args: any[]) {}
     static _getAddress(...args: any[]) {}
     constructor(...args: any[]) {
@@ -21,6 +22,9 @@ export class LedgerWallet {
     }
     async signTransaction(...args: any[]) {
         return await LedgerWallet._signTransaction(...args);
+    }
+    async signTransactionHash(...args: any[]) {
+        return await LedgerWallet._signTransactionHash(...args);
     }
     async getAccounts(...args: any[]) {
         return await LedgerWallet._getAccounts(...args);

@@ -138,8 +138,9 @@ export default function SignUsage() {
       // setSuccess(true);
     } else {
       try {
-        signedTransaction = await adapter.signTransaction(transaction);
-        // signedTransaction = await (adapter as LedgerAdapter).signTransactionHash(transaction);
+        // signedTransaction = await adapter.signTransaction(transaction);
+        signedTransaction = await (adapter as LedgerAdapter).signTransactionHash(transaction);
+        console.log('signedTransaction: ', signedTransaction);
       } catch (e) {
         console.log(e);
         return;
