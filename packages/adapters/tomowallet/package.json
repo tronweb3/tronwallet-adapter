@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-tomowallet",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Wallet adapter for Tomo Wallet app.",
     "keywords": [
         "TRON",
@@ -47,8 +47,8 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "shx": "^0.3.4",
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
         "vitest": "3.2.4"
     }
 }

@@ -204,12 +204,12 @@ export class GateWalletAdapter extends Adapter {
         this.emit('disconnect');
     }
 
-    async signTransaction(transaction: Transaction, privateKey?: string): Promise<SignedTransaction> {
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
         try {
             const wallet = await this.checkAndGetWallet();
 
             try {
-                return await wallet.tronWeb.trx.sign(transaction, privateKey);
+                return await wallet.tronWeb.trx.sign(transaction);
             } catch (error: any) {
                 if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
@@ -225,16 +225,12 @@ export class GateWalletAdapter extends Adapter {
         }
     }
 
-    async multiSign(
-        transaction: Transaction,
-        privateKey?: string | false,
-        permissionId?: number
-    ): Promise<SignedTransaction> {
+    async multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<SignedTransaction> {
         try {
             const wallet = await this.checkAndGetWallet();
 
             try {
-                return await wallet.tronWeb.trx.multiSign(transaction, privateKey, permissionId);
+                return await wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId);
             } catch (error: any) {
                 if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignTransactionError(error.message, error);
@@ -250,11 +246,11 @@ export class GateWalletAdapter extends Adapter {
         }
     }
 
-    async signMessage(message: string, privateKey?: string): Promise<string> {
+    async signMessage(message: string): Promise<string> {
         try {
             const wallet = await this.checkAndGetWallet();
             try {
-                return await wallet.tronWeb.trx.signMessageV2(message, privateKey);
+                return await wallet.tronWeb.trx.signMessageV2(message);
             } catch (error: any) {
                 if (error instanceof Error || (typeof error === 'object' && error.message)) {
                     throw new WalletSignMessageError(error.message, error);

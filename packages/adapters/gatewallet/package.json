@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-gatewallet",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Wallet adapter for Gate Wallet app and extension.",
     "keywords": [
         "TRON",
@@ -48,8 +48,8 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "shx": "^0.3.4",
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
         "vitest": "3.2.4"
     },
     "bugs": {

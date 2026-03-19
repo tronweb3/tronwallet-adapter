@@ -104,7 +104,7 @@ export abstract class Adapter<Name extends string = string>
     abstract signMessage(message: string): Promise<string>;
     abstract signTransaction(transaction: Transaction): Promise<SignedTransaction>;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    multiSign(...args: any[]): Promise<any> {
+    multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<any> {
         return Promise.reject("The current wallet doesn't support multiSign.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
