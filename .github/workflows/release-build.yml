@@ -20,6 +20,11 @@ jobs:
           node-version: '20.18.0'
           cache: 'pnpm'
 
+      - name: Enable pnpm (via Corepack)
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
       - name: Install dependencies
         run: pnpm install
 
