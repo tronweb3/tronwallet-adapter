@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 pnpm run build
 pnpm run test
 echo "MD5:" && npm pack --dry-run --json | jq -r '.[0].shasum'
