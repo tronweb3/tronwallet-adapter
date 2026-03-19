@@ -1,32 +1,35 @@
-name: Build on release branch
+name: Release Branch CI
 
 on:
   push:
     branches:
-      - 'release/*'
+      - 'release/**'
 
 jobs:
   build:
-    name: pnpm build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js + pnpm cache
         uses: actions/setup-node@v4
         with:
-          node-version: '20.18.0'
+          node-version: 20.18.0
           cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Enable pnpm (via Corepack)
+      - name: Enable Corepack + prepare pnpm
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Run build
+        run: pnpm run build
+
+      - name: Run tests
+        run: pnpm run test
