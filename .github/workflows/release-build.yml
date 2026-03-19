@@ -33,3 +33,7 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+      - name: Get shasum
+        run: echo "MD5:" && npm pack --dry-run --json | jq -r '.[0].shasum'
+      - name: Get commitID
+        run: echo "commitID:" && git rev-parse HEAD

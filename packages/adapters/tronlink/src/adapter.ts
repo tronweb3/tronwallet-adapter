@@ -296,10 +296,10 @@ export class TronLinkAdapter extends Adapter {
      * @param permissionId permissionId for multiSign
      * @returns
      */
-    async multiSign(transaction: Transaction, _?: false, permissionId?: number): Promise<SignedTransaction> {
+    async multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<SignedTransaction> {
         // multiSign is a transaction signing operation, so it uses WalletSignTransactionError
         return this._checkAndSign(
-            (wallet) => wallet.tronWeb.trx.multiSign(transaction, _, permissionId),
+            (wallet) => wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId),
             WalletSignTransactionError
         );
     }
