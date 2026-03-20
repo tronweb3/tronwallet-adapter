@@ -48,7 +48,7 @@
         "lint:fix": "pnpm run fmt && eslint --fix .",
         "test": "pnpm --recursive --filter \"@tronweb3/*\" run test",
         "example": "pnpm run --filter {demos/react-ui/vite-app} dev",
-        "postinstall": "husky install",
+        "prepare": "husky install && chmod ug+x .husky/*",
         "update-version": "pnpm changeset add && pnpm changeset version",
         "prerelease": "node ./scripts/check-dep-version.js"
     },
@@ -162,7 +162,7 @@
             "qs": ">=6.14.2",
             "axios@<=1.13.4": ">=1.13.5",
             "cross-spawn@<6.0.6": ">=6.0.6",
-            "flatted@<3.4.0": ">=3.4.0",
+            "flatted@<3.4.2": ">=3.4.2",
             "undici@>=7.0.0 <7.24.0": ">=7.24.0"
         }
     }
