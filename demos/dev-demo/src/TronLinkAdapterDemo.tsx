@@ -225,7 +225,7 @@ export function MultiSignDemo(props: { address: string; adapter: Adapter }) {
   const multiSignWithAddress1 = useCallback(
     async function () {
       const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, props.address, { permissionId: 2 });
-      const signedTransaction = await props.adapter.multiSign(transaction, null, 2);
+      const signedTransaction = await props.adapter.multiSign(transaction, { permissionId: 2 });
       setTransferTransaction(signedTransaction);
     },
     [props.adapter, setTransferTransaction, props.address]
@@ -233,7 +233,7 @@ export function MultiSignDemo(props: { address: string; adapter: Adapter }) {
   const multiSignWithAddress2 = useCallback(
     async function () {
       console.log('first multi signed tx:', transferTransaction);
-      const signedTransaction = await props.adapter.multiSign(transferTransaction as any, null, 2);
+      const signedTransaction = await props.adapter.multiSign(transferTransaction as any, { permissionId: 2 });
       console.log('second multi signed tx:', signedTransaction);
       setTransferTransaction(signedTransaction);
       const signWeight = await tronWeb.trx.getSignWeight(signedTransaction, 2);

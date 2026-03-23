@@ -19,14 +19,14 @@ export function MultiSignUsage({ adapter }: { adapter: Adapter }) {
   }
 
   async function signWithAddress1() {
-    const signedTransaction = await adapter.multiSign(transaction, privateKey1, permissionId);
+    const signedTransaction = await adapter.multiSign(transaction!, { permissionId });
     setTransaction(signedTransaction);
     console.log('signedTransaction:', signedTransaction);
     alert('success signed');
   }
 
   async function signWithAddress2() {
-    const signedTransaction = await adapter.multiSign(transaction, privateKey2, permissionId);
+    const signedTransaction = await adapter.multiSign(transaction!, { permissionId });
     setTransaction(signedTransaction);
     console.log('signedTransaction:', signedTransaction);
     alert('success signed');
