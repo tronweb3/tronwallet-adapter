@@ -124,30 +124,14 @@ export default function SignUsage() {
     }
     const transaction = await tronWeb.transactionBuilder.sendTrx(receiver, tronWeb.toSun(0.000001) as unknown as number, adapter.address || '');
     let signedTransaction: any;
-    // try {
-    //   signedTransaction = await adapter.signTransaction(transaction);
-    // } catch (e) {
-    //   console.log(e);
-    //   return;
-    // }
-    // const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-
-    if (adapter.name === 'Todo: BinanceWalletAdapterName') {
-      // const res = await (adapter as BinanceWalletAdapter).signAndSendTransaction(transaction);
-      // console.log('binance signAndSendTransaction: ', res);
-      // setSuccess(true);
-    } else {
-      try {
-        // signedTransaction = await adapter.signTransaction(transaction);
-        signedTransaction = await (adapter as LedgerAdapter).signTransactionHash(transaction);
-        console.log('signedTransaction: ', signedTransaction);
-      } catch (e) {
-        console.log(e);
-        return;
-      }
-      const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
-      setSuccess(res.result);
+    try {
+      signedTransaction = await adapter.signTransaction(transaction);
+    } catch (e) {
+      console.log(e);
+      return;
     }
+    const res = await tronWeb.trx.sendRawTransaction(signedTransaction);
+    setSuccess(res.result);
     setOpen(true);
     setTitle('Transfer');
   };
