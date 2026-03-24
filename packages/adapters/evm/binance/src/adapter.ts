@@ -1,4 +1,4 @@
-import type { AdapterName, EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
+import type { AdapterName, EIP1193Provider, EIP6963ProviderInfo } from '@tronweb3/abstract-adapter-evm';
 import {
     Adapter,
     WalletReadyState,
@@ -27,6 +27,7 @@ export class BinanceEvmAdapter extends Adapter {
     constructor(options: BinanceEvmAdapterOptions = { useDeeplink: true }) {
         super();
         this.options = options;
+        this.eip6963Info.support = true;
         const provider = getBinanceEvmProvider();
         if (provider) {
             this.readyState = WalletReadyState.Found;
@@ -78,71 +79,11 @@ export class BinanceEvmAdapter extends Adapter {
         throw new WalletError('[BinanceEvm] The wallet does not support addChain() currently.');
     }
 
-    private getProviderPromise: Promise<EIP1193Provider | null> | null = null;
-    async getProvider(): Promise<EIP1193Provider | null> {
-        if (this.getProviderPromise !== null) {
-            return this.getProviderPromise;
-        }
-        this.getProviderPromise = new Promise((resolve) => {
-            const provider = getBinanceEvmProvider();
-            if (provider) {
-                return resolve(provider);
-            }
-            let handled = false;
-            let interval: null | ReturnType<typeof setInterval> = null;
-            const handleEthereum = () => {
-                if (handled) {
-                    return;
-                }
-                handled = true;
-                const provider = getBinanceEvmProvider();
-                if (provider) {
-                    resolve(provider);
-                } else {
-                    console.error('[BinanceEvmAdapter]: Unable to detect window.ethereum.');
-                    resolve(null);
-                }
-            };
-            interval = setInterval(() => {
-                const provider = getBinanceEvmProvider();
-                if (provider) {
-                    handleEthereum();
-                    interval && clearInterval(interval);
-                }
-            }, 100);
-            setTimeout(() => {
-                interval && clearInterval(interval);
-                handleEthereum();
-            }, 3000);
-        });
-        return this.getProviderPromise;
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return getBinanceEvmProvider();
     }
-    private listenEvents(provider: EIP1193Provider) {
-        provider.on('connect', (connectInfo) => {
-            this.emit('connect', connectInfo);
-        });
-        provider.on('disconnect', (error) => {
-            this.emit('disconnect', error);
-        });
-        provider.on('accountsChanged', this.onAccountsChanged);
-        provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', chainId);
-        });
-    }
-    private onAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-            this.address = null;
-        } else {
-            this.address = accounts[0];
-        }
-        this.emit('accountsChanged', accounts);
-    };
-    private async autoConnect(provider: EIP1193Provider) {
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
 
-        this.address = accounts?.[0] || null;
-        if (this.address) {
-            this.emit('accountsChanged', accounts);
-        }
+    protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
+        return Boolean((provider as any).isBinance) || !!info?.name?.toLowerCase().includes('binance');
     }
 }

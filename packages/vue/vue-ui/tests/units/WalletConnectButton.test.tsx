@@ -172,8 +172,8 @@ describe('when a wallet is seleted', () => {
             await nextTick();
             const el = getByTestId('wallet-connect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBe('');
-            expect(el.text()).toEqual('Connected');
+            expect((el.element as HTMLButtonElement).disabled).toBe(false);
+            expect(el.text()).toEqual('Connect');
         });
     });
 

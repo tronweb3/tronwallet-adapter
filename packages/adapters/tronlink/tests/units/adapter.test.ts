@@ -4,6 +4,8 @@ import {
     WalletNotFoundError,
     WalletSwitchChainError,
     AdapterState,
+    TIP6963AnnounceProviderEventName,
+    TIP6963RequestProviderEventName,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { TronLinkAdapter } from '../../src/index.js';
 import { wait, ONE_MINUTE } from './utils.js';
@@ -12,13 +14,46 @@ import { waitFor } from '@testing-library/dom';
 const noop = () => {
     //
 };
+
+function installTIP6963Provider(
+    provider: MockTron,
+    options: { name?: string; rdns?: string } = {}
+) {
+    const detail = {
+        info: {
+            uuid: `${options.rdns || 'com.tronlink.wallet'}-${options.name || 'TronLink'}`,
+            name: options.name || 'TronLink',
+            icon: '',
+            rdns: options.rdns || 'com.tronlink.wallet',
+        },
+        provider,
+    };
+
+    const onRequestProvider = () => {
+        window.dispatchEvent(
+            new CustomEvent(TIP6963AnnounceProviderEventName, {
+                detail,
+            })
+        );
+    };
+
+    window.addEventListener(TIP6963RequestProviderEventName, onRequestProvider);
+
+    return () => {
+        window.removeEventListener(TIP6963RequestProviderEventName, onRequestProvider);
+    };
+}
+
 window.open = jest.fn();
 beforeEach(function () {
     jest.useFakeTimers();
+    jest.clearAllTimers();
     global.document = window.document;
     global.navigator = window.navigator;
     window.tronLink = undefined;
     window.tron = undefined;
+    window.tronWeb = undefined;
+    // @ts-ignore
 });
 describe('TronLinkAdapter', function () {
     describe('#adapter()', function () {
@@ -80,6 +115,38 @@ describe('TronLinkAdapter', function () {
         beforeEach(() => {
             jest.useFakeTimers();
         });
+        test('should discover TronLink via TIP-6963 on desktop', async function () {
+            const tron = new MockTron('xxx');
+            tron._unlock();
+            const cleanup = installTIP6963Provider(tron);
+
+            const adapter = new TronLinkAdapter();
+            jest.advanceTimersByTime(50);
+            await Promise.resolve();
+
+            expect(adapter.readyState).toEqual('Found');
+            expect(adapter.state).toEqual(AdapterState.Connected);
+            expect(adapter.address).toEqual('xxx');
+
+            cleanup();
+        });
+        test('should prefer TIP-6963 TronLink provider over legacy injected tron object', async function () {
+            const tron = new MockTron('xxx');
+            tron._unlock();
+            const cleanup = installTIP6963Provider(tron);
+            setTimeout(() => {
+                (window as any).tron = { isTronLink: true, tronWeb: { defaultAddress: { base58: 'legacy' } } };
+            }, 100);
+
+            const adapter = new TronLinkAdapter();
+            jest.advanceTimersByTime(50);
+            await Promise.resolve();
+
+            expect(adapter.address).toEqual('xxx');
+            expect(adapter.state).toEqual(AdapterState.Connected);
+
+            cleanup();
+        });
         test('should work fine when tron is disconnected', async function () {
             const tron = ((window as any).tron = new MockTron(''));
             tron.request = jest.fn(() => {
@@ -117,8 +184,9 @@ describe('TronLinkAdapter', function () {
     describe('#connect()', function () {
         test('should throw error when TronLink is not installed', async function () {
             (window as any).tronLink = undefined;
-            const adapter = new TronLinkAdapter();
-            expect(adapter.connect()).rejects.toThrow(WalletNotFoundError);
+            const adapter = new TronLinkAdapter({ checkTimeout: 100 });
+            jest.advanceTimersByTime(200);
+            await expect(adapter.connect()).rejects.toThrow(WalletNotFoundError);
         });
         test('should throw error when TronLink is locked', async function () {
             const address = 'xxxxx';
@@ -209,7 +277,7 @@ describe('TronLinkAdapter', function () {
             const adapter = new TronLinkAdapter();
             const res = adapter.signMessage('some str');
             jest.advanceTimersByTime(ONE_MINUTE);
-            expect(res).rejects.toThrow(WalletDisconnectedError);
+            await expect(res).rejects.toThrow(WalletDisconnectedError);
         });
         test('should throw Disconnected error when TronLink is disconnected', async function () {
             (window as any).tronLink = {
@@ -217,7 +285,7 @@ describe('TronLinkAdapter', function () {
             };
             const adapter = new TronLinkAdapter();
             jest.advanceTimersByTime(3000);
-            expect(adapter.signMessage('some str')).rejects.toThrow(WalletDisconnectedError);
+            await expect(adapter.signMessage('some str')).rejects.toThrow(WalletDisconnectedError);
         });
         test('should work fine when TronLink is connected', async function () {
             const tronLink = ((window as any).tronLink = new MockTronLink('address'));
@@ -233,8 +301,9 @@ describe('TronLinkAdapter', function () {
     describe('#signTransaction()', function () {
         test('should throw Disconnected error when TronLink is not installed', async function () {
             (window as any).tronLink = undefined;
-            const adapter = new TronLinkAdapter();
-            expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
+            const adapter = new TronLinkAdapter({ checkTimeout: 100 });
+            jest.advanceTimersByTime(200);
+            await expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
         });
         test('should throw Disconnected error when TronLink is disconnected', async function () {
             (window as any).tronLink = {

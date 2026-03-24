@@ -324,6 +324,9 @@ importers:
       '@tronweb3/tronwallet-adapter-tronlink-evm':
         specifier: ^1.0.1
         version: link:../../packages/adapters/evm/tronlink
+      '@tronweb3/tronwallet-adapter-trustwallet-evm':
+        specifier: latest
+        version: link:../../packages/adapters/evm/trustwallet
       '@tronweb3/tronwallet-adapters':
         specifier: latest
         version: link:../../packages/adapters/adapters
@@ -641,6 +644,9 @@ importers:
       '@tronweb3/tronwallet-adapter-trust':
         specifier: workspace:^
         version: link:../trust
+      '@tronweb3/tronwallet-adapter-trustwallet-evm':
+        specifier: workspace:^
+        version: link:../evm/trustwallet
       '@tronweb3/tronwallet-adapter-walletconnect':
         specifier: workspace:^
         version: link:../walletconnect
@@ -773,7 +779,7 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
+        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
@@ -792,7 +798,26 @@ importers:
         version: 8.20.1
       jest:
         specifier: '28'
-        version: 28.1.3(@types/node@18.19.42)(ts-node@10.9.2(@types/node@18.19.42)(typescript@5.5.4))
+        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
+      jest-environment-jsdom:
+        specifier: '28'
+        version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+
+  packages/adapters/evm/trustwallet:
+    dependencies:
+      '@tronweb3/abstract-adapter-evm':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      jest:
+        specifier: '28'
+        version: 28.1.3(@types/node@22.7.5)(ts-node@10.9.2(@types/node@22.7.5)(typescript@5.5.4))
       jest-environment-jsdom:
         specifier: '28'
         version: 28.1.3(bufferutil@4.0.8)(utf-8-validate@6.0.3)

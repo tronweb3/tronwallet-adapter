@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import type { EIP1193Provider, ProviderEvents } from './eip1193-provider.js';
-import { WalletDisconnectedError } from './errors.js';
+import { WalletDisconnectedError, WalletNotFoundError } from './errors.js';
 
 export { EventEmitter };
 
@@ -51,6 +51,12 @@ export interface Asset {
         image?: string;
         tokenId?: string;
     };
+}
+export interface EIP6963ProviderInfo {
+    uuid: string;
+    name: string;
+    icon: string;
+    rdns: string;
 }
 export interface AdapterEvents extends ProviderEvents {
     /**
@@ -116,12 +122,35 @@ export abstract class Adapter<Name extends string = string>
     abstract address: string | null;
     connecting = false;
 
+    protected eip6963Info = {
+        support: false,
+        name: '',
+        rdns: '',
+    };
+
     get connected() {
         return !!this.address;
     }
 
     abstract connect(options?: Record<string, unknown>): Promise<string>;
-    abstract getProvider(): Promise<EIP1193Provider | null>;
+    protected getInjectedProvider(): EIP1193Provider | null {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        return (window as Window & { ethereum?: EIP1193Provider }).ethereum || null;
+    }
+    protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
+        if (!this.eip6963Info.support) {
+            return false;
+        }
+
+        if (this.eip6963Info.rdns && info?.rdns === this.eip6963Info.rdns) {
+            return true;
+        }
+
+        return !!this.eip6963Info.name && info?.name === this.eip6963Info.name;
+    }
     async network(): Promise<string> {
         const provider = await this.prepareProvider();
         return provider.request({
@@ -181,7 +210,124 @@ export abstract class Adapter<Name extends string = string>
         });
     }
 
+    protected getProviderPromise: Promise<EIP1193Provider | null> | null = null;
+    async getProvider(): Promise<EIP1193Provider | null> {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        if (this.getProviderPromise !== null) {
+            return this.getProviderPromise;
+        }
+
+        this.getProviderPromise = new Promise((resolve) => {
+            let handled = false;
+            let interval: ReturnType<typeof setInterval> | null = null;
+            let timeout: ReturnType<typeof setTimeout> | null = null;
+            let eip6963Handler: ((event: Event) => void) | null = null;
+
+            const cleanup = () => {
+                if (interval) {
+                    clearInterval(interval);
+                    interval = null;
+                }
+
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+
+                if (eip6963Handler) {
+                    window.removeEventListener('eip6963:announceProvider', eip6963Handler);
+                    eip6963Handler = null;
+                }
+            };
+
+            const finish = (provider: EIP1193Provider | null) => {
+                if (handled) {
+                    return;
+                }
+
+                handled = true;
+                cleanup();
+                resolve(provider);
+            };
+
+            if (this.eip6963Info.support) {
+                eip6963Handler = (event: Event) => {
+                    const customEvent = event as CustomEvent<{
+                        info?: EIP6963ProviderInfo;
+                        provider?: EIP1193Provider;
+                    }>;
+                    const announcedProvider = customEvent.detail?.provider;
+
+                    if (!announcedProvider || !this.isEIP6963Provider(announcedProvider, customEvent.detail?.info)) {
+                        return;
+                    }
+
+                    finish(announcedProvider);
+                };
+
+                window.addEventListener('eip6963:announceProvider', eip6963Handler);
+                window.dispatchEvent(new Event('eip6963:requestProvider'));
+            } else {
+                const injectedProvider = this.getInjectedProvider();
+                if (injectedProvider) {
+                    finish(injectedProvider);
+                    return;
+                }
+            }
+
+            interval = setInterval(() => {
+                const provider = this.getInjectedProvider();
+                if (provider) {
+                    finish(provider);
+                }
+            }, 100);
+
+            timeout = setTimeout(() => {
+                const provider = this.getInjectedProvider();
+                if (provider) {
+                    finish(provider);
+                } else {
+                    console.error(`[${this.name}]: Unable to detect provider.`);
+                    finish(null);
+                }
+            }, 3000);
+        });
+
+        return this.getProviderPromise;
+    }
+    protected listenEvents(provider: EIP1193Provider) {
+        provider.on('connect', (connectInfo) => {
+            this.emit('connect', connectInfo);
+        });
+        provider.on('disconnect', (error) => {
+            this.emit('disconnect', error);
+        });
+        provider.on('accountsChanged', this.onAccountsChanged);
+        provider.on('chainChanged', this.onChainChanged);
+    }
+    protected onAccountsChanged = (accounts: string[]) => {
+        this.address = accounts[0] || null;
+        this.emit('accountsChanged', accounts);
+    };
+    protected onChainChanged = (chainId: string) => {
+        this.emit('chainChanged', chainId);
+    };
     protected async prepareProvider() {
-        return (await this.getProvider()) as EIP1193Provider;
+        const provider = await this.getProvider();
+        if (!provider) {
+            throw new WalletNotFoundError();
+        }
+        return provider;
+    }
+    protected async autoConnect(provider: EIP1193Provider) {
+        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
+
+        this.address = accounts?.[0] || null;
+        if (this.address) {
+            this.emit('accountsChanged', accounts);
+        }
     }
 }

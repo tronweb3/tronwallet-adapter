@@ -52,7 +52,11 @@ export interface TokenPocketWallet {
 
 declare global {
     interface Window {
-        tokenpocket?: TokenPocketWallet;
+        tokenpocket?: {
+            ready?: boolean;
+            tron?: Tron;
+            tronWeb?: TronWeb;
+        };
     }
 }
 

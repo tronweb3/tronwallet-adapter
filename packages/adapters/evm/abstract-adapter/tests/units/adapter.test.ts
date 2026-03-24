@@ -26,6 +26,58 @@ class TestAdapter extends Adapter {
     }
 }
 
+class DetectAdapter extends Adapter {
+    name = 'Detect' as AdapterName<'Detect'>;
+    icon = 'https://icon.com/test-icon.png';
+    url = 'https://test-wallet.com';
+    address: null | string = null;
+    readyState = WalletReadyState.Found;
+
+    constructor(private readonly injectedProvider: EIP1193Provider | null = null) {
+        super();
+        this.eip6963Info.support = true;
+        this.eip6963Info.name = 'Detect';
+    }
+
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return this.injectedProvider;
+    }
+
+    async connect() {
+        return Promise.resolve('address1');
+    }
+
+    async signTypedData(): Promise<string> {
+        return Promise.resolve('signature');
+    }
+}
+
+function installEIP6963Provider(provider: EIP1193Provider, name = 'Detect') {
+    const detail = {
+        info: {
+            uuid: `io.test.${name}`,
+            name,
+            icon: '',
+            rdns: `io.test.${name}`,
+        },
+        provider,
+    };
+
+    const onRequestProvider = () => {
+        window.dispatchEvent(
+            new CustomEvent('eip6963:announceProvider', {
+                detail,
+            })
+        );
+    };
+
+    window.addEventListener('eip6963:requestProvider', onRequestProvider);
+
+    return () => {
+        window.removeEventListener('eip6963:requestProvider', onRequestProvider);
+    };
+}
+
 let adapter: TestAdapter;
 beforeEach(() => {
     adapter = new TestAdapter();
@@ -33,6 +85,21 @@ beforeEach(() => {
     provider.request = jest.fn();
 });
 describe('#AbstractAdapter', () => {
+    test('#getProvider() should resolve provider via EIP-6963', async () => {
+        const detectedProvider = { request: jest.fn() } as unknown as EIP1193Provider;
+        const cleanup = installEIP6963Provider(detectedProvider);
+        const detectAdapter = new DetectAdapter();
+
+        await expect(detectAdapter.getProvider()).resolves.toBe(detectedProvider);
+
+        cleanup();
+    });
+    test('#getProvider() should prefer injected provider', async () => {
+        const injectedProvider = { request: jest.fn() } as unknown as EIP1193Provider;
+        const detectAdapter = new DetectAdapter(injectedProvider);
+
+        await expect(detectAdapter.getProvider()).resolves.toBe(injectedProvider);
+    });
     test('#connected should be correct', () => {
         expect(adapter.connected).toEqual(true);
         adapter.address = '';

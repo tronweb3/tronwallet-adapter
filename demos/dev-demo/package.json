@@ -27,6 +27,7 @@
     "@tronweb3/tronwallet-adapter-react-hooks": "latest",
     "@tronweb3/tronwallet-adapter-react-ui": "latest",
     "@tronweb3/tronwallet-adapter-tronlink-evm": "^1.0.1",
+    "@tronweb3/tronwallet-adapter-trustwallet-evm": "latest",
     "@tronweb3/tronwallet-adapters": "latest",
     "buffer": "^6.0.3",
     "ethers": "^6.15.0",

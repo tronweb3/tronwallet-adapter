@@ -1,6 +1,21 @@
 import { TronLinkEvmAdapter } from '../../src/adapter.js';
+import { TronLinkProvider, installTronLinkEIP6963Provider } from './tronlink-provider.js';
+
+async function flushPromises() {
+    for (const i of [1, 2, 3]) {
+        await Promise.resolve(i);
+    }
+}
 
 describe('TronLinkEvmAdapter', () => {
+    beforeEach(() => {
+        jest.useFakeTimers();
+        // @ts-ignore
+        window.TronLinkEVM = null;
+        // @ts-ignore
+        window.ethereum = null;
+    });
+
     test('base props should be valid', () => {
         const adapter = new TronLinkEvmAdapter();
         expect(adapter.name).toEqual('TronLink');
@@ -10,5 +25,23 @@ describe('TronLinkEvmAdapter', () => {
         expect(adapter.connected).toEqual(false);
         jest.advanceTimersByTime(4000);
         expect(adapter.readyState).toEqual('Loading');
+    });
+
+    test('should discover TronLink provider via EIP-6963', async () => {
+        const provider = new TronLinkProvider();
+        provider.selectedAddress = '0x123';
+        const cleanup = installTronLinkEIP6963Provider(provider);
+
+        const adapter = new TronLinkEvmAdapter();
+        jest.advanceTimersByTime(300);
+        await flushPromises();
+        jest.advanceTimersByTime(300);
+        await flushPromises();
+
+        expect(adapter.readyState).toEqual('Found');
+        await expect(adapter.getProvider()).resolves.toBe(provider);
+        expect(adapter.address).toEqual('0x123');
+
+        cleanup();
     });
 });

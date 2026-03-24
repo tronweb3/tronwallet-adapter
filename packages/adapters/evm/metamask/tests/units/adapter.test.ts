@@ -1,6 +1,7 @@
 import { WalletNotFoundError } from '@tronweb3/abstract-adapter-evm';
 import { MetaMaskEvmAdapter } from '../../src/adapter.js';
-import { MetaMaskProvider } from './metamask-provider.js';
+import { MetaMaskProvider, installMetaMaskEIP6963Provider } from './metamask-provider.js';
+import { TrustWalletProvider, installTrustWalletProvider } from '../../../trustwallet/tests/units/trustwallet-provider.js';
 
 let provider: MetaMaskProvider;
 jest.useFakeTimers();
@@ -50,6 +51,41 @@ describe('MetaMaskEvmAdapter', () => {
         test('adapter should be ready when window.ethereum.isMetaMask is true', () => {
             const adapter = new MetaMaskEvmAdapter();
             expect(adapter.readyState).toEqual('Found');
+        });
+        test('adapter should discover provider via EIP-6963', async () => {
+            // @ts-ignore
+            window.ethereum = null;
+            const eip6963Provider = new MetaMaskProvider();
+            const cleanup = installMetaMaskEIP6963Provider(eip6963Provider);
+
+            const adapter = new MetaMaskEvmAdapter();
+            jest.advanceTimersByTime(10);
+            for (const i of [1, 2, 3]) {
+                await Promise.resolve(i);
+            }
+
+            expect(adapter.readyState).toEqual('Found');
+            await expect(adapter.getProvider()).resolves.toBe(eip6963Provider);
+
+            cleanup();
+        });
+        test('adapter should not treat Trust Wallet as MetaMask provider', async () => {
+            // @ts-ignore
+            window.ethereum = new TrustWalletProvider();
+            const metaMaskProvider = new MetaMaskProvider();
+            const cleanupTrust = installTrustWalletProvider(window.ethereum);
+            const cleanupMetaMask = installMetaMaskEIP6963Provider(metaMaskProvider);
+
+            const adapter = new MetaMaskEvmAdapter();
+            jest.advanceTimersByTime(10);
+            for (const i of [1, 2, 3]) {
+                await Promise.resolve(i);
+            }
+
+            await expect(adapter.getProvider()).resolves.toBe(metaMaskProvider);
+
+            cleanupTrust();
+            cleanupMetaMask();
         });
         test('adapter should be ready when window.ethereum.providers has MetaMaskProvider', () => {
             // @ts-ignore
