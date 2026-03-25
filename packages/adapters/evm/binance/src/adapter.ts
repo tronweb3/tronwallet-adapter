@@ -118,16 +118,21 @@ export class BinanceEvmAdapter extends Adapter {
         return this.getProviderPromise;
     }
     private listenEvents(provider: EIP1193Provider) {
-        provider.on('connect', (connectInfo) => {
-            this.emit('connect', connectInfo);
-        });
-        provider.on('disconnect', (error) => {
-            this.emit('disconnect', error);
-        });
-        provider.on('accountsChanged', this.onAccountsChanged);
-        provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', chainId);
-        });
+        // Fix error when use binance extension in unsupported region
+        try {
+            provider.on('connect', (connectInfo) => {
+                this.emit('connect', connectInfo);
+            });
+            provider.on('disconnect', (error) => {
+                this.emit('disconnect', error);
+            });
+            provider.on('accountsChanged', this.onAccountsChanged);
+            provider.on('chainChanged', (chainId) => {
+                this.emit('chainChanged', chainId);
+            });
+        } catch {
+            //
+        }
     }
     private onAccountsChanged = (accounts: string[]) => {
         if (accounts.length === 0) {

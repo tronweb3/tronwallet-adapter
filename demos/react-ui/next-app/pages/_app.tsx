@@ -36,9 +36,8 @@ export default function App({ Component, pageProps }: AppProps) {
             const walletConnectAdapter = new WalletConnectAdapter({
                 network: 'Nile',
                 options: {
-                    relayUrl: 'wss://relay.walletconnect.com',
-                    // example WC app project ID
-                    projectId: '',
+                    relayUrl: process.env.NEXT_PUBLIC_WALLETCONNECT_RELAY_URL,
+                    projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID,
                     metadata: {
                         name: 'Test DApp',
                         description: 'Test dApp',

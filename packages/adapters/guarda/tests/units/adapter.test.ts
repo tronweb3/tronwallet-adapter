@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { GuardaAdapter } from '../../src/adapter.js';
 
 describe('GuardaAdapter', () => {

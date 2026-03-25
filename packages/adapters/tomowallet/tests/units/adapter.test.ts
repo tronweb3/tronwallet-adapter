@@ -1,6 +1,7 @@
+import { describe, test, expect } from 'vitest';
 import { TomoWalletAdapter, TomoWalletAdapterName } from '../../src/adapter.js';
 
-describe('TokenPocketAdapter', () => {
+describe('TomoWalletAdapter', () => {
     test('should be defined', () => {
         expect(TomoWalletAdapter).not.toBeNull();
     });

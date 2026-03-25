@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 export async function wait() {
     const p = new Promise((resolve) => {
         setTimeout(resolve, 1000);
     });
-    jest.advanceTimersByTime(1000);
+    vi.advanceTimersByTime(1000);
     await p;
     await p;
 }

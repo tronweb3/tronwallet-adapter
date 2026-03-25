@@ -1,10 +1,9 @@
+import { vi, describe, test, expect, beforeEach } from 'vitest';
 import { TrustAdapter } from '../../src/index.js';
 
-window.open = jest.fn();
+window.open = vi.fn();
 beforeEach(function () {
-    jest.useFakeTimers();
-    global.document = window.document;
-    global.navigator = window.navigator;
+    vi.useFakeTimers();
     window.tronLink = undefined;
     window.tron = undefined;
 });

@@ -5,34 +5,31 @@
     "scripts": {
         "dev": "PORT=5002 next dev",
         "build": "next build",
-        "start": "PORT=5002 next start",
-        "lint": "next lint"
+        "start": "PORT=5002 next start"
     },
     "dependencies": {
-        "@emotion/react": "^11.10.4",
-        "@emotion/styled": "^11.10.4",
-        "@mui/material": "^5.10.10",
+        "@emotion/react": "11.13.0",
+        "@emotion/styled": "11.13.0",
+        "@mui/material": "6.4.8",
         "@noble/secp256k1": "1.7.1",
         "@tronweb3/tronwallet-abstract-adapter": "latest",
         "@tronweb3/tronwallet-adapter-react-hooks": "latest",
         "@tronweb3/tronwallet-adapter-react-ui": "latest",
         "@tronweb3/tronwallet-adapters": "latest",
         "@types/node": "18.11.9",
-        "eslint": "^8.23.1",
-        "eslint-config-next": "13.0.5",
-        "next": "^15.5.8",
-        "react": "^18.3.1",
-        "react-dom": "^18.3.1",
-        "react-hot-toast": "^2.4.0",
-        "tronweb": "^6.0.0",
-        "tslib": "^2.5.0",
+        "next": "16.1.6",
+        "react": "18.3.1",
+        "react-dom": "18.3.1",
+        "react-hot-toast": "2.4.1",
+        "tronweb": "6.2.2",
+        "tslib": "2.6.3",
         "typescript": "5.5.4"
     },
     "devDependencies": {
         "@types/react": "18.3.3",
         "@types/react-dom": "18.0.6",
-        "lokijs": "^1.5.12",
-        "pino-pretty": "^10.0.0"
+        "lokijs": "1.5.12",
+        "pino-pretty": "10.3.1"
     },
     "overrides": {
         "@types/react": "18.3.3",

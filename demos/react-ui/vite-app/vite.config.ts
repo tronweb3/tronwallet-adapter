@@ -5,6 +5,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    mode: 'development',
     plugins: [
         react(),
         legacy({
@@ -17,6 +18,7 @@ export default defineConfig({
     build: {
         // Set false to speed up build process, should change to `true` for production mode.
         minify: false,
+        cssMinify: false,
     },
     server: {
         host: '0.0.0.0',

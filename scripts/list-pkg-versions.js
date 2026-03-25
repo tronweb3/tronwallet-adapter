@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -61,15 +59,15 @@ pkgsNotChanged.forEach(({ name, version }) => {
     console.log(`${name}: ${version}`);
 });
 
-console.log('\nTag Content: ');
-console.log('TRON');
+console.log('\nTag Content: \n# Package Latest Version\n## TRON');
+
 pkgVersions
     .filter(({ name }) => !EVM_PKGS.includes(name))
     .forEach(({ name, version }) => {
         console.log(`- [${name}@${version}](https://www.npmjs.com/package/${name})`);
     });
 
-console.log('\nEVM');
+console.log('\n## EVM');
 pkgVersions
     .filter(({ name }) => EVM_PKGS.includes(name))
     .forEach(({ name, version }) => {

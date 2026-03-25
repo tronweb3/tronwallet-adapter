@@ -78,7 +78,7 @@ interface TokenPocketConfig {
 
 ### Caveats
 
--   TokenPocket Wallet doesn't implement `multiSign()` and `switchChain()`.
+-   TokenPocket Wallet doesn't implement `multiSign()` and `switchChain()` and will throw error when call them.
 -   TokenPocket App will be connected automatically and when user change accounts, the page will reload. So there is no need to to listen to `accountsChanged` event.
 -   TokenPocket Extension doesn't support `chainChanged` event.
 

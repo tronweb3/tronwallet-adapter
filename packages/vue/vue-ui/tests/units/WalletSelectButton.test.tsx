@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
-import { MockTronLink } from './MockTronLink.js';
-import { WalletSelectButton } from '../../src/WalletSelectButton.js';
-import { defineComponent, nextTick } from 'vue';
+import { h, nextTick } from 'vue';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
-import { vi } from 'vitest';
+import { vi, beforeEach } from 'vitest';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
 import { WalletItem, WalletSelectModal } from '../../src/index.js';
+import { MockTronLink } from './MockTronLink.js';
+import { Providers } from './TestProviders.js';
+import { WalletSelectButton } from '../../src/WalletSelectButton.js';
 
-const Providers = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletSelectButton },
-    props: ['className', 'tabIndex', 'style', 'disabled', 'icon', 'onClick'],
-    template: `<WalletProvider><WalletModalProvider><WalletSelectButton v-bind="$props"></WalletSelectButton> </WalletModalProvider></WalletProvider>`,
-});
-
-const makeSut = (props: any = {}, children = '') => {
-    return mount(Providers, { props, slots: { default: children } });
+const makeSut = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], autoConnect, ...buttonProps } = props;
+    return mount(Providers, {
+        props: { adapters, autoConnect },
+        slots: {
+            default: () => h(WalletSelectButton, buttonProps),
+        },
+    });
 };
 
 let container: VueWrapper;

@@ -1,40 +1,27 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import type { FC, PropsWithChildren } from 'react';
 import React, { act } from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import 'jest-localstorage-mock';
+import { vi, describe, beforeEach, afterEach, test, expect } from 'vitest';
 
 import type { ButtonProps } from '../../src/Button.js';
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
-import { MockTronLink } from './MockTronLink.js';
 import { WalletActionButton } from '../../src/WalletActionButton.js';
+import { Providers, NoAutoConnectProviders } from './TestProviders.js';
+import { MockTronLink } from './MockTronLink.js';
 
-const Providers: FC<PropsWithChildren> = function (props) {
-    return (
-        <WalletProvider>
-            <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-    );
-};
-const NoAutoConnectProviders: FC<PropsWithChildren> = function (props) {
-    return (
-        <WalletProvider autoConnect={false}>
-            <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-    );
-};
-
-window.open = jest.fn();
 const makeSut = (props: ButtonProps = {}) => render(<WalletActionButton {...props} />, { wrapper: Providers });
+
+(window as any).open = vi.fn();
 const makeSutNoAutoConnect = (props: ButtonProps = {}) =>
     render(<WalletActionButton {...props} />, { wrapper: NoAutoConnectProviders });
 
 beforeEach(() => {
     localStorage.clear();
-    window.tronLink = new MockTronLink();
-    window.tronWeb = window.tronLink.tronWeb;
+    (window as any).tronLink = new MockTronLink();
+    (window as any).tronWeb = (window as any).tronLink.tronWeb;
+    vi.clearAllMocks();
+});
+
+afterEach(() => {
+    vi.useRealTimers();
 });
 
 describe('when tronlink is avaliable', () => {
@@ -54,7 +41,6 @@ describe('when tronlink is avaliable', () => {
     });
     describe('when a wallet is seleted', () => {
         beforeEach(() => {
-            jest.useFakeTimers();
             localStorage.setItem('tronAdapterName', '"TronLink"');
         });
 
@@ -67,38 +53,26 @@ describe('when tronlink is avaliable', () => {
 
 describe('when tronlink is not avaliable', () => {
     beforeEach(() => {
-        window.tronLink = undefined;
-        window.tronWeb = undefined;
+        (window as any).tronLink = undefined;
+        (window as any).tronWeb = undefined;
     });
     describe('when no wallet is selected', () => {
         test('selectButton should exist', async () => {
             const { getByTestId } = makeSut();
             expect(getByTestId('wallet-select-button')).toBeInTheDocument();
         });
-
-        // test('should open website after select a wallet', async () => {
-        //     const { getByTestId, getByText, queryByTestId } = makeSut();
-        //     fireEvent.click(getByTestId('wallet-select-button'));
-        //     expect(getByTestId('wallet-select-modal')).toBeInTheDocument();
-        //     fireEvent.click(getByText('TronLink'));
-        //     await waitFor(() => {
-        //         expect(queryByTestId('wallet-select-modal')).toBeNull();
-        //     });
-        //     // when tronlink is NotFound, select will open it's website
-        //     expect(window.open).toHaveBeenCalled();
-        // });
     });
 });
 
 describe('when tronlink is avaliable but not ready', () => {
     beforeEach(() => {
-        (window.tronLink as MockTronLink).setReadyState(false);
-        (window.tronLink as MockTronLink).address = '';
+        ((window as any).tronLink as MockTronLink).setReadyState(false);
+        ((window as any).tronLink as MockTronLink).address = '';
     });
     describe('when no wallet is selected', () => {
         test('selectButton should exist', async () => {
             const { getByTestId } = makeSut();
-            waitFor(() => {
+            await waitFor(() => {
                 expect(getByTestId('wallet-select-button')).toBeInTheDocument();
             });
         });
@@ -130,19 +104,18 @@ describe('when tronlink is avaliable but not ready', () => {
 
     describe('when a wallet is selected', () => {
         beforeEach(() => {
-            jest.useFakeTimers();
             localStorage.setItem('tronAdapterName', '"TronLink"');
         });
         test('should work fine when autoConnect enabled', async () => {
             const { getByTestId, queryByTestId } = makeSut();
             // autoconnect
             expect(queryByTestId('wallet-connect-button')).toBeInTheDocument();
-            act(() => {
-                jest.advanceTimersByTime(1300);
-            });
-            await waitFor(() => {
-                expect(getByTestId('wallet-action-button')).toBeInTheDocument();
-            });
+            await waitFor(
+                () => {
+                    expect(getByTestId('wallet-action-button')).toBeInTheDocument();
+                },
+                { timeout: 30 }
+            );
         });
         test('should work fine when autoConnect disabled', async () => {
             const { getByTestId } = makeSutNoAutoConnect();

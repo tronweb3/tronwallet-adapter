@@ -76,7 +76,7 @@ interface OkxWalletAdapterConfig {
 
 ### Caveats
 
--   OkxWallet App and Extension doesn't implement `multiSign()` and `switchChain()`.
+-   OkxWallet App and Extension doesn't implement `multiSign()` and `switchChain()` and will throw error when call them.
 -   OkxWallet Extension only support these: `accountsChanged`,`connect`,`disconnect`.
 -   OkxWallet App does not support any events.
 -   Deeplink only works for OKX App **version 6.1.38 or later** on Android.
