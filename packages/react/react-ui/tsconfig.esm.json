@@ -6,6 +6,6 @@
         "outDir": "lib/esm",
         "declarationDir": "lib/types",
         "jsx": "react",
-        "types": ["react", "react-dom", "jest"]
+        "types": ["react", "react-dom"]
     }
 }

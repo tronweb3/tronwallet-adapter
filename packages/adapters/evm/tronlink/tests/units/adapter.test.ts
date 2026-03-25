@@ -1,3 +1,4 @@
+import { vi, describe, beforeEach, test, expect } from 'vitest';
 import { TronLinkEvmAdapter } from '../../src/adapter.js';
 import { TronLinkProvider, installTronLinkEIP6963Provider } from './tronlink-provider.js';
 
@@ -9,7 +10,7 @@ async function flushPromises() {
 
 describe('TronLinkEvmAdapter', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         // @ts-ignore
         window.TronLinkEVM = null;
         // @ts-ignore
@@ -17,13 +18,14 @@ describe('TronLinkEvmAdapter', () => {
     });
 
     test('base props should be valid', () => {
+        vi.useFakeTimers();
         const adapter = new TronLinkEvmAdapter();
         expect(adapter.name).toEqual('TronLink');
         expect(adapter.url).toEqual('https://www.tronlink.org/');
         expect(adapter.readyState).toEqual('Loading');
         expect(adapter.address).toEqual(null);
         expect(adapter.connected).toEqual(false);
-        jest.advanceTimersByTime(4000);
+        vi.advanceTimersByTime(4000);
         expect(adapter.readyState).toEqual('Loading');
     });
 
@@ -33,9 +35,9 @@ describe('TronLinkEvmAdapter', () => {
         const cleanup = installTronLinkEIP6963Provider(provider);
 
         const adapter = new TronLinkEvmAdapter();
-        jest.advanceTimersByTime(300);
+        vi.advanceTimersByTime(300);
         await flushPromises();
-        jest.advanceTimersByTime(300);
+        vi.advanceTimersByTime(300);
         await flushPromises();
 
         expect(adapter.readyState).toEqual('Found');

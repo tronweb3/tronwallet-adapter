@@ -82,6 +82,38 @@ export class BinanceEvmAdapter extends Adapter {
     protected getInjectedProvider(): EIP1193Provider | null {
         return getBinanceEvmProvider();
     }
+    protected listenEvents(provider: EIP1193Provider) {
+        // Fix error when use binance extension in unsupported region
+        try {
+            provider.on('connect', (connectInfo) => {
+                this.emit('connect', connectInfo);
+            });
+            provider.on('disconnect', (error) => {
+                this.emit('disconnect', error);
+            });
+            provider.on('accountsChanged', this.onAccountsChanged);
+            provider.on('chainChanged', (chainId) => {
+                this.emit('chainChanged', chainId);
+            });
+        } catch {
+            //
+        }
+    }
+    protected onAccountsChanged = (accounts: string[]) => {
+        if (accounts.length === 0) {
+            this.address = null;
+        } else {
+            this.address = accounts[0];
+        }
+        this.emit('accountsChanged', accounts);
+    };
+    protected async autoConnect(provider: EIP1193Provider) {
+        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
+        this.address = accounts?.[0] || null;
+        if (this.address) {
+            this.emit('accountsChanged', accounts);
+        }
+    }
 
     protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
         return Boolean((provider as any).isBinance) || !!info?.name?.toLowerCase().includes('binance');

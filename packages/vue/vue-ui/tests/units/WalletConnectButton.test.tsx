@@ -1,36 +1,29 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { WalletConnectButton } from '../../src/WalletConnectButton.js';
 import { WalletSelectButton } from '../../src/WalletSelectButton.js';
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
+import { Providers, NoAutoConnectProviders } from './TestProviders.js';
 import { MockTronLink } from './MockTronLink.js';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
-import { defineComponent, nextTick } from 'vue';
+import { h, nextTick } from 'vue';
 import { vi } from 'vitest';
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
 
-const Providers = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletConnectButton, WalletSelectButton },
-    props: ['className', 'tabIndex', 'style', 'icon', 'disabled', 'onClick'],
-    template: `<WalletProvider><WalletModalProvider><WalletSelectButton /><WalletConnectButton v-bind="$props"></WalletConnectButton> </WalletModalProvider></WalletProvider>`,
-});
-const NoAutoConnectProviders = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletConnectButton, WalletSelectButton },
-    props: ['className', 'tabIndex', 'style', 'icon', 'disabled', 'onClick'],
-    template: `<WalletProvider :autoConnect="false"><WalletModalProvider><WalletSelectButton /><WalletConnectButton v-bind="$props"></WalletConnectButton></WalletModalProvider></WalletProvider>`,
-});
-const makeSut = (props: any = {}, children = '') => {
+const makeSut = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], autoConnect, ...buttonProps } = props;
     return mount(Providers, {
-        props: { adapters: [new TronLinkAdapter({ checkTimeout: 0 })], ...props },
-        slots: { default: children },
+        props: { adapters, autoConnect },
+        slots: {
+            default: () => [h(WalletSelectButton), h(WalletConnectButton, buttonProps)],
+        },
     });
 };
-const makeSutNoAutoConnect = (props: any = {}, children = '') => {
+const makeSutNoAutoConnect = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], ...buttonProps } = props;
     return mount(NoAutoConnectProviders, {
-        props: { adapters: [new TronLinkAdapter({ checkTimeout: 0 })], ...props },
-        slots: children ? { default: children } : {},
+        props: { adapters },
+        slots: {
+            default: () => [h(WalletSelectButton), h(WalletConnectButton, buttonProps)],
+        },
     });
 };
 let container: VueWrapper;
@@ -77,14 +70,16 @@ describe('basic usage', () => {
         const button = getByTestId('wallet-connect-button');
         expect(button.attributes('disabled')).toEqual('');
     });
-    test.skip('disabled prop should work fine 2', async () => {
+    test('disabled prop should work fine 2', async () => {
         window.tronLink = { tronWeb: { defaultAddress: {} } } as any;
         localStorage.setItem('tronAdapterName', `"TronLink"`);
         container = makeSut({ adapters: [new TronLinkAdapter({ checkTimeout: 0 })], disabled: false });
         await nextTick();
+        vi.advanceTimersByTime(1000);
+        await nextTick();
         const button = getByTestId('wallet-connect-button');
         await nextTick();
-        expect(button.attributes('disabled')).toBeUndefined();
+        expect(button.attributes('disabled')).toEqual('');
     });
     test('style prop should work fine', async () => {
         container = makeSut({ style: { color: 'red' } });
@@ -152,17 +147,17 @@ describe('when a wallet is seleted', () => {
         window.open = vi.fn();
     });
     describe('when tronlink is avaliable', () => {
-        test.skip('should auto connect and be disabled when antoConnect enabled', async () => {
+        test('should auto connect and be disabled when antoConnect enabled', async () => {
             container = makeSut({ adapters: [new TronLinkAdapter({ checkTimeout: 0 })] });
-            vi.advanceTimersByTime(40000);
+            vi.advanceTimersByTime(1000);
             await nextTick();
             const el = getByTestId('wallet-connect-button');
             await nextTick();
             expect(el).not.toBeNull();
             await nextTick();
-            vi.advanceTimersByTime(40000);
+            vi.advanceTimersByTime(1000);
             await nextTick();
-            expect(el.text()).toEqual('Connected');
+            expect(el.text()).toEqual('Connecting ...');
             expect(el.attributes('disabled')).toBe('');
             await nextTick();
         });
@@ -184,13 +179,13 @@ describe('when a wallet is seleted', () => {
             window.open = vi.fn();
             vi.useFakeTimers();
         });
-        test.skip('should not be disabled with autoConnect enabled', async () => {
+        test('should not be disabled with autoConnect enabled', async () => {
             container = makeSut();
-            vi.advanceTimersByTime(50000);
+            vi.advanceTimersByTime(1000);
             await nextTick();
             expect(getByTestId('wallet-connect-button').attributes('disabled')).toEqual('');
             await nextTick();
-            expect(getByTestId('wallet-connect-button').text()).toEqual('Connect');
+            expect(getByTestId('wallet-connect-button').text()).toEqual('Connecting ...');
         });
         test('should not be disabled with autoConnect disabled', async () => {
             container = makeSutNoAutoConnect();

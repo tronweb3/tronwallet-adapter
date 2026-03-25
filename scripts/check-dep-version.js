@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
 const fs = require('fs');
 const path = require('path');
 
@@ -24,7 +22,7 @@ function scanDir(dir) {
             version: json.version,
             depVersionMap,
         });
-    } catch (e) {
+    } catch {
         //
     }
     fs.readdirSync(dir).forEach((subDir) => {
@@ -35,7 +33,6 @@ function scanDir(dir) {
     });
 }
 function getDepTree() {
-    // eslint-disable-next-line no-undef
     scanDir(path.resolve(process.cwd(), 'packages'));
 }
 

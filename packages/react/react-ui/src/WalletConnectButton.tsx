@@ -6,11 +6,10 @@ import { Button } from './Button.js';
 
 export const WalletConnectButton: FC<ButtonProps> = ({ children, disabled, onClick, ...props }) => {
     const { wallet, connect, connecting, connected } = useWallet();
-
     const handleClick = useCallback(
         async (event: MouseEvent<HTMLButtonElement>) => {
             if (onClick) onClick(event);
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
+
             if (!event.defaultPrevented) {
                 await connect();
             }

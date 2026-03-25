@@ -10,6 +10,7 @@
         "isolatedModules": false,
         "emitDeclarationOnly": true,
         // "noEmit": true,
-        "jsxImportSource": "vue"
+        "jsxImportSource": "vue",
+        "skipLibCheck": true
     }
 }

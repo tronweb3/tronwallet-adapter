@@ -124,6 +124,32 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
         // { address: 'some address', publicKey: 'publicKey for address' }
         ```
 
+### Methods
+
+-   `signTransaction(transaction, options?)`
+
+    Sign a transaction via the Ledger wallet.
+
+    -   `transaction` - `Transaction` to sign.
+    -   `options` - optional object:
+        -   `fallbackToHashSign?: boolean` - If the ledger returns `Too many bytes to encode`, whether to retry with `signTransactionHash`. Defaults to `true`.
+
+    ```ts
+    const signedTransaction = await adapter.signTransaction(unSignedTransaction);
+    // or disable fallback:
+    const signedTx = await adapter.signTransaction(unSignedTransaction, { fallbackToHashSign: false });
+    ```
+
+-   `signTransactionHash(transaction)`
+
+    Sign the transaction by its hash. This avoids encoding the full transaction payload and is useful when the transaction is too large for the Ledger to encode.
+
+    -   `transaction` - `Transaction` to sign.
+
+    ```ts
+    const signedTransaction = await adapter.signTransactionHash(unSignedTransaction);
+    ```
+
 ### Caveats
 
 -   `multiSign()` and `switchChain(chainId: string)` are not supported.

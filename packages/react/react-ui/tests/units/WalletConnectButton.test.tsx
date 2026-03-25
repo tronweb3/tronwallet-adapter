@@ -1,39 +1,23 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import type { FC, PropsWithChildren } from 'react';
-import React, { act } from 'react';
+import React from 'react';
 import { render, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import 'jest-localstorage-mock';
+import { vi, describe, beforeEach, test, expect } from 'vitest';
 
 import type { ButtonProps } from '../../src/Button.js';
 import { WalletConnectButton } from '../../src/WalletConnectButton.js';
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
+import { Providers, NoAutoConnectProviders } from './TestProviders.js';
 import { MockTronLink } from './MockTronLink.js';
 
-const Providers: FC<PropsWithChildren> = function (props) {
-    return (
-        <WalletProvider>
-            <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-    );
-};
-const NoAutoConnectProviders: FC<PropsWithChildren> = function (props) {
-    return (
-        <WalletProvider autoConnect={false}>
-            <WalletModalProvider>{props.children}</WalletModalProvider>
-        </WalletProvider>
-    );
-};
 const makeSut = (props: ButtonProps = {}) => render(<WalletConnectButton {...props} />, { wrapper: Providers });
 const makeSutNoAutoConnect = (props: ButtonProps = {}) =>
     render(<WalletConnectButton {...props} />, { wrapper: NoAutoConnectProviders });
 
 beforeEach(() => {
     localStorage.clear();
-    window.tronLink = new MockTronLink();
-    window.tronWeb = window.tronLink.tronWeb;
+    (window as any).tronLink = new MockTronLink();
+    (window as any).tronWeb = (window as any).tronLink.tronWeb;
+    vi.clearAllMocks();
 });
+
 describe('basic usage', () => {
     test('should work fine with basic usage', () => {
         const { container } = makeSut({
@@ -63,40 +47,39 @@ describe('when no wallet is selected', () => {
 
 describe('when a wallet is seleted', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
         localStorage.setItem('tronAdapterName', '"TronLink"');
     });
     describe('when tronlink is avaliable', () => {
         test('should auto connect and be disabled when antoConnect enabled', async () => {
             const { getByTestId } = makeSut({});
-            act(() => {
-                jest.advanceTimersByTime(4000);
-            });
-            await waitFor(() => {
-                const el = getByTestId('wallet-connect-button');
-                expect(el).toBeInTheDocument();
-                expect(el).toBeDisabled();
-                expect(el).toHaveTextContent('Connected');
-            });
+            await waitFor(
+                () => {
+                    const el = getByTestId('wallet-connect-button');
+                    expect(el).toBeInTheDocument();
+                    expect(el).toBeDisabled();
+                    expect(el).toHaveTextContent('Connected');
+                },
+                { timeout: 1000 }
+            );
         });
         test('tronlink is connected when antoConnect disabled', async () => {
             const { getByTestId } = makeSutNoAutoConnect({});
-            act(() => {
-                jest.advanceTimersByTime(5000);
-            });
-            await waitFor(() => {
-                const el = getByTestId('wallet-connect-button');
-                expect(el).toBeInTheDocument();
-                expect(el).toBeDisabled();
-                expect(el).toHaveTextContent('Connected');
-            });
+            await waitFor(
+                () => {
+                    const el = getByTestId('wallet-connect-button');
+                    expect(el).toBeInTheDocument();
+                    expect(el).toBeDisabled();
+                    expect(el).toHaveTextContent('Connected');
+                },
+                { timeout: 1000 }
+            );
         });
     });
 
     describe('when tronlink is not avaliable', () => {
         beforeEach(() => {
-            window.tronLink = undefined;
-            window.tronWeb = undefined;
+            (window as any).tronLink = undefined;
+            (window as any).tronWeb = undefined;
         });
         test('should not be disabled with autoConnect disabled', async () => {
             const { getByTestId } = makeSutNoAutoConnect();

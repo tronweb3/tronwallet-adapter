@@ -47,6 +47,9 @@
             "path": "../guarda/tsconfig.all.json"
         },
         {
+            "path": "../onekey/tsconfig.all.json"
+        },
+        {
             "path": "../evm/metamask/tsconfig.all.json"
         },
         {

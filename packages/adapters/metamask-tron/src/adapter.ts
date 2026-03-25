@@ -180,11 +180,10 @@ export class MetaMaskAdapter extends Adapter {
     /**
      * Signs a transaction using the MetaMask wallet.
      * @param transaction - The transaction to sign.
-     * @param privateKey - Optional private key (not recommended for production).
      * @returns A promise that resolves to the signed transaction.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async signTransaction(transaction: Transaction, _?: string): Promise<SignedTransaction> {
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
         try {
             if (!this._scope) {
                 throw new WalletDisconnectedError('Wallet not connected');
@@ -226,11 +225,10 @@ export class MetaMaskAdapter extends Adapter {
     /**
      * Signs a message using the MetaMask wallet.
      * @param message - The message to sign.
-     * @param privateKey - Optional private key (not recommended for production).
      * @returns A promise that resolves to the signature.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async signMessage(message: string, _?: string): Promise<string> {
+    async signMessage(message: string): Promise<string> {
         try {
             if (!this._scope) {
                 throw new WalletDisconnectedError('Wallet not connected');

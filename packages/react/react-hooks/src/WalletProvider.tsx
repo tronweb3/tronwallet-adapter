@@ -1,4 +1,4 @@
-import { WalletNotSelectedError, AdapterState } from '@tronweb3/tronwallet-abstract-adapter';
+import { WalletNotSelectedError } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Adapter,
     WalletError,
@@ -237,7 +237,7 @@ export const WalletProvider: FC<WalletProviderProps> = function ({
                 setConnecting(true);
                 try {
                     await adapter.connect();
-                } catch (error) {
+                } catch {
                     // setName(null);
                 } finally {
                     setConnecting(false);
@@ -298,17 +298,17 @@ export const WalletProvider: FC<WalletProviderProps> = function ({
     );
 
     const signTransaction = useCallback(
-        async function (transaction: Transaction, privateKey?: string) {
+        async function (transaction: Transaction) {
             if (!adapter) throw handleError(new WalletNotSelectedError());
-            return await adapter.signTransaction(transaction, privateKey);
+            return await adapter.signTransaction(transaction);
         },
         [adapter, handleError]
     );
 
     const signMessage = useCallback(
-        async function (message: string, privateKey?: string) {
+        async function (message: string) {
             if (!adapter) throw handleError(new WalletNotSelectedError());
-            return await adapter.signMessage(message, privateKey);
+            return await adapter.signMessage(message);
         },
         [adapter, handleError]
     );

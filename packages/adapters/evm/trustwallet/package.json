@@ -38,8 +38,8 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "jest",
-        "test:coverage": "jest  --coverage",
+        "test": "../abstract-adapter/node_modules/.bin/vitest run",
+        "test:coverage": "../abstract-adapter/node_modules/.bin/vitest run --coverage",
         "build:umd": "node ../../../../scripts/build-umd.js"
     },
     "dependencies": {
@@ -47,8 +47,8 @@
     },
     "devDependencies": {
         "@testing-library/dom": "^8.20.0",
-        "jest": "28",
-        "jest-environment-jsdom": "28",
-        "shx": "^0.3.4"
+        "happy-dom": "20.8.3",
+        "shx": "^0.3.4",
+        "vitest": "3.2.4"
     }
 }

@@ -5,21 +5,25 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>TronWallet Adapter CDN Demo</title>
         <link rel="stylesheet" href="../tron/index.css"></link>
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <script src="https://unpkg.com/tronweb@6.0.4/dist/TronWeb.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-tronlink/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-binance/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-guarda/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-tokenpocket/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-bitkeep/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-okxwallet/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-imtoken/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-gatewallet/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-foxwallet/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-bybit/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-trust/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-tomowallet/lib/umd/index.js"></script>
-        <script src="../node_modules/@tronweb3/tronwallet-adapter-ledger/lib/umd/index.js"></script>
+        <script type="module">
+            import bufferPolyfill from 'https://cdn.jsdelivr.net/npm/buffer-polyfill@6.0.3/+esm'
+            window.Buffer = bufferPolyfill
+        </script>
+        <script defer src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script defer src="https://unpkg.com/tronweb@6.0.4/dist/TronWeb.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-tronlink/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-binance/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-guarda/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-tokenpocket/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-bitkeep/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-okxwallet/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-imtoken/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-gatewallet/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-foxwallet/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-bybit/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-trust/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-tomowallet/lib/umd/index.js"></script>
+        <script defer src="../node_modules/@tronweb3/tronwallet-adapter-ledger/lib/umd/index.js"></script>
 
         <script type="importmap">
             {
@@ -32,7 +36,7 @@
 
     <body>
         <div id="app"></div>
-        <script type="module">
+        <script type="module" defer >
             import { createApp } from 'vue';
             import App from './App.js';
 

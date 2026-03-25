@@ -1,7 +1,5 @@
 import { EventEmitter } from '@tronweb3/abstract-adapter-evm';
 import type { EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
-
-jest.useFakeTimers();
 export class MetaMaskProvider extends EventEmitter {
     isMetaMask = true;
     providers = [MetaMaskProvider];

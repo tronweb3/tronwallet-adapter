@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-gatewallet",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "Wallet adapter for Gate Wallet app and extension.",
     "keywords": [
         "TRON",
@@ -39,8 +39,8 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "jest",
-        "test:coverage": "jest  --coverage",
+        "test": "vitest run",
+        "test:coverage": "vitest run --coverage",
         "build:umd": "node ../../../scripts/build-umd.js"
     },
     "dependencies": {
@@ -48,9 +48,9 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "jest-environment-jsdom": "^29.3.1",
-        "shx": "^0.3.4"
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
+        "vitest": "3.2.4"
     },
     "bugs": {
         "url": "https://github.com/tronweb3/tronwallet-adapter/issues"

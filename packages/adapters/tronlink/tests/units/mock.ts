@@ -1,10 +1,14 @@
 // @ts-nocheck
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { TronLinkWallet } from '../../src/adapter.js';
 import type { TronWeb } from '../../src/types.js';
 import type { Tron } from '../../src/types.js';
+import { TronLinkAdapter as _TronLinkAdapter } from '../../src/index.js';
 
+export class TronLinkAdapter extends _TronLinkAdapter {
+    constructor(config: any = {}) {
+        super({ ...config, checkTimeout: 2000 });
+    }
+}
 export class MockTronWeb implements TronWeb {
     fullNode = { host: 'http://api.nileex.io' };
     solidityNode = { host: 'http://api.nileex.io' };
@@ -18,10 +22,10 @@ export class MockTronWeb implements TronWeb {
     } = { base58: '', hex: '', type: 1, name: '' };
     ready = true;
     trx = {
-        sign(_: unknown): Promise<unknown> {
+        sign(): Promise<unknown> {
             return Promise.resolve('');
         },
-        signMessageV2(_: unknown): Promise<unknown> {
+        signMessageV2(): Promise<unknown> {
             return Promise.resolve('');
         },
         multiSign() {
@@ -37,7 +41,7 @@ export class MockTronWeb implements TronWeb {
         this.defaultAddress.base58 = address;
     }
 
-    toHex(_: string): string {
+    toHex(): string {
         return '';
     }
 }
@@ -65,7 +69,7 @@ export class MockBaseTronLink {
         this._tronWeb.defaultAddress!.base58 = address;
     }
 
-    request(args: { method: any; params: unknown[] | Record<string, unknown> }): Promise<any> {
+    request(): Promise<any> {
         return Promise.reject('No provide request result.');
     }
 }
@@ -116,7 +120,6 @@ export class MockTronLink extends MockBaseTronLink implements TronLinkWallet {
         super(address || '');
         this._tronWeb = new MockTronWeb(address || '');
         window.addEventListener = this._on;
-        window.postMessage = this._emit;
     }
 
     get tronWeb() {
@@ -126,33 +129,11 @@ export class MockTronLink extends MockBaseTronLink implements TronLinkWallet {
         this.ready = false;
         this.locked = true;
         this._tronWeb.ready = false;
-        window.postMessage(
-            {
-                message: {
-                    action: 'accountsChanged',
-                    data: {
-                        address: false,
-                    },
-                },
-            },
-            '*'
-        );
     }
 
     _unlock() {
         this.locked = false;
         this.ready = !!this._tronWeb.defaultAddress?.base58;
-        window.postMessage(
-            {
-                message: {
-                    action: 'accountsChanged',
-                    data: {
-                        address: this._tronWeb.defaultAddress?.base58,
-                    },
-                },
-            },
-            '*'
-        );
     }
 
     _on = (event: string, cb: any) => {
@@ -179,4 +160,7 @@ export class MockTronLink extends MockBaseTronLink implements TronLinkWallet {
             });
         }
     };
+    request(): Promise<any> {
+        return {};
+    }
 }

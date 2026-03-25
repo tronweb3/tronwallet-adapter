@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { MetaMaskAdapter } from '../../src/adapter.js';
 
 describe('MetaMaskAdapter', () => {

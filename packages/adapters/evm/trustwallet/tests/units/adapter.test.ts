@@ -1,8 +1,9 @@
+import { vi, describe, beforeEach, afterEach, test, expect } from 'vitest';
 import { WalletConnectionError, WalletNotFoundError } from '@tronweb3/abstract-adapter-evm';
 import { TrustWalletEvmAdapter } from '../../src/adapter.js';
 import { TrustWalletProvider, installTrustWalletProvider } from './trustwallet-provider.js';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const typedData = {
     domain: {
@@ -32,9 +33,14 @@ async function flushPromises() {
     }
 }
 
+async function settleProviderDetection() {
+    vi.advanceTimersByTime(100);
+    await flushPromises();
+}
+
 describe('TrustWalletEvmAdapter', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         // @ts-ignore
         window.ethereum = undefined;
         // @ts-ignore
@@ -42,8 +48,8 @@ describe('TrustWalletEvmAdapter', () => {
     });
 
     afterEach(() => {
-        jest.clearAllTimers();
-        jest.restoreAllMocks();
+        vi.clearAllTimers();
+        vi.restoreAllMocks();
     });
 
     test('base props should be valid when provider is unavailable', async () => {
@@ -55,7 +61,7 @@ describe('TrustWalletEvmAdapter', () => {
         expect(adapter.address).toEqual(null);
         expect(adapter.connected).toEqual(false);
 
-        jest.advanceTimersByTime(4000);
+        vi.advanceTimersByTime(4000);
         await flushPromises();
 
         expect(adapter.readyState).toEqual('NotFound');
@@ -98,7 +104,7 @@ describe('TrustWalletEvmAdapter', () => {
         window.trustwallet = { ethereum: provider };
 
         const adapter = new TrustWalletEvmAdapter();
-        await flushPromises();
+        await settleProviderDetection();
 
         expect(adapter.address).toEqual('0x123');
         expect(adapter.connected).toEqual(true);
@@ -111,7 +117,9 @@ describe('TrustWalletEvmAdapter', () => {
         window.trustwallet = { ethereum: provider };
 
         const adapter = new TrustWalletEvmAdapter();
-        const address = await adapter.connect();
+        const addressPromise = adapter.connect();
+        await settleProviderDetection();
+        const address = await addressPromise;
 
         expect(address).toEqual('0xabc');
         expect(adapter.address).toEqual('0xabc');
@@ -121,7 +129,7 @@ describe('TrustWalletEvmAdapter', () => {
         const adapter = new TrustWalletEvmAdapter();
         const res = adapter.connect();
 
-        jest.advanceTimersByTime(4000);
+        vi.advanceTimersByTime(4000);
         await flushPromises();
 
         await expect(res).rejects.toBeInstanceOf(WalletNotFoundError);
@@ -138,7 +146,9 @@ describe('TrustWalletEvmAdapter', () => {
         window.trustwallet = { ethereum: provider };
 
         const adapter = new TrustWalletEvmAdapter();
-        await expect(adapter.connect()).rejects.toBeInstanceOf(WalletConnectionError);
+        const connectPromise = adapter.connect();
+        await settleProviderDetection();
+        await expect(connectPromise).rejects.toBeInstanceOf(WalletConnectionError);
     });
 
     test('signTypedData should stringify typed data before requesting signature', async () => {
@@ -149,9 +159,9 @@ describe('TrustWalletEvmAdapter', () => {
         window.trustwallet = { ethereum: provider };
 
         const adapter = new TrustWalletEvmAdapter();
-        await flushPromises();
+        await settleProviderDetection();
 
-        const request = jest.spyOn(provider, 'request');
+        const request = vi.spyOn(provider, 'request');
         const signature = await adapter.signTypedData({ typedData });
 
         expect(signature).toEqual('0xsigned');

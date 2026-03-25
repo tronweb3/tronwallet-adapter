@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.22",
+    "version": "1.2.24",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
@@ -53,21 +53,20 @@
         "@tronweb3/tronwallet-adapter-imtoken": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger": "workspace:^",
         "@tronweb3/tronwallet-adapter-metamask-evm": "workspace:^",
+        "@tronweb3/tronwallet-adapter-metamask-tron": "workspace:^",
         "@tronweb3/tronwallet-adapter-okxwallet": "workspace:^",
+        "@tronweb3/tronwallet-adapter-onekey": "workspace:^",
         "@tronweb3/tronwallet-adapter-tokenpocket": "workspace:^",
         "@tronweb3/tronwallet-adapter-tomowallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
         "@tronweb3/tronwallet-adapter-trustwallet-evm": "workspace:^",
-        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^",
-        "@tronweb3/tronwallet-adapter-metamask-tron": "workspace:^"
+        "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },
     "devDependencies": {
-        "@walletconnect/modal": "^2.6.2",
-        "@walletconnect/sign-client": "^2.1.4",
-        "happy-dom": "20.0.10",
-        "shx": "^0.3.4",
-        "vitest": "^2.0.4"
+        "happy-dom": "20.8.3",
+        "shx": "0.3.4",
+        "vitest": "3.2.4"
     }
 }

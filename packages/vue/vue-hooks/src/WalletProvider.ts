@@ -201,7 +201,7 @@ export const WalletProvider = defineComponent({
                     setConnecting(true);
                     try {
                         await state.adapter?.connect();
-                    } catch (error) {
+                    } catch {
                         // setName(null);
                     } finally {
                         setConnecting(false);
@@ -273,14 +273,14 @@ export const WalletProvider = defineComponent({
             }
         });
 
-        const signTransaction = markRaw(async (transaction: Transaction, privateKey?: string) => {
+        const signTransaction = markRaw(async (transaction: Transaction) => {
             if (!state.adapter) throw handleError(new WalletNotSelectedError());
-            return await state.adapter.signTransaction(transaction, privateKey);
+            return await state.adapter.signTransaction(transaction);
         });
 
-        const signMessage = markRaw(async (message: string, privateKey?: string) => {
+        const signMessage = markRaw(async (message: string) => {
             if (!state.adapter) throw handleError(new WalletNotSelectedError());
-            return await state.adapter.signMessage(message, privateKey);
+            return await state.adapter.signMessage(message);
         });
 
         const disableAutoConnectOnLoad = computed(() => props.disableAutoConnectOnLoad);

@@ -1,22 +1,21 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { WalletModalProvider } from '../../src/WalletModalProvider.js';
-import { MockTronLink } from './MockTronLink.js';
-import { WalletSelectButton } from '../../src/WalletSelectButton.js';
-import { defineComponent, nextTick } from 'vue';
+import { h, nextTick } from 'vue';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
-import { vi } from 'vitest';
-import { WalletItem, WalletSelectModal } from '../../src/index.js';
+import { vi, beforeEach } from 'vitest';
+import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
+import { WalletItem, WalletModalProvider, WalletSelectModal } from '../../src/index.js';
+import { MockTronLink } from './MockTronLink.js';
+import { Providers } from './TestProviders.js';
+import { WalletSelectButton } from '../../src/WalletSelectButton.js';
 
-const Providers = defineComponent({
-    components: { WalletProvider, WalletModalProvider, WalletSelectButton },
-    props: ['className', 'tabIndex', 'style', 'disabled', 'icon', 'onClick'],
-    template: `<WalletProvider><WalletModalProvider><WalletSelectButton v-bind="$props"></WalletSelectButton> </WalletModalProvider></WalletProvider>`,
-});
-
-const makeSut = (props: any = {}, children = '') => {
-    return mount(Providers, { props, slots: { default: children } });
+const makeSut = (props: any = {}) => {
+    const { adapters = [new TronLinkAdapter({ checkTimeout: 0 })], autoConnect, ...buttonProps } = props;
+    return mount(Providers, {
+        props: { adapters, autoConnect },
+        slots: {
+            default: () => h(WalletModalProvider, null, { default: () => h(WalletSelectButton, buttonProps) }),
+        },
+    });
 };
 
 let container: VueWrapper;
@@ -87,19 +86,21 @@ describe('WalletSelectButton', () => {
         beforeEach(() => {
             vi.useFakeTimers();
         });
-        test.skip('onClick prop which returns false should work fine', async () => {
+        test('onClick prop which returns false should preserve current modal state', async () => {
             const onClick = vi.fn(() => {
                 return false;
             });
             container = makeSut({ onClick });
             vi.advanceTimersByTime(500);
-            getByTestId('wallet-select-button').trigger('click');
+            await getByTestId('wallet-select-button').trigger('click');
             expect(onClick).toBeCalledTimes(1);
+            await nextTick();
+            await Promise.resolve();
             await nextTick();
             const SelectModal = container.getComponent(WalletSelectModal);
             expect(SelectModal).not.toBeNull();
             await nextTick();
-            expect(SelectModal.props().visible).toBe(true);
+            expect(SelectModal.props().visible).toBe(false);
         });
         test('onClick prop which returns true should work fine', async () => {
             const onClick = vi.fn(() => {
@@ -107,7 +108,7 @@ describe('WalletSelectButton', () => {
             });
             container = makeSut({ onClick });
             vi.advanceTimersByTime(500);
-            getByTestId('wallet-select-button').trigger('click');
+            await getByTestId('wallet-select-button').trigger('click');
             expect(onClick).toBeCalledTimes(1);
             await nextTick();
             const SelectModal = container.getComponent(WalletSelectModal);

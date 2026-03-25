@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { TokenPocketAdapter } from '../../src/adapter.js';
 
 describe('TokenPocketAdapter', () => {
