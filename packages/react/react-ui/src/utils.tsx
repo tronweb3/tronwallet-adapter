@@ -8,4 +8,5 @@ export function copyData(copyText: string) {
     textArea.style.left = '-9999px';
     document.execCommand('copy');
     textArea.blur();
+    document.body.removeChild(textArea);
 }

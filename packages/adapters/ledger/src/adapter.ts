@@ -10,6 +10,7 @@ import {
     WalletDisconnectionError,
     WalletReadyState,
 } from '@tronweb3/tronwallet-abstract-adapter';
+import { txCheck } from 'tronweb/utils';
 
 import type { Transaction, SignedTransaction, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import type { Account, LedgerUtils, LedgerWalletConfig } from './LedgerWallet.js';
@@ -118,16 +119,20 @@ export class LedgerAdapter extends Adapter {
         }
     }
 
-    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    private async _checkAndSign<T>(
+        action: () => Promise<T>,
+        errorClass: typeof WalletSignMessageError | typeof WalletSignTransactionError,
+        preCheck?: () => void
+    ): Promise<T> {
         try {
             if (this.state !== AdapterState.Connected) {
                 throw new WalletDisconnectedError();
             }
+            if (preCheck) preCheck();
             try {
-                const signedTransaction = await this._wallet.signTransaction(transaction);
-                return signedTransaction;
+                return await action();
             } catch (e: any) {
-                throw new WalletSignTransactionError(e.message);
+                throw new errorClass(e?.message, e);
             }
         } catch (error: any) {
             this.emit('error', error);
@@ -135,20 +140,67 @@ export class LedgerAdapter extends Adapter {
         }
     }
 
-    async signMessage(message: string): Promise<string> {
-        try {
-            if (this.state !== AdapterState.Connected) {
-                throw new WalletDisconnectedError();
+    /**
+     * Sign a transaction.
+     * @param transaction - The transaction to sign.
+     * @param options.fallbackToHashSign - Whether to use hash signing when the transaction is too large. Default is true.
+     */
+    async signTransaction(
+        transaction: Transaction,
+        options: { fallbackToHashSign?: boolean } = {}
+    ): Promise<SignedTransaction> {
+        const { fallbackToHashSign = true } = options;
+        return this._checkAndSign(
+            async () => {
+                try {
+                    return await this._wallet.signTransaction(transaction);
+                } catch (e: any) {
+                    if (fallbackToHashSign && /Too many bytes to encode/.test(e?.message)) {
+                        return await this._wallet.signTransactionHash(transaction);
+                    }
+                    throw e;
+                }
+            },
+            WalletSignTransactionError,
+            () => {
+                if (!txCheck(transaction)) {
+                    throw new WalletSignTransactionError('Invalid transaction');
+                }
             }
-            try {
-                const signedResponse = await this._wallet.signPersonalMessage(message);
-                return signedResponse;
-            } catch (error: any) {
-                throw new WalletSignMessageError(error?.message, error);
+        );
+    }
+
+    /**
+     * Sign a transaction by its hash.
+     * @param transaction - The transaction to sign.
+     */
+    async signTransactionHash(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign(
+            () => this._wallet.signTransactionHash(transaction),
+            WalletSignTransactionError,
+            () => {
+                if (!txCheck(transaction)) {
+                    throw new WalletSignTransactionError('Invalid transaction');
+                }
             }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        );
+    }
+
+    /**
+     * Sign a message and optionally convert the signature suffix.
+     *
+     * By default, if the signature ends with '00' or '01', it will be replaced with '1b' or '1c' respectively.
+     * This is required for compatibility with some signature verification logic.
+     *
+     * @param message - The message to sign.
+     * @param options.convertSuffix - Whether to convert the signature suffix. Default is true.
+     * @returns The signature string, with suffix converted if enabled.
+     */
+    async signMessage(message: string, options?: { convertSuffix?: boolean }): Promise<string> {
+        return this._checkAndSign(async () => {
+            const signature = await this._wallet.signPersonalMessage(message);
+            const { convertSuffix = true } = options ?? {};
+            return convertSuffix ? signature.replace(/(00|01)$/, (match) => (match === '00' ? '1b' : '1c')) : signature;
+        }, WalletSignMessageError);
     }
 }

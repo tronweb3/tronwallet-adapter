@@ -71,7 +71,7 @@ interface FoxWalletAdapterConfig {
 
 ### Caveats
 
--   FoxWallet App doesn't implement `switchChain()`.
+-   FoxWallet App doesn't implement `switchChain()` and `multiSign()` and will throw error when call them.
 -   Only support `NetworkType.Mainnet`, `NetworkType.Shasta` currently.
 -   In FoxWallet, `tronWeb` is a dynamic instance that will be reinitialized when necessary, so the way to access `tronWeb` ​​instance from FoxWallet:
     -   Recommend:

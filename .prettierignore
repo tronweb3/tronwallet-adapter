@@ -1,5 +1,8 @@
 .github
+.claude
+.eslintignore
 .next
+.prettierignore
 .parcel-cache
 .swc
 

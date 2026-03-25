@@ -6,11 +6,8 @@ import type { SignedTransaction, Transaction } from '@tronweb3/tronwallet-abstra
  */
 export type TronRpc = {
     methods: {
-        signMessage: RpcMethod<{ message: string; privateKey?: string }, { signature: string }>;
-        signTransaction: RpcMethod<
-            { transaction: Transaction; privateKey?: string },
-            { signedTransaction: SignedTransaction }
-        >;
+        signMessage: RpcMethod<{ message: string }, { signature: string }>;
+        signTransaction: RpcMethod<{ transaction: Transaction }, { signedTransaction: SignedTransaction }>;
     };
     events: [];
 };

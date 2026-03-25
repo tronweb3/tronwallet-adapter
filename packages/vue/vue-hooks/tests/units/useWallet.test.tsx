@@ -319,7 +319,7 @@ describe('useWallet', function () {
         test('disconnect() should not be called as there is no selected wallet', async function () {
             try {
                 await componentRef.getState().disconnect();
-            } catch (e) {
+            } catch {
                 //
             }
             expect(adapter1.disconnect).toHaveBeenCalledTimes(0);

@@ -2,7 +2,7 @@
 import VueUiDemo from './components/VueUiDemo.vue';
 import HooksDemo from './components/HooksDemo.vue';
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-vue-hooks';
-import { Adapter } from '@tronweb3/tronwallet-abstract-adapter';
+import type { Adapter } from '@tronweb3/tronwallet-abstract-adapter';
 import {
     BitKeepAdapter,
     LedgerAdapter,
@@ -18,9 +18,8 @@ const tronLink = new TronLinkAdapter();
 const walletConnect = new WalletConnectAdapter({
     network: 'Nile',
     options: {
-        relayUrl: 'wss://relay.walletconnect.com',
-        // example WC app project ID
-        projectId: '',
+        relayUrl: import.meta.env.VITE_WALLETCONNECT_RELAY_URL,
+        projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
         metadata: {
             name: 'Test DApp',
             description: 'Test dApp',

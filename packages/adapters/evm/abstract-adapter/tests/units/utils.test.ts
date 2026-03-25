@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import { isInBrowser, isInMobileBrowser } from '../../src/utils.js';
 
 describe('utils', () => {
