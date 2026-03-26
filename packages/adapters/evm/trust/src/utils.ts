@@ -36,3 +36,23 @@ export function getTrustWalletProvider(): TrustWalletProvider | null {
 
     return isTrustWalletProvider(context.trustwallet?.ethereum) ? context.trustwallet.ethereum : null;
 }
+
+export function isTrustWalletMobileWebView() {
+    if (!isInBrowser()) {
+        return false;
+    }
+    const context = window as Window & {
+        ethereum?: TrustWalletProvider;
+        trustwallet?: { ethereum?: TrustWalletProvider };
+    };
+    return isTrustWalletProvider(context.ethereum) || isTrustWalletProvider(context.trustwallet?.ethereum);
+}
+
+export function openTrustWalletWithDeeplink() {
+    if (!isInBrowser()) {
+        return;
+    }
+
+    const link = `https://link.trustwallet.com/open_url?url=${encodeURIComponent(window.location.href)}`;
+    window.location.href = link;
+}

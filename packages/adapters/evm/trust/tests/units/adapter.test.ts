@@ -151,6 +151,55 @@ describe('TrustEvmAdapter', () => {
         await expect(connectPromise).rejects.toBeInstanceOf(WalletConnectionError);
     });
 
+    test('should deeplink to Trust Wallet when connecting from an external mobile browser', async () => {
+        vi.stubGlobal('navigator', {
+            ...window.navigator,
+            userAgent:
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+        });
+        const hrefSetter = vi.fn();
+        Object.defineProperty(window, 'location', {
+            configurable: true,
+            value: {
+                href: 'https://example.com/demo',
+            },
+        });
+        Object.defineProperty(window.location, 'href', {
+            configurable: true,
+            get() {
+                return 'https://example.com/demo';
+            },
+            set: hrefSetter,
+        });
+
+        const adapter = new TrustEvmAdapter();
+        const address = await adapter.connect();
+
+        expect(address).toEqual('');
+        expect(hrefSetter).toHaveBeenCalledWith(
+            'https://link.trustwallet.com/open_url?url=https%3A%2F%2Fexample.com%2Fdemo'
+        );
+    });
+
+    test('should discover injected Trust Wallet provider on mobile browsers', async () => {
+        const provider = new TrustWalletProvider();
+        provider._setAccountsRes(['0x123']);
+        // @ts-ignore
+        window.trustwallet = { ethereum: provider };
+        vi.stubGlobal('navigator', {
+            ...window.navigator,
+            userAgent:
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 Safari/604.1',
+        });
+
+        const adapter = new TrustEvmAdapter();
+        await settleProviderDetection();
+
+        expect(adapter.readyState).toEqual('Found');
+        expect(adapter.address).toEqual('0x123');
+        await expect(adapter.getProvider()).resolves.toBe(provider);
+    });
+
     test('signTypedData should stringify typed data before requesting signature', async () => {
         const provider = new TrustWalletProvider();
         provider._setAccountsRes(['0x123']);

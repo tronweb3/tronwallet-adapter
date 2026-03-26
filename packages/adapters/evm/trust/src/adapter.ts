@@ -8,7 +8,16 @@ import {
     isInMobileBrowser,
 } from '@tronweb3/abstract-adapter-evm';
 import type { TrustWalletProvider } from './utils.js';
-import { getTrustWalletProvider, TRUST_WALLET_RDNS } from './utils.js';
+import {
+    getTrustWalletProvider,
+    isTrustWalletMobileWebView,
+    openTrustWalletWithDeeplink,
+    TRUST_WALLET_RDNS,
+} from './utils.js';
+
+export interface TrustEvmAdapterOptions {
+    useDeeplink?: boolean;
+}
 
 export const TrustEvmAdapterName = 'Trust Wallet' as AdapterName<'Trust Wallet'>;
 
@@ -20,9 +29,11 @@ export class TrustEvmAdapter extends Adapter {
     readyState = WalletReadyState.Loading;
     address: string | null = null;
     connecting = false;
+    options: TrustEvmAdapterOptions;
 
-    constructor() {
+    constructor(options: TrustEvmAdapterOptions = { useDeeplink: true }) {
         super();
+        this.options = options;
         this.eip6963Info.support = true;
         this.eip6963Info.name = 'Trust Wallet';
         this.eip6963Info.rdns = TRUST_WALLET_RDNS;
@@ -40,6 +51,11 @@ export class TrustEvmAdapter extends Adapter {
     }
 
     async connect() {
+        if (this.options.useDeeplink !== false && isInMobileBrowser() && !isTrustWalletMobileWebView()) {
+            openTrustWalletWithDeeplink();
+            return '';
+        }
+
         this.connecting = true;
 
         try {
@@ -98,7 +114,7 @@ export class TrustEvmAdapter extends Adapter {
     }
 
     async getProvider(): Promise<EIP1193Provider | null> {
-        if (isInMobileBrowser()) {
+        if (isInMobileBrowser() && !isTrustWalletMobileWebView()) {
             return null;
         }
 
