@@ -2,10 +2,7 @@ import { vi, describe, beforeEach, test, expect } from 'vitest';
 import { WalletNotFoundError } from '@tronweb3/abstract-adapter-evm';
 import { MetaMaskEvmAdapter } from '../../src/adapter.js';
 import { MetaMaskProvider, installMetaMaskEIP6963Provider } from './metamask-provider.js';
-import {
-    TrustWalletProvider,
-    installTrustWalletProvider,
-} from '../../../trustwallet/tests/units/trustwallet-provider.js';
+import { TrustWalletProvider, installTrustWalletProvider } from '../../../trust/tests/units/trustwallet-provider.js';
 
 let provider: MetaMaskProvider;
 

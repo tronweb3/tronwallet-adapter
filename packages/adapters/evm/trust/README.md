@@ -1,13 +1,13 @@
-# `@tronweb3/tronwallet-adapter-trustwallet-evm`
+# `@tronweb3/tronwallet-adapter-trust-evm`
 
 This package provides an adapter to enable DApps to connect to the [Trust Wallet browser extension](https://trustwallet.com/browser-extension).
 
 ## Demo
 
 ```typescript
-import { TrustWalletEvmAdapter } from '@tronweb3/tronwallet-adapter-trustwallet-evm';
+import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
 
-const adapter = new TrustWalletEvmAdapter();
+const adapter = new TrustEvmAdapter();
 await adapter.connect();
 
 console.log(adapter.address);
@@ -27,9 +27,9 @@ await adapter.sendTransaction(transaction);
 -   `Constructor()`
 
     ```typescript
-    import { TrustWalletEvmAdapter } from '@tronweb3/tronwallet-adapter-trustwallet-evm';
+    import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
 
-    const trustWalletEvmAdapter = new TrustWalletEvmAdapter();
+    const trustWalletEvmAdapter = new TrustEvmAdapter();
     ```
 
 The adapter discovers the Trust Wallet extension using `EIP-6963` and supports the standard EVM wallet methods exposed by the shared abstract adapter.

@@ -18,6 +18,6 @@ test('this library should expose all adapters', () => {
     expect(Adapters.MetaMaskAdapter).not.toBeUndefined();
     expect(Adapters.MetaMaskEvmAdapter).not.toBeUndefined();
     expect(Adapters.TronLinkEvmAdapter).not.toBeUndefined();
-    expect(Adapters.TrustWalletEvmAdapter).not.toBeUndefined();
+    expect(Adapters.TrustEvmAdapter).not.toBeUndefined();
     expect(Adapters.BinanceEvmAdapter).not.toBeUndefined();
 });

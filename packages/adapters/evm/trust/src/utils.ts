@@ -12,7 +12,9 @@ function isInBrowser() {
 }
 
 function isTrustWalletProvider(provider: EIP1193Provider | null | undefined): provider is TrustWalletProvider {
-    return Boolean(provider && ((provider as TrustWalletProvider).isTrust || (provider as TrustWalletProvider).isTrustWallet));
+    return Boolean(
+        provider && ((provider as TrustWalletProvider).isTrust || (provider as TrustWalletProvider).isTrustWallet)
+    );
 }
 
 export function getTrustWalletProvider(): TrustWalletProvider | null {
@@ -24,7 +26,9 @@ export function getTrustWalletProvider(): TrustWalletProvider | null {
         ethereum?: TrustWalletProvider & { providers?: TrustWalletProvider[] };
         trustwallet?: { ethereum?: TrustWalletProvider };
     };
-    const providers = [context.ethereum, ...(context.ethereum?.providers || [])].filter(Boolean) as TrustWalletProvider[];
+    const providers = [context.ethereum, ...(context.ethereum?.providers || [])].filter(
+        Boolean
+    ) as TrustWalletProvider[];
     const injectedProvider = providers.find((provider) => isTrustWalletProvider(provider));
     if (injectedProvider) {
         return injectedProvider;

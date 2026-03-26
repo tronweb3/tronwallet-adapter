@@ -6,6 +6,7 @@ import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
 import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
 import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
+import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
@@ -62,7 +63,12 @@ const ConnectButton = styled(Button)({
     backgroundColor: '#07094c',
   },
   '&.Mui-disabled': {
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.92)',
+    background: 'linear-gradient(135deg, rgba(20, 18, 118, 0.58), rgba(70, 67, 223, 0.5))',
+    border: '1px solid rgba(255, 255, 255, 0.14)',
+    boxShadow: '0px 24px 24px -20px rgba(20, 18, 118, 0.45)',
+    cursor: 'not-allowed',
+    opacity: 1,
   },
 });
 
@@ -117,7 +123,7 @@ const SectionButton = styled(Button)({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter()], []);
+  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter(), new TrustEvmAdapter()], []);
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
@@ -236,7 +242,9 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
             <Typography sx={{ color: '#333', fontSize: 13, fontWeight: 600 }}>Network</Typography>
             <Typography sx={{ color: '#555', fontSize: 13 }}>{chainId || '—'}</Typography>
           </InfoCard>
-          <ConnectButton onClick={onConnect}>{adapter.connected ? 'Disconnect' : 'Connect'}</ConnectButton>
+          <ConnectButton onClick={onConnect} disabled={adapter.connected}>
+            {adapter.connected ? 'Connected to Wallet' : 'Connect Wallet'}
+          </ConnectButton>
         </BasicInfoWrap>
 
         {/* Right Column: Action Cards */}

@@ -50,7 +50,7 @@
             "path": "./packages/adapters/evm/tronlink/tsconfig.all.json"
         },
         {
-            "path": "./packages/adapters/evm/trustwallet/tsconfig.all.json"
+            "path": "./packages/adapters/evm/trust/tsconfig.all.json"
         },
         {
             "path": "./packages/adapters/foxwallet/tsconfig.all.json"

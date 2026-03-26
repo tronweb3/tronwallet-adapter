@@ -417,6 +417,10 @@ export class TronLinkAdapter extends Adapter {
     private isLegacyTronLinkProvider(provider: Tron | undefined | null) {
         return !!provider?.isTronLink;
     }
+
+    private hasDesktopLegacyTronLinkProvider() {
+        return this.isLegacyTronLinkProvider(window.tron) || !!window.tronLink;
+    }
     /**
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
      * @returns if wallet exists
@@ -456,7 +460,7 @@ export class TronLinkAdapter extends Adapter {
 
                 timer = setTimeout(
                     finishWithLegacyDetection,
-                    supportTronLink() ? DESKTOP_TIP6963_FALLBACK_DELAY : this.config.checkTimeout
+                    this.hasDesktopLegacyTronLinkProvider() ? DESKTOP_TIP6963_FALLBACK_DELAY : this.config.checkTimeout
                 );
 
                 const handler = (event: TIP6963AnnounceProviderEvent) => {
@@ -506,7 +510,7 @@ export class TronLinkAdapter extends Adapter {
                         }
                         return;
                     }
-                    if (this.isLegacyTronLinkProvider(window.tron) || window.tronLink || window.tronWeb) {
+                    if (this.hasDesktopLegacyTronLinkProvider()) {
                         finishWithLegacyDetection();
                     }
                 }, 100);
@@ -571,15 +575,6 @@ export class TronLinkAdapter extends Adapter {
         } else if (window.tronLink) {
             this._wallet = window.tronLink;
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;
-            state = this._wallet.ready ? AdapterState.Connected : AdapterState.Disconnect;
-        } else if (window.tronWeb) {
-            // fake tronLink
-            this._wallet = {
-                ready: window.tronWeb.ready,
-                tronWeb: window.tronWeb,
-                request: () => Promise.resolve(true) as any,
-            } as TronLinkWallet;
-            address = this._wallet.tronWeb.defaultAddress?.base58 || null;
             state = this._wallet.ready ? AdapterState.Connected : AdapterState.Disconnect;
         } else {
             // no tronlink support

@@ -1,6 +1,6 @@
 import { vi, describe, beforeEach, afterEach, test, expect } from 'vitest';
 import { WalletConnectionError, WalletNotFoundError } from '@tronweb3/abstract-adapter-evm';
-import { TrustWalletEvmAdapter } from '../../src/adapter.js';
+import { TrustEvmAdapter } from '../../src/adapter.js';
 import { TrustWalletProvider, installTrustWalletProvider } from './trustwallet-provider.js';
 
 vi.useFakeTimers();
@@ -38,7 +38,7 @@ async function settleProviderDetection() {
     await flushPromises();
 }
 
-describe('TrustWalletEvmAdapter', () => {
+describe('TrustEvmAdapter', () => {
     beforeEach(() => {
         vi.useFakeTimers();
         // @ts-ignore
@@ -53,7 +53,7 @@ describe('TrustWalletEvmAdapter', () => {
     });
 
     test('base props should be valid when provider is unavailable', async () => {
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
 
         expect(adapter.name).toEqual('Trust Wallet');
         expect(adapter.url).toEqual('https://trustwallet.com');
@@ -71,7 +71,7 @@ describe('TrustWalletEvmAdapter', () => {
         const provider = new TrustWalletProvider();
         const cleanup = installTrustWalletProvider(provider);
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         await flushPromises();
 
         expect(adapter.readyState).toEqual('Found');
@@ -88,7 +88,7 @@ describe('TrustWalletEvmAdapter', () => {
         const trustProvider = new TrustWalletProvider();
         const cleanupTrust = installTrustWalletProvider(trustProvider);
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         await flushPromises();
 
         await expect(adapter.getProvider()).resolves.toBe(trustProvider);
@@ -103,7 +103,7 @@ describe('TrustWalletEvmAdapter', () => {
         // @ts-ignore
         window.trustwallet = { ethereum: provider };
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         await settleProviderDetection();
 
         expect(adapter.address).toEqual('0x123');
@@ -116,7 +116,7 @@ describe('TrustWalletEvmAdapter', () => {
         // @ts-ignore
         window.trustwallet = { ethereum: provider };
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         const addressPromise = adapter.connect();
         await settleProviderDetection();
         const address = await addressPromise;
@@ -126,7 +126,7 @@ describe('TrustWalletEvmAdapter', () => {
     });
 
     test('connect should throw WalletNotFoundError when provider is unavailable', async () => {
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         const res = adapter.connect();
 
         vi.advanceTimersByTime(4000);
@@ -145,7 +145,7 @@ describe('TrustWalletEvmAdapter', () => {
         // @ts-ignore
         window.trustwallet = { ethereum: provider };
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         const connectPromise = adapter.connect();
         await settleProviderDetection();
         await expect(connectPromise).rejects.toBeInstanceOf(WalletConnectionError);
@@ -158,7 +158,7 @@ describe('TrustWalletEvmAdapter', () => {
         // @ts-ignore
         window.trustwallet = { ethereum: provider };
 
-        const adapter = new TrustWalletEvmAdapter();
+        const adapter = new TrustEvmAdapter();
         await settleProviderDetection();
 
         const request = vi.spyOn(provider, 'request');

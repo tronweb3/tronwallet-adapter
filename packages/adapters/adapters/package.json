@@ -61,7 +61,7 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
-        "@tronweb3/tronwallet-adapter-trustwallet-evm": "workspace:^",
+        "@tronweb3/tronwallet-adapter-trust-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },
     "devDependencies": {
