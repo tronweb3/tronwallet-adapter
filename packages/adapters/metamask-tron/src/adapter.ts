@@ -1,3 +1,4 @@
+import type { TronScope } from '@metamask/multichain-api-client';
 import {
     type CaipAccountId,
     type MultichainApiClient,
@@ -7,7 +8,6 @@ import {
     getMultichainClient,
     isMetamaskInstalled,
 } from '@metamask/multichain-api-client';
-import type { TronAddress } from '@metamask/multichain-api-client/dist/types/scopes/tron.types.cjs';
 import {
     Adapter,
     AdapterState,
@@ -24,7 +24,6 @@ import { Scope } from './types.js';
 import {
     chainIdToScope,
     getAddressFromCaipAccountId,
-    isAccountChangedEvent,
     scopeToChainId,
     scopeToNetworkType,
     isSessionChangedEvent,
@@ -43,6 +42,8 @@ export interface MetaMaskAdapterConfig extends BaseAdapterConfig {
 export const MetaMaskAdapterName = 'MetaMask' as AdapterName<'MetaMask'>;
 
 export class MetaMaskAdapter extends Adapter {
+    // list of scopes in priority order for resolving selected account
+    readonly scopes = [Scope.MAINNET, Scope.SHASTA, Scope.NILE] as const;
     name = MetaMaskAdapterName;
     // @prettier-ignore
     icon =
@@ -56,9 +57,8 @@ export class MetaMaskAdapter extends Adapter {
     private _switchingChain = false;
     private _address: string | null = null;
     private _scope: Scope | undefined;
-    private _selectedAddressOnPageLoadPromise: Promise<string | undefined> | undefined;
     private _checkWalletPromise: Promise<void> | undefined;
-    private _removeAccountsChangedListener: (() => void) | undefined;
+    private _removeSessionChangedListener: (() => void) | undefined;
     private _transport: Transport;
     private _client: MultichainApiClient;
 
@@ -72,14 +72,12 @@ export class MetaMaskAdapter extends Adapter {
         this._transport = getDefaultTransport();
         this._client = getMultichainClient({ transport: this._transport });
         this._checkWalletPromise = this.checkWallet();
-        this._selectedAddressOnPageLoadPromise = this.getInitialSelectedAddress();
         // Auto-restore session on page refresh
         this._checkWalletPromise.then(() => {
             if (this._readyState === WalletReadyState.Found) {
                 this.tryRestoringSession()
                     .then(() => {
                         if (this.address) {
-                            this.startListeners();
                             this.setState(AdapterState.Connected);
                             this.emit('connect', this.address);
                         }
@@ -87,6 +85,9 @@ export class MetaMaskAdapter extends Adapter {
                     .catch((error) => {
                         console.warn('Failed to auto-restore session:', error);
                     });
+                this._removeSessionChangedListener = this._client.onNotification(
+                    this.handleSessionChangedEvent.bind(this)
+                );
             }
         });
     }
@@ -144,8 +145,11 @@ export class MetaMaskAdapter extends Adapter {
                 if (!this.address) {
                     return;
                 }
-                this.startListeners();
-
+                if (!this._removeSessionChangedListener) {
+                    this._removeSessionChangedListener = this._client.onNotification(
+                        this.handleSessionChangedEvent.bind(this)
+                    );
+                }
                 this.setState(AdapterState.Connected);
                 this.emit('connect', this.address);
             } catch (error: any) {
@@ -168,14 +172,15 @@ export class MetaMaskAdapter extends Adapter {
             return;
         }
 
-        this.stopListeners();
+        this._removeSessionChangedListener?.();
+        this._removeSessionChangedListener = undefined;
 
         this.setAddress(null);
         this.setScope(undefined, false);
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
 
-        await this._client.revokeSession({ scopes: [Scope.MAINNET, Scope.NILE, Scope.SHASTA] });
+        await this._client.revokeSession({ scopes: [...this.scopes] });
     }
 
     /**
@@ -199,7 +204,7 @@ export class MetaMaskAdapter extends Adapter {
                 request: {
                     method: 'signTransaction',
                     params: {
-                        address: this._address as TronAddress,
+                        address: this._address as TronScope.TronAddress,
                         transaction: {
                             rawDataHex: transaction.raw_data_hex,
                             type: contractType,
@@ -240,7 +245,7 @@ export class MetaMaskAdapter extends Adapter {
                 scope: this._scope,
                 request: {
                     method: 'signMessage',
-                    params: { message: base64Message, address: this._address as TronAddress },
+                    params: { message: base64Message, address: this._address as TronScope.TronAddress },
                 },
             });
             return result.signature;
@@ -324,30 +329,6 @@ export class MetaMaskAdapter extends Adapter {
     }
 
     /**
-     * Listen for up to 2 seconds to the accountsChanged event emitted on page load.
-     * @returns If any, the initial selected address.
-     */
-    protected getInitialSelectedAddress(): Promise<string | undefined> {
-        return new Promise((resolve) => {
-            const timeout = setTimeout(() => {
-                resolve(undefined);
-            }, 2000);
-            const handleAccountChange = (data: any) => {
-                if (isAccountChangedEvent(data)) {
-                    const address = data?.params?.notification?.params?.[0];
-                    if (address) {
-                        clearTimeout(timeout);
-                        removeNotification?.();
-                        resolve(address);
-                    }
-                }
-            };
-
-            const removeNotification = this._client.onNotification(handleAccountChange);
-        });
-    }
-
-    /**
      * Checks if the MetaMask wallet is available in the browser.
      * By default, the _readyState is set to Found to avoid issues on page reloads.
      * But if the wallet is not actually available, we need to update the _readyState accordingly.
@@ -380,10 +361,8 @@ export class MetaMaskAdapter extends Adapter {
             if (!existingSession) {
                 return;
             }
-            // Get the address from accountChanged emitted on page load, if any
-            const address = await this._selectedAddressOnPageLoadPromise;
             const scope = this.restoreScope();
-            this.updateSession(existingSession, scope, address);
+            this.updateSession(existingSession, scope);
         } catch (error) {
             console.warn(`Error restoring session`, error);
         }
@@ -395,26 +374,6 @@ export class MetaMaskAdapter extends Adapter {
      * @param addresses - Optional list of addresses to include in the session.
      */
     private async createSession(scope: Scope, addresses?: string[]): Promise<void> {
-        let resolvePromise: (value: string) => void;
-        const waitForAccountChangedPromise = new Promise<string>((resolve) => {
-            resolvePromise = resolve;
-        });
-
-        // If there are multiple accounts, wait for the first accountChanged event to know which one to use
-        const handleAccountChange = (data: any) => {
-            if (!isAccountChangedEvent(data)) {
-                return;
-            }
-            const selectedAddress = data?.params?.notification?.params?.[0];
-
-            if (selectedAddress) {
-                removeNotification();
-                resolvePromise(selectedAddress);
-            }
-        };
-
-        const removeNotification = this._client.onNotification(handleAccountChange);
-
         const session = await this._client.createSession({
             optionalScopes: {
                 [scope]: {
@@ -424,34 +383,27 @@ export class MetaMaskAdapter extends Adapter {
                 },
             },
             sessionProperties: {
+                // Previously this was needed to enable metamask_accountsChanged events for Solana.
+                // This isn't needed for that purpose since we now use wallet_sessionChanged events.
+                // However this is still needed to help the wallet identify our injected solana provider
+                // until we migrate to a more accurate property name.
+                // See: https://github.com/MetaMask/metamask-extension/blob/70dd748af54b58ceb8e78d227b6bdf118fb8e7ba/ui/pages/multichain-accounts/multichain-accounts-connect-page/multichain-accounts-connect-page.tsx#L169-L174
                 tron_accountChanged_notifications: true,
             },
         });
 
-        // Wait for the accountChanged event to know which one to use, timeout after 2000ms
-        const selectedAddress = await Promise.race([
-            waitForAccountChangedPromise,
-            new Promise<undefined>((resolve) => setTimeout(() => resolve(undefined), 2000)),
-        ]);
-
-        this.updateSession(session, undefined, selectedAddress);
+        this.updateSession(session);
     }
 
     /**
      * Updates the session and the address to connect to.
-     * This method handles the logic for selecting the appropriate Tron network scope
-     * and address to connect to based on the following priority:
-     * 1. First tries to find an available scope in order: previously selected scope > mainnet > shasta > nile
-     * 2. For address selection:
-     *    - First tries to use the selectedAddress param, most likely coming from
-     *      the accountsChanged event
-     *    - Falls back to the previously saved address if it exists in the scope
-     *    - Finally defaults to the first address in the scope
+     * Selects the scope in priority order: previously selected scope > mainnet > shasta > nile,
+     * then uses the first account in that scope.
      *
      * @param session - The session data containing available scopes and accounts
-     * @param selectedAddress - The address that was selected by the user, if any
+     * @param selectedScope - The scope to prefer, if available
      */
-    private updateSession(session: SessionData, selectedScope?: Scope, selectedAddress?: string) {
+    private updateSession(session: SessionData, selectedScope?: Scope) {
         const currentScope = this._scope;
 
         const scope = this.selectScopeFromSessionWithPriority(session, selectedScope);
@@ -469,77 +421,38 @@ export class MetaMaskAdapter extends Adapter {
             this.setAddress(null);
             return;
         }
-        let addressToConnect;
-        // Try to use selectedAddress
-        if (selectedAddress && scopeAccounts.includes(`${scope}:${selectedAddress}`)) {
-            addressToConnect = selectedAddress;
-        }
-        // Otherwise try to use the previously saved address in this._address
-        else if (this._address && scopeAccounts.includes(`${scope}:${this._address}`)) {
-            addressToConnect = this._address;
-        }
-        // Otherwise select first address
-        else {
-            addressToConnect = getAddressFromCaipAccountId(scopeAccounts[0]);
-        }
-        // Update the address and scope
+        const addressToConnect = getAddressFromCaipAccountId(scopeAccounts[0]);
         this.setAddress(addressToConnect);
         this.setScope(scope, currentScope !== scope);
     }
 
     /**
-     * Starts listening to the accountsChanged event.
-     * @param handler Optional custom handler for the event.
-     */
-    private startListeners(handler?: (data: any) => void) {
-        this._removeAccountsChangedListener = this._client.onNotification(handler ?? this.handleEvents.bind(this));
-    }
-
-    /**
-     * Stops listening to the accountsChanged event.
-     */
-    private stopListeners() {
-        this._removeAccountsChangedListener?.();
-        this._removeAccountsChangedListener = undefined;
-    }
-
-    /**
-     * Handles the accountsChanged event.
+     * Handles the wallet_sessionChanged event.
      * @param data - The event data
      */
-    private async handleEvents(data: any) {
-        if (isAccountChangedEvent(data)) {
-            const newAddressSelected = data?.params?.notification?.params?.[0];
-            if (!newAddressSelected) {
-                // Disconnect if no address selected
-                await this.disconnect();
-                return;
-            }
-            const session = await this._client.getSession();
-            if (!session) {
-                return;
-            }
-            this.updateSession(session, this._scope, newAddressSelected);
-        } else if (isSessionChangedEvent(data)) {
-            const session = data?.params;
-            if (!session) {
-                return;
-            }
-            const scope = this.selectScopeFromSessionWithPriority(session);
-
-            if (!scope) {
-                // Disconnect if no scope selected
-                await this.disconnect();
-                return;
-            }
-            const isAccountsEmpty = !(session?.sessionScopes?.[scope]?.accounts?.length > 0);
-            if (isAccountsEmpty) {
-                // Disconnect if no address selected
-                await this.disconnect();
-                return;
-            }
-            this.updateSession(session, scope);
+    private async handleSessionChangedEvent(data: any) {
+        if (!isSessionChangedEvent(data)) {
+            return;
         }
+
+        const session = data?.params as SessionData;
+        if (!session) {
+            return;
+        }
+        const scope = this.selectScopeFromSessionWithPriority(session);
+
+        if (!scope) {
+            // Disconnect if no scope selected
+            await this.disconnect();
+            return;
+        }
+        const isAccountsEmpty = session.sessionScopes?.[scope]?.accounts?.[0] === undefined;
+        if (isAccountsEmpty) {
+            // Disconnect if no address selected
+            await this.disconnect();
+            return;
+        }
+        this.updateSession(session, scope);
     }
 
     /**
@@ -608,14 +521,15 @@ export class MetaMaskAdapter extends Adapter {
      */
     private selectScopeFromSessionWithPriority(session: SessionData, selectedScope?: Scope): Scope | undefined {
         const sessionScopes = new Set(Object.keys(session?.sessionScopes ?? {}));
-        const scopePriorityOrder = (selectedScope ? [selectedScope] : []).concat([
-            Scope.MAINNET,
-            Scope.SHASTA,
-            Scope.NILE,
-        ]);
+        const scopePriorityOrder = (selectedScope ? [selectedScope] : []).concat(this.scopes);
 
         return scopePriorityOrder.find((scope) => sessionScopes.has(scope));
     }
+
+    /**
+     * Opens the MetaMask app using a deep link if necessary.
+     * @returns True if the app was opened, false otherwise.
+     */
     private openAppWithDeepLinkIfNeed() {
         if (this._config.openAppWithDeeplink === false) {
             return false;
