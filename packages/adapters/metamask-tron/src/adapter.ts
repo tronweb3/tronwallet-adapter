@@ -167,20 +167,22 @@ export class MetaMaskAdapter extends Adapter {
      * Disconnects from the MetaMask wallet.
      * @returns A promise that resolves when disconnected.
      */
-    async disconnect(): Promise<void> {
+    async disconnect(options: { revokeSession?: boolean } = {}): Promise<void> {
         if (this.state !== AdapterState.Connected) {
             return;
         }
-
-        this._removeSessionChangedListener?.();
-        this._removeSessionChangedListener = undefined;
+        const { revokeSession = true } = options;
 
         this.setAddress(null);
         this.setScope(undefined, false);
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
 
-        await this._client.revokeSession({ scopes: [...this.scopes] });
+        if (revokeSession) {
+            this._removeSessionChangedListener?.();
+            this._removeSessionChangedListener = undefined;
+            await this._client.revokeSession({ scopes: [...this.scopes] });
+        }
     }
 
     /**
@@ -442,16 +444,17 @@ export class MetaMaskAdapter extends Adapter {
         const scope = this.selectScopeFromSessionWithPriority(session);
 
         if (!scope) {
-            // Disconnect if no scope selected
-            await this.disconnect();
+            // Soft disconnect if no scope selected
+            await this.disconnect({ revokeSession: false });
             return;
         }
         const isAccountsEmpty = session.sessionScopes?.[scope]?.accounts?.[0] === undefined;
         if (isAccountsEmpty) {
-            // Disconnect if no address selected
-            await this.disconnect();
+            // Soft disconnect if no address selected
+            await this.disconnect({ revokeSession: false });
             return;
         }
+
         this.updateSession(session, scope);
     }
 
