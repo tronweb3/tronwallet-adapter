@@ -5,6 +5,7 @@ import {
     WalletNotFoundError,
     WalletConnectionError,
     isInMobileBrowser,
+    isInBrowser,
     WalletDisconnectedError,
 } from '@tronweb3/abstract-adapter-evm';
 import { getMetaMaskProvider, isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
@@ -16,6 +17,7 @@ declare global {
 
 export interface MetaMaskEvmAdapterOptions {
     useDeeplink?: boolean;
+    openUrlWhenWalletNotFound?: boolean;
 }
 
 export const MetaMaskEvmAdapterName = 'MetaMask' as AdapterName<'MetaMask'>;
@@ -66,6 +68,9 @@ export class MetaMaskEvmAdapter extends Adapter {
 
         const provider = await this.getProvider();
         if (!provider) {
+            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                window.open(this.url, '_blank');
+            }
             throw new WalletNotFoundError();
         }
         const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });

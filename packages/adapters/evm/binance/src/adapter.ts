@@ -5,12 +5,14 @@ import {
     WalletNotFoundError,
     WalletConnectionError,
     isInMobileBrowser,
+    isInBrowser,
     WalletError,
 } from '@tronweb3/abstract-adapter-evm';
 import { getBinanceEvmProvider, openBinanceWithDeeplink, supportBinanceEvm } from './utils.js';
 
 export interface BinanceEvmAdapterOptions {
     useDeeplink?: boolean;
+    openUrlWhenWalletNotFound?: boolean;
 }
 export const BinanceEvmAdapterName = 'Binance' as AdapterName<'Binance'>;
 export class BinanceEvmAdapter extends Adapter {
@@ -58,6 +60,9 @@ export class BinanceEvmAdapter extends Adapter {
 
         const provider = await this.getProvider();
         if (!provider) {
+            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                window.open(this.url, '_blank');
+            }
             throw new WalletNotFoundError();
         }
         let accounts: string[] = [];

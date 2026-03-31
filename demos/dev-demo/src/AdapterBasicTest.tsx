@@ -30,6 +30,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     [selectedName]
   );
   useEffect(() => {
+    setChainId('');
     setAccount(adapter.address || '');
     setReadyState(adapter.readyState);
     if (adapter.connected) {
@@ -78,6 +79,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     adapter.on('disconnect', () => {
       log('disconnect');
       setAccount(adapter.address || '');
+      setChainId('');
     });
 
     return () => {

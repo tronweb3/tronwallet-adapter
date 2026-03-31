@@ -11,6 +11,7 @@ import {
     WalletNotFoundError,
     WalletConnectionError,
     isInMobileBrowser,
+    isInBrowser,
     WalletError,
 } from '@tronweb3/abstract-adapter-evm';
 import { getTronLinkEvmProvider } from './utils.js';
@@ -22,6 +23,11 @@ declare global {
 }
 
 export const TronLinkEvmAdapterName = 'TronLink' as AdapterName<'TronLink'>;
+
+export interface TronLinkEvmAdapterOptions {
+    openUrlWhenWalletNotFound?: boolean;
+}
+
 export class TronLinkEvmAdapter extends Adapter {
     name = TronLinkEvmAdapterName;
     // @prettier-ignore
@@ -31,9 +37,11 @@ export class TronLinkEvmAdapter extends Adapter {
     readyState = WalletReadyState.Loading;
     address: string | null = null;
     connecting = false;
+    options: TronLinkEvmAdapterOptions;
 
-    constructor() {
+    constructor(options: TronLinkEvmAdapterOptions = {}) {
         super();
+        this.options = options;
         this.eip6963Info.support = true;
         this.eip6963Info.name = 'TronLink';
         const provider = getTronLinkEvmProvider();
@@ -60,6 +68,9 @@ export class TronLinkEvmAdapter extends Adapter {
 
         const provider = await this.getProvider();
         if (!provider) {
+            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                window.open(this.url, '_blank');
+            }
             throw new WalletNotFoundError();
         }
         const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });

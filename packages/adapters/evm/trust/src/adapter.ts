@@ -6,6 +6,7 @@ import {
     WalletNotFoundError,
     WalletReadyState,
     isInMobileBrowser,
+    isInBrowser,
 } from '@tronweb3/abstract-adapter-evm';
 import type { TrustWalletProvider } from './utils.js';
 import {
@@ -17,6 +18,7 @@ import {
 
 export interface TrustEvmAdapterOptions {
     useDeeplink?: boolean;
+    openUrlWhenWalletNotFound?: boolean;
 }
 
 export const TrustEvmAdapterName = 'Trust Wallet' as AdapterName<'Trust Wallet'>;
@@ -61,6 +63,9 @@ export class TrustEvmAdapter extends Adapter {
         try {
             const provider = await this.getProvider();
             if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
                 throw new WalletNotFoundError();
             }
 
@@ -119,6 +124,14 @@ export class TrustEvmAdapter extends Adapter {
         }
 
         return super.getProvider();
+    }
+
+    async switchChain(chainId: `0x${string}`): Promise<null> {
+        const result = await super.switchChain(chainId);
+        // Trust Wallet emits chainChanged before the Promise resolves, causing a race condition.
+        // Re-emit after resolution to ensure React state updates correctly.
+        this.emit('chainChanged', chainId);
+        return result;
     }
 
     protected listenEvents(provider: EIP1193Provider) {

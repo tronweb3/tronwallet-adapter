@@ -142,6 +142,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
   );
 
   useEffect(() => {
+    setChainId('');
     setAccount(adapter.address || '');
     setReadyState(adapter.readyState);
     if (adapter.connected) {
@@ -180,6 +181,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
     });
     adapter.on('disconnect', () => {
       setAccount(adapter.address || '');
+      setChainId('');
     });
 
     return () => {
@@ -242,16 +244,16 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
             <Typography sx={{ color: '#333', fontSize: 13, fontWeight: 600 }}>Network</Typography>
             <Typography sx={{ color: '#555', fontSize: 13 }}>{chainId || '—'}</Typography>
           </InfoCard>
-          <ConnectButton onClick={onConnect} disabled={adapter.connected}>
-            {adapter.connected ? 'Connected to Wallet' : 'Connect Wallet'}
+          <ConnectButton onClick={onConnect} disabled={!!account}>
+            {!!account ? 'Connected to Wallet' : 'Connect Wallet'}
           </ConnectButton>
         </BasicInfoWrap>
 
         {/* Right Column: Action Cards */}
         <Box sx={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          <SectionSign adapter={adapter} />
-          <SectionTriggerContract adapter={adapter} />
-          <SectionSwitchChain adapter={adapter} />
+          <SectionSign adapter={adapter} connected={!!account} />
+          <SectionTriggerContract adapter={adapter} connected={!!account} />
+          <SectionSwitchChain adapter={adapter} connected={!!account} />
         </Box>
       </MainContent>
     </Box>
@@ -260,7 +262,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
 
 // ─── Section: Sign ───────────────────────────────────────────────────────────
 
-const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter }) {
+const SectionSign = memo(function SectionSign({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [message, setMessage] = useState('Hello, Adapter');
   const [signedMessage, setSignedMessage] = useState('');
   const [receiver, setReceiver] = useState('');
@@ -332,7 +334,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
       </SectionButton>
       <SectionButton onClick={onSignTypedData}>Sign Typed Data</SectionButton>
       <DarkInput placeholder="Receiver Address" disableUnderline value={receiver} onChange={(e) => setReceiver(e.target.value)} />
-      <SectionButton disabled={!adapter.connected || !receiver} onClick={onSignTransaction}>
+      <SectionButton disabled={!connected || !receiver} onClick={onSignTransaction}>
         Transfer
       </SectionButton>
     </SectionCard>
@@ -341,7 +343,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
 
 // ─── Section: Smart Contract ─────────────────────────────────────────────────
 
-const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
+const SectionTriggerContract = function ({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [number, setNumber] = useState('0');
   const [contractAddress, setContractAddress] = useState('');
 
@@ -384,15 +386,15 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
       <Typography variant="h6" fontWeight={700} color="white">
         Smart Contract
       </Typography>
-      <SectionButton disabled={!adapter.connected} onClick={deployContract}>
+      <SectionButton disabled={!connected} onClick={deployContract}>
         Deploy Contract
       </SectionButton>
       <DarkInput placeholder="Contract Address" disableUnderline value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
       <DarkInput placeholder="Number" disableUnderline value={number} onChange={(e) => setNumber(e.target.value)} />
-      <SectionButton disabled={!adapter.connected || !contractAddress} onClick={triggerContract}>
+      <SectionButton disabled={!connected || !contractAddress} onClick={triggerContract}>
         Store Number
       </SectionButton>
-      <SectionButton disabled={!adapter.connected || !contractAddress} onClick={readContract}>
+      <SectionButton disabled={!connected || !contractAddress} onClick={readContract}>
         Get Number
       </SectionButton>
     </SectionCard>
@@ -401,7 +403,7 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
 
 // ─── Section: Switch Chain ────────────────────────────────────────────────────
 
-const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapter: Adapter }) {
+const SectionSwitchChain = memo(function SectionSwitchChain({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [selectedChainId, setSelectedChainId] = useState<`0x${string}`>('0x1');
   return (
     <SectionCard background="linear-gradient(45deg, rgba(65, 183, 233, 0.75), rgba(70, 67, 223, 0.95))">
@@ -430,7 +432,7 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
         <MenuItem value="0xa4b1">Arbitrum One</MenuItem>
         <MenuItem value="0x539">Localhost Test</MenuItem>
       </Select>
-      <SectionButton disabled={!adapter.connected} onClick={() => adapter.switchChain(selectedChainId)}>
+      <SectionButton disabled={!connected} onClick={() => adapter.switchChain(selectedChainId).catch((e) => console.error('switchChain error:', e))}>
         Switch to {selectedChainId}
       </SectionButton>
     </SectionCard>
