@@ -542,6 +542,9 @@ importers:
 
   packages/adapters/adapters:
     dependencies:
+      '@tronweb3/tronwallet-adapter-backpack':
+        specifier: workspace:^
+        version: link:../backpack
       '@tronweb3/tronwallet-adapter-binance':
         specifier: workspace:^
         version: link:../binance
@@ -609,6 +612,22 @@ importers:
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@22.9.0)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@20.8.3(bufferutil@4.0.8)(utf-8-validate@6.0.3))(jsdom@28.1.0)(msw@2.7.3(@types/node@22.9.0)(typescript@5.8.2))(terser@5.31.3)
+
+  packages/adapters/backpack:
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+    devDependencies:
+      '@testing-library/dom':
+        specifier: ^8.20.0
+        version: 8.20.1
+      shx:
+        specifier: 0.3.4
+        version: 0.3.4
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.9.0)(@vitest/browser@3.2.4)(@vitest/ui@3.2.4)(happy-dom@20.8.3)(jsdom@28.1.0)(msw@2.7.3(@types/node@22.9.0)(typescript@5.8.2))(terser@5.31.3)
 
   packages/adapters/binance:
     dependencies:

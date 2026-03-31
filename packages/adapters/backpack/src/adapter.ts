@@ -1,0 +1,381 @@
+import {
+    Adapter,
+    AdapterState,
+    isInBrowser,
+    NetworkType,
+    WalletConnectionError,
+    WalletDisconnectedError,
+    WalletError,
+    WalletGetNetworkError,
+    WalletNotFoundError,
+    WalletReadyState,
+    WalletSignMessageError,
+    WalletSignTransactionError,
+    WalletSwitchChainError,
+    type AdapterName,
+    type BaseAdapterConfig,
+    type Network,
+    type SignedTransaction,
+    type Transaction,
+} from '@tronweb3/tronwallet-abstract-adapter';
+import { getBackpackProvider, openBackpack, supportBackpack, type BackpackTronProvider } from './utils.js';
+
+const chainIdNetworkMap: Record<string, NetworkType> = {
+    '0x2b6653dc': NetworkType.Mainnet,
+    '0x94a9059e': NetworkType.Shasta,
+    '0xcd8690dc': NetworkType.Nile,
+};
+
+export interface BackpackAdapterConfig extends BaseAdapterConfig {
+    /**
+     * Timeout in milliseconds for checking if Backpack wallet exists.
+     * Default is 2000ms
+     */
+    checkTimeout?: number;
+    /**
+     * Set if open Backpack app using DeepLink on mobile.
+     * Default is true.
+     */
+    openAppWithDeeplink?: boolean;
+}
+
+export const BackpackAdapterName = 'Backpack' as AdapterName<'Backpack'>;
+
+export class BackpackAdapter extends Adapter {
+    readonly name = BackpackAdapterName;
+    readonly url = 'https://backpack.app';
+    readonly icon =
+        'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDU1IDgwIiBmaWxsPSJub25lIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTMyLjcxIDYuMjkwMjZDMzUuNjE3OCA2LjI5MDI2IDM4LjM0NTIgNi42ODAwNSA0MC44NzA1IDcuNDAyOTZDMzguMzk4MiAxLjY0MDg1IDMzLjI2NDkgMCAyNy41NTE5IDBDMjEuODI3NyAwIDE2LjY4NTUgMS42NDcyOSAxNC4yMTg4IDcuNDM2OTJMMTYuNzI1NSA2LjY4ODU2IDE5LjQ0MTIgNi4yOTAyNiAyMi4zMzkgNi4yOTAyNkgzMi43MVpNMjEuNjczOSAxMi4wNzUyQzcuODY2NzcgMTIuMDc1MiAwIDIyLjkzNzEgMCAzNi4zMzZWNTAuMUMwIDUxLjQzOTkgMS4xMTkyOSA1Mi41IDIuNSA1Mi41SDUyLjVDNTMuODgwNyA1Mi41IDU1IDUxLjQzOTkgNTUgNTAuMVYzNi4zMzZDNTUgMjIuOTM3MSA0NS44NTIxIDEyLjA3NTIgMzIuMDQ0OSAxMi4wNzUySDIxLjY3MzlaTTI3LjQ4MDUgMzYuNDU1MUMzMi4zMTMgMzYuNDU1MSAzNi4yMzA1IDMyLjUzNzYgMzYuMjMwNSAyNy43MDUxQzM2LjIzMDUgMjIuODcyNiAzMi4zMTMgMTguOTU1MSAyNy40ODA5IDE4Ljk1NTFDMjIuNjQ4IDE4Ljk1NTEgMTguNzMwNSAyMi44NzI2IDE4LjczMDUgMjcuNzA1MUMxOC43MzA1IDMyLjUzNzYgMjIuNjQ4IDM2LjQ1NTEgMjcuNDgwNSAzNi40NTUxWk0wIDYwLjU5MDFDMCA1OS4yNTAzIDEuMTE5MjkgNTguMTY0MSAyLjUgNTguMTY0MUg1Mi41QzUzLjg4MDcgNTguMTY0MSA1NSA1OS4yNTAzIDU1IDYwLjU5MDFWNzUuMTQ2NkM1NSA3Ny44MjY0IDUyLjc2MTQgNzkuOTk4OCA1MCA3OS45OTg4SDVDMi4yMzg1NyA3OS45OTg4IDAgNzcuODI2NCAwIDc1LjE0NjZWNjAuNTkwMVoiIGZpbGw9IiNFMzNFM0YiLz48L3N2Zz4=';
+
+    config: Required<BackpackAdapterConfig>;
+    private _readyState: WalletReadyState = isInBrowser() ? WalletReadyState.Loading : WalletReadyState.NotFound;
+    private _state: AdapterState = isInBrowser() ? AdapterState.Loading : AdapterState.NotFound;
+    private _connecting = false;
+    private _wallet: BackpackTronProvider | null = null;
+    private _address: string | null = null;
+
+    constructor(config: BackpackAdapterConfig = {}) {
+        super();
+        const { checkTimeout = 2000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = true } = config;
+
+        if (typeof checkTimeout !== 'number') {
+            throw new Error('[BackpackAdapter] config.checkTimeout should be a number');
+        }
+
+        this.config = {
+            checkTimeout,
+            openUrlWhenWalletNotFound,
+            openAppWithDeeplink,
+        };
+
+        if (supportBackpack()) {
+            this._readyState = WalletReadyState.Found;
+            this._updateWallet();
+        } else {
+            this._checkWallet();
+        }
+    }
+
+    get state(): AdapterState {
+        return this._state;
+    }
+
+    get address(): string | null {
+        return this._address;
+    }
+
+    get readyState(): WalletReadyState {
+        return this._readyState;
+    }
+
+    get connecting(): boolean {
+        return this._connecting;
+    }
+
+    async connect(): Promise<void> {
+        try {
+            this._checkIfOpenBackpack();
+
+            if (this.connected || this._connecting) {
+                return;
+            }
+
+            await this._checkWallet();
+
+            if (this._state === AdapterState.NotFound) {
+                if (this.config.openUrlWhenWalletNotFound && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
+            }
+
+            if (!this._wallet) {
+                throw new WalletNotFoundError();
+            }
+
+            this._connecting = true;
+
+            try {
+                const accounts = (await this._wallet.request({
+                    method: 'tron_requestAccounts',
+                })) as string[];
+
+                const address = accounts?.[0];
+                if (!address) {
+                    throw new WalletConnectionError('No address returned from Backpack wallet.');
+                }
+
+                this._setAddress(address);
+                this._setState(AdapterState.Connected);
+                this._listenProviderEvents();
+            } catch (error: any) {
+                if (error?.code === 4001) {
+                    throw new WalletConnectionError('The user rejected connection.');
+                }
+                throw new WalletConnectionError(error?.message || 'Failed to connect to Backpack wallet.', error);
+            }
+
+            this.emit('connect', this._address!);
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        } finally {
+            this._connecting = false;
+        }
+    }
+
+    async disconnect(): Promise<void> {
+        this._stopListenProviderEvents();
+
+        if (this._state !== AdapterState.Connected) {
+            return;
+        }
+
+        try {
+            if (this._wallet?.disconnect) {
+                await this._wallet.disconnect();
+            }
+        } catch {
+            // Ignore disconnect errors
+        }
+
+        this._setAddress(null);
+        this._setState(AdapterState.Disconnect);
+        this.emit('disconnect');
+    }
+
+    async signMessage(message: string): Promise<string> {
+        try {
+            const wallet = this._checkConnected();
+
+            try {
+                return (await wallet.request({
+                    method: 'tron_signMessage',
+                    params: { message },
+                })) as string;
+            } catch (error: any) {
+                throw new WalletSignMessageError(error?.message || 'Failed to sign message.', error);
+            }
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        }
+    }
+
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        try {
+            const wallet = this._checkConnected();
+            try {
+                return (await wallet.request({
+                    method: 'tron_signTransaction',
+                    params: { transaction },
+                })) as SignedTransaction;
+            } catch (error: any) {
+                throw new WalletSignTransactionError(error?.message || 'Failed to sign transaction.', error);
+            }
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        }
+    }
+
+    async multiSign(): Promise<unknown> {
+        throw new WalletSignTransactionError('Multi-sign method not implemented for Backpack wallet.');
+    }
+
+    /**
+     * Switch to target chain. If current chain is the same as target chain, the call will success immediately.
+     * Available chainIds:
+     * - Mainnet: 0x2b6653dc
+     * - Shasta: 0x94a9059e
+     * - Nile: 0xcd8690dc
+     * @param chainId chainId
+     */
+    async switchChain(chainId: string): Promise<void> {
+        try {
+            const wallet = this._checkConnected();
+            await wallet.request({
+                method: 'tron_switchChain',
+                params: { chainId: `tron:${parseInt(chainId, 16).toString()}` },
+            });
+            this.emit('chainChanged', { chainId });
+        } catch (error: any) {
+            const err =
+                error instanceof WalletError
+                    ? error
+                    : new WalletSwitchChainError(
+                          error?.message
+                              ? error.message.replace(
+                                    /tron:(\d+)/g,
+                                    (_: string, p1: string) => `0x${parseInt(p1, 10).toString(16)}`
+                                )
+                              : 'Failed to switch chain.',
+                          error
+                      );
+
+            this.emit('error', err);
+            throw err;
+        }
+    }
+
+    async network(): Promise<Network> {
+        try {
+            const wallet = this._checkConnected();
+            const chainId = (await wallet.request({ method: 'tron_chainId' })) as string;
+            return {
+                networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
+                chainId,
+                fullNode: '',
+                solidityNode: '',
+                eventServer: '',
+            };
+        } catch (error: any) {
+            const err =
+                error instanceof WalletError
+                    ? error
+                    : new WalletGetNetworkError(error?.message || 'Failed to get network.', error);
+            this.emit('error', err);
+            throw err;
+        }
+    }
+
+    private _checkConnected(): BackpackTronProvider {
+        if (!this._wallet || !this.connected) {
+            throw new WalletDisconnectedError();
+        }
+        return this._wallet;
+    }
+
+    private _checkIfOpenBackpack(): void {
+        if (this.config.openAppWithDeeplink === false) {
+            return;
+        }
+        if (openBackpack()) {
+            throw new WalletNotFoundError();
+        }
+    }
+
+    private _checkPromise: Promise<boolean> | null = null;
+
+    private _checkWallet(): Promise<boolean> {
+        if (this._readyState === WalletReadyState.Found) {
+            return Promise.resolve(true);
+        }
+        if (this._checkPromise) {
+            return this._checkPromise;
+        }
+
+        const interval = 100;
+        const maxTimes = Math.floor(this.config.checkTimeout / interval);
+        let times = 0;
+        let timer: ReturnType<typeof setInterval>;
+
+        this._checkPromise = new Promise((resolve) => {
+            const check = () => {
+                times++;
+                const isSupport = supportBackpack();
+                if (isSupport || times > maxTimes) {
+                    timer && clearInterval(timer);
+                    this._readyState = isSupport ? WalletReadyState.Found : WalletReadyState.NotFound;
+                    this._updateWallet();
+                    this.emit('readyStateChanged', this._readyState);
+                    resolve(isSupport);
+                }
+            };
+            timer = setInterval(check, interval);
+            check();
+        });
+
+        return this._checkPromise;
+    }
+
+    private _updateWallet(): void {
+        const provider = getBackpackProvider();
+
+        if (provider) {
+            this._wallet = provider;
+            this._listenProviderEvents();
+
+            // Check for existing connection
+            this._checkExistingConnection();
+        } else {
+            this._wallet = null;
+            this._setAddress(null);
+            this._setState(AdapterState.NotFound);
+        }
+    }
+
+    private async _checkExistingConnection(): Promise<void> {
+        if (!this._wallet) return;
+        try {
+            const accounts = (await this._wallet.request({
+                method: 'tron_accounts',
+            })) as string[];
+            this._onAccountsChanged(accounts);
+        } catch (e: any) {
+            console.error(`[BackpackAdapter] check existing connection error: `, e);
+            // On error, assume disconnected
+            this._onAccountsChanged([]);
+        }
+    }
+
+    private _listenProviderEvents(): void {
+        this._stopListenProviderEvents();
+        this._wallet?.on?.('accountsChanged', this._onAccountsChanged);
+        this._wallet?.on?.('chainChanged', this._onChainChanged);
+    }
+
+    private _stopListenProviderEvents(): void {
+        this._wallet?.removeListener?.('accountsChanged', this._onAccountsChanged);
+        this._wallet?.removeListener?.('chainChanged', this._onChainChanged);
+    }
+
+    private _onAccountsChanged = (accounts: string[]) => {
+        const prevAddress = this._address;
+        const newAddress = accounts?.[0] || null;
+        this._setAddress(newAddress);
+        this._setState(newAddress ? AdapterState.Connected : AdapterState.Disconnect);
+        this.emit('accountsChanged', newAddress || '', prevAddress || '');
+        if (prevAddress && !newAddress) {
+            this.emit('disconnect');
+        } else if (!prevAddress && newAddress) {
+            this.emit('connect', newAddress);
+        }
+    };
+
+    private _onChainChanged = (chainData: unknown) => {
+        const chainId = typeof chainData === 'string' ? chainData : (chainData as { chainId?: string })?.chainId || '';
+        this.emit('chainChanged', { chainId });
+    };
+
+    private _setAddress(address: string | null): void {
+        this._address = address;
+    }
+
+    private _setState(state: AdapterState): void {
+        if (this._state !== state) {
+            this._state = state;
+            this.emit('stateChanged', state);
+        }
+    }
+}
