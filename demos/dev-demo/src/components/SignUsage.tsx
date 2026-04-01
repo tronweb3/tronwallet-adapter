@@ -7,8 +7,7 @@ import { useWallet } from './WalletProvider';
 import { CHAIN_ID, TRONSCAN_URL } from '../config';
 import { tronWeb } from '../tronweb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import type { BinanceWalletAdapter, LedgerAdapter } from '@tronweb3/tronwallet-adapters';
-import { BinanceWalletAdapterName } from '@tronweb3/tronwallet-adapters';
+import type { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
@@ -90,7 +89,7 @@ export default function SignUsage() {
   const [receiver, setReceiver] = useState('');
   const [signature, setSignature] = useState('');
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Verify Message'>('Transfer');
+  const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Verify Message' | 'Sign TypedData'>('Transfer');
   const onSignMessage = async () => {
     if (!adapter) {
       return;
@@ -116,6 +115,48 @@ export default function SignUsage() {
     setSuccess(recoveredAddress === adapter.address);
     setOpen(true);
     setTitle('Verify Message');
+  };
+  const onSignTypedData = async () => {
+    if (!adapter) {
+      return;
+    }
+    try {
+      const typedData = {
+        domain: {
+          name: 'Permit',
+          version: '1',
+          chainId: (await (adapter as TronLinkAdapter).network()).chainId,
+          verifyingContract: adapter.address,
+        },
+        types: {
+          Permit: [
+            { name: 'owner', type: 'address' },
+            { name: 'spender', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'nonce', type: 'uint256' },
+            { name: 'deadline', type: 'uint256' },
+          ],
+        },
+        message: {
+          owner: adapter.address || '',
+          spender: adapter.address,
+          value: '1000000',
+          nonce: '0',
+          deadline: '9999999999',
+        },
+      };
+      const res = await adapter.signTypedData(typedData);
+      const verified = tronWeb.trx.verifyTypedData(typedData.domain, typedData.types, typedData.message, res, adapter.address || '');
+      setSignature(res);
+      setSuccess(verified);
+      setOpen(true);
+      setTitle('Sign TypedData');
+    } catch (e) {
+      console.log(e);
+      setSuccess(false);
+      setOpen(true);
+      setTitle('Sign TypedData');
+    }
   };
   const onTransfer = async () => {
     if (!adapter || !receiver) {
@@ -172,6 +213,22 @@ export default function SignUsage() {
     if (title === 'Verify Message') {
       return <InformAlertText>{success ? 'Success! The signature is valid' : 'Failed to verify the signature'}</InformAlertText>;
     }
+    if (title === 'Sign TypedData') {
+      return (
+        <InformAlertText>
+          {success ? (
+            <>
+              Success! The signature is{' '}
+              <i>
+                {signature?.slice(0, 6)}...{signature?.slice(-6)}
+              </i>
+            </>
+          ) : (
+            'Failed to sign typed data'
+          )}
+        </InformAlertText>
+      );
+    }
   }, [title, success, signature, connectionState.chainId, connectionState.address]);
 
   const [isReceiverError, setIsReceiverError] = useState(false);
@@ -187,6 +244,9 @@ export default function SignUsage() {
       </Button>
       <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage}>
         Verify Signed Message
+      </Button>
+      <Button disabled={!connectionState.connected} onClick={onSignTypedData} sx={{ marginTop: '20px' }}>
+        Sign TypedData (TIP-712)
       </Button>
       <MessageInput placeholder="Receiver Address" disableUnderline={!isReceiverError} value={receiver} onChange={(e) => setReceiver(e.target.value)} error={isReceiverError} />
       <Button disabled={!connectionState.connected || isReceiverError} onClick={onTransfer}>
