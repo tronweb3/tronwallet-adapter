@@ -89,32 +89,24 @@ export default function SignUsage() {
   const [receiver, setReceiver] = useState('');
   const [signature, setSignature] = useState('');
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Verify Message' | 'Sign TypedData'>('Transfer');
+  const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Sign TypedData'>('Transfer');
   const onSignMessage = async () => {
     if (!adapter) {
       return;
     }
-    let res;
     try {
-      res = await adapter.signMessage(message);
+      const res = await adapter.signMessage(message);
+      const recoveredAddress = await tronWeb.trx.verifyMessageV2(message, res);
+      setSignature(res as any);
+      setSuccess(recoveredAddress === adapter.address);
+      setOpen(true);
+      setTitle('Sign Message');
     } catch (e) {
       console.log(e);
-      return;
+      setSuccess(false);
+      setOpen(true);
+      setTitle('Sign Message');
     }
-
-    setSignature(res as any);
-    setSuccess(true);
-    setOpen(true);
-    setTitle('Sign Message');
-  };
-  const onVerifySignedMessage = async () => {
-    if (!adapter) {
-      return;
-    }
-    const recoveredAddress = await tronWeb.trx.verifyMessageV2(message, signature);
-    setSuccess(recoveredAddress === adapter.address);
-    setOpen(true);
-    setTitle('Verify Message');
   };
   const onSignTypedData = async () => {
     if (!adapter) {
@@ -210,9 +202,6 @@ export default function SignUsage() {
         </InformAlertText>
       );
     }
-    if (title === 'Verify Message') {
-      return <InformAlertText>{success ? 'Success! The signature is valid' : 'Failed to verify the signature'}</InformAlertText>;
-    }
     if (title === 'Sign TypedData') {
       return (
         <InformAlertText>
@@ -239,11 +228,8 @@ export default function SignUsage() {
     <UsageBox background="linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)">
       <UsageTitle>Sign Usage</UsageTitle>
       <MessageInput placeholder="Message to sign" disableUnderline={true} value={message} onChange={(e) => setMessage(e.target.value)} />
-      <Button disabled={!connectionState.connected} onClick={onSignMessage} sx={{ marginBottom: '20px' }}>
+      <Button disabled={!connectionState.connected} onClick={onSignMessage}>
         Sign Message
-      </Button>
-      <Button disabled={!connectionState.connected} onClick={onVerifySignedMessage}>
-        Verify Signed Message
       </Button>
       <Button disabled={!connectionState.connected} onClick={onSignTypedData} sx={{ marginTop: '20px' }}>
         Sign TypedData (TIP-712)

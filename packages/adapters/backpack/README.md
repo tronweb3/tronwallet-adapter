@@ -1,6 +1,6 @@
 # @tronweb3/tronwallet-adapter-backpack
 
-Backpack wallet adapter for Backpack Wallet extension and App wallet.
+Backpack wallet adapter for Backpack Wallet browser extension.
 
 ## Installation
 
@@ -92,7 +92,7 @@ try {
 
 If the adapter cannot detect Backpack wallet:
 
-1. Ensure Backpack extension/app is installed
+1. Ensure Backpack browser extension is installed
 2. Refresh the page after installing the extension
 3. Check browser console for errors
 

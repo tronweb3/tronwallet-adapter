@@ -18,7 +18,7 @@ import {
     type SignedTransaction,
     type Transaction,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import { getBackpackProvider, openBackpack, supportBackpack, type BackpackTronProvider } from './utils.js';
+import { getBackpackProvider, supportBackpack, type BackpackTronProvider } from './utils.js';
 
 const chainIdNetworkMap: Record<string, NetworkType> = {
     '0x2b6653dc': NetworkType.Mainnet,
@@ -32,11 +32,6 @@ export interface BackpackAdapterConfig extends BaseAdapterConfig {
      * Default is 2000ms
      */
     checkTimeout?: number;
-    /**
-     * Set if open Backpack app using DeepLink on mobile.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
 }
 
 export const BackpackAdapterName = 'Backpack' as AdapterName<'Backpack'>;
@@ -56,7 +51,7 @@ export class BackpackAdapter extends Adapter {
 
     constructor(config: BackpackAdapterConfig = {}) {
         super();
-        const { checkTimeout = 2000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = true } = config;
+        const { checkTimeout = 2000, openUrlWhenWalletNotFound = true } = config;
 
         if (typeof checkTimeout !== 'number') {
             throw new Error('[BackpackAdapter] config.checkTimeout should be a number');
@@ -65,7 +60,6 @@ export class BackpackAdapter extends Adapter {
         this.config = {
             checkTimeout,
             openUrlWhenWalletNotFound,
-            openAppWithDeeplink,
         };
 
         if (supportBackpack()) {
@@ -94,8 +88,6 @@ export class BackpackAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            this._checkIfOpenBackpack();
-
             if (this.connected || this._connecting) {
                 return;
             }
@@ -266,15 +258,6 @@ export class BackpackAdapter extends Adapter {
         return this._wallet;
     }
 
-    private _checkIfOpenBackpack(): void {
-        if (this.config.openAppWithDeeplink === false) {
-            return;
-        }
-        if (openBackpack()) {
-            throw new WalletNotFoundError();
-        }
-    }
-
     private _checkPromise: Promise<boolean> | null = null;
 
     private _checkWallet(): Promise<boolean> {
@@ -341,13 +324,21 @@ export class BackpackAdapter extends Adapter {
 
     private _listenProviderEvents(): void {
         this._stopListenProviderEvents();
-        this._wallet?.on?.('accountsChanged', this._onAccountsChanged);
-        this._wallet?.on?.('chainChanged', this._onChainChanged);
+        try {
+            this._wallet?.on?.('accountsChanged', this._onAccountsChanged);
+            this._wallet?.on?.('chainChanged', this._onChainChanged);
+        } catch {
+            // do nothing
+        }
     }
 
     private _stopListenProviderEvents(): void {
-        this._wallet?.removeListener?.('accountsChanged', this._onAccountsChanged);
-        this._wallet?.removeListener?.('chainChanged', this._onChainChanged);
+        try {
+            this._wallet?.removeListener?.('accountsChanged', this._onAccountsChanged);
+            this._wallet?.removeListener?.('chainChanged', this._onChainChanged);
+        } catch {
+            // do nothing
+        }
     }
 
     private _onAccountsChanged = (accounts: string[]) => {

@@ -1,4 +1,4 @@
-import { isInBrowser, isInMobileBrowser } from '@tronweb3/tronwallet-abstract-adapter';
+import { isInBrowser } from '@tronweb3/tronwallet-abstract-adapter';
 
 export interface BackpackTronProvider {
     isBackpack?: boolean;
@@ -38,24 +38,4 @@ export function supportBackpack(): boolean {
 export function getBackpackProvider(): BackpackTronProvider | null {
     if (!isInBrowser()) return null;
     return window.backpack?.tron || (window.tron?.isBackpack ? window.tron : null) || null;
-}
-
-/**
- * Check if running inside Backpack app
- */
-export function isInBackpackApp(): boolean {
-    if (typeof navigator === 'undefined') return false;
-    return /Backpack/i.test(navigator.userAgent);
-}
-
-/**
- * Open Backpack app via deep link on mobile
- */
-export function openBackpack(): boolean {
-    if (isInMobileBrowser() && !isInBackpackApp()) {
-        const currentUrl = encodeURIComponent(window.location.href);
-        window.location.href = `https://backpack.app/ul/browse/${currentUrl}`;
-        return true;
-    }
-    return false;
 }
