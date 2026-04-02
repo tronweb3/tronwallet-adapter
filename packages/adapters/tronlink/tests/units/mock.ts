@@ -31,6 +31,9 @@ export class MockTronWeb implements TronWeb {
         multiSign() {
             return Promise.resolve();
         },
+        _signTypedData() {
+            return Promise.resolve('');
+        },
         async getBlockByNumber() {
             return Promise.resolve({
                 blockID: '0000000a93d9e9372efcd8690dc',

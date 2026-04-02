@@ -51,11 +51,9 @@ describe('BackpackAdapter', () => {
         const adapter = new BackpackAdapter({
             checkTimeout: 5000,
             openUrlWhenWalletNotFound: false,
-            openAppWithDeeplink: false,
         });
         expect(adapter.config.checkTimeout).toEqual(5000);
         expect(adapter.config.openUrlWhenWalletNotFound).toEqual(false);
-        expect(adapter.config.openAppWithDeeplink).toEqual(false);
     });
 
     test('should throw error for invalid checkTimeout', () => {
@@ -329,7 +327,7 @@ describe('BackpackAdapter - network()', () => {
         provider.request = vi.fn().mockImplementation((args) => {
             if (args.method === 'tron_requestAccounts') return Promise.resolve([address]);
             if (args.method === 'tron_accounts') return Promise.resolve([address]);
-            if (args.method === 'tron_chainId') return Promise.resolve('tron:728126428');
+            if (args.method === 'tron_chainId') return Promise.resolve('0x2b6653dc');
             return Promise.reject(new Error('Unknown method'));
         });
 

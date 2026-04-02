@@ -6,6 +6,7 @@ import {
     WalletReadyState,
     WalletSignMessageError,
     WalletSignTransactionError,
+    WalletSignTypedDataError,
     WalletSwitchChainError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type { TronWeb } from '../../src/types.js';
@@ -712,6 +713,77 @@ describe('methods should work fine', () => {
 
             await expect(adapter.multiSign({} as any)).rejects.toThrow('multiSign error');
             await expect(adapter.multiSign({} as any)).rejects.toThrow(WalletSignTransactionError);
+            expect(onError).toHaveBeenCalled();
+        });
+    });
+
+    describe('signTypedData() should work fine', () => {
+        const mockTypedData = {
+            domain: {
+                name: 'Permit',
+                version: '1',
+                chainId: '0x2b6653dc',
+                verifyingContract: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+            },
+            types: {
+                Permit: [
+                    { name: 'owner', type: 'address' },
+                    { name: 'spender', type: 'address' },
+                    { name: 'value', type: 'uint256' },
+                ],
+            },
+            message: {
+                owner: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+                spender: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+                value: '1000000',
+            },
+        };
+
+        test('when there is no wallet', async () => {
+            window.tron = undefined;
+            adapter = new TronLinkAdapter();
+            vi.advanceTimersByTime(ONE_MINUTE);
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletDisconnectedError);
+            await wait();
+            expect(onError).toHaveBeenCalledTimes(1);
+        });
+        test('when wallet is disconnected', async () => {
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletDisconnectedError);
+            expect(onError).toHaveBeenCalledTimes(1);
+        });
+        test('when signTypedData successfully', async () => {
+            tron.request = () => Promise.resolve(['address']);
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            tron._setAddress('address');
+            await adapter.connect();
+            const _signTypedData: any = vi.fn(() => Promise.resolve('signedTypedData'));
+            (tron.tronWeb as TronWeb).trx._signTypedData = _signTypedData;
+
+            const result = await adapter.signTypedData(mockTypedData);
+            expect(_signTypedData).toHaveBeenCalledWith(
+                mockTypedData.domain,
+                mockTypedData.types,
+                mockTypedData.message
+            );
+            expect(result).toBe('signedTypedData');
+            expect(onError).not.toHaveBeenCalled();
+        });
+        test('when signTypedData with error', async () => {
+            tron.request = () => Promise.resolve(['address']);
+            const onError = vi.fn();
+            tron._setAddress('address');
+            adapter = new TronLinkAdapter();
+            adapter.on('error', onError);
+            const _signTypedData: any = vi.fn(() => Promise.reject('signTypedData error'));
+            (tron.tronWeb as TronWeb).trx._signTypedData = _signTypedData;
+
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow('signTypedData error');
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletSignTypedDataError);
             expect(onError).toHaveBeenCalled();
         });
     });
