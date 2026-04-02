@@ -270,7 +270,7 @@ const SectionSign = memo(function SectionSign({ adapter, connected }: { adapter:
   async function onSignTransaction() {
     const cid = await adapter.network();
     const tx = { value: '0x' + Number(11).toString(16), to: receiver, from: adapter.address, chainId: cid };
-    await adapter.sendTransaction(tx);
+    await adapter.sendTransaction(adapter.name === 'Trust Wallet' ? { ...tx, data: '0x' } : tx);
   }
 
   const onSignMessage = useCallback(async () => {

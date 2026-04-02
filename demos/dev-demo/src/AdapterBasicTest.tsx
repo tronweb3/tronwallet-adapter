@@ -164,7 +164,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
       from: adapter.address,
       chainId: chainId,
     };
-    const signedTransaction = await adapter.sendTransaction(transaction);
+    const signedTransaction = await adapter.sendTransaction(adapter.name === 'Trust Wallet' ? { ...transaction, data: '0x' } : transaction);
     setOpen(true);
   }
 

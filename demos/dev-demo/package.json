@@ -51,12 +51,16 @@
     "@ledgerhq/errors": "6.10.0",
     "@ledgerhq/devices": "6.27.1",
     "@ledgerhq/hw-transport": "6.27.1",
-    "@ledgerhq/hw-transport-webhid": "6.27.1"
+    "@ledgerhq/hw-transport-webhid": "6.27.1",
+    "lodash": "4.18.1",
+    "lodash-es": "4.18.1"
   },
   "resolutions": {
     "@ledgerhq/errors": "6.10.0",
     "@ledgerhq/devices": "6.27.1",
     "@ledgerhq/hw-transport": "6.27.1",
-    "@ledgerhq/hw-transport-webhid": "6.27.1"
+    "@ledgerhq/hw-transport-webhid": "6.27.1",
+    "lodash": "4.18.1",
+    "lodash-es": "4.18.1"
   }
 }
