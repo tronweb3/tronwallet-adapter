@@ -85,6 +85,7 @@ try {
 -   Backpack wallet does not support `multiSign`.
 -   Backpack wallet only support `Mainnet` and `Shasta`.
 -   Backpack extension cannot be connected automatically after page refresh.
+-   Backpack extension events cannot work fine currently.
 
 ## Troubleshooting
 
