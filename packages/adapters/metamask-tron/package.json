@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-metamask-tron",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Wallet adapter for MetaMask Extension and App Wallet on TRON.",
     "keywords": [
         "TRON",
