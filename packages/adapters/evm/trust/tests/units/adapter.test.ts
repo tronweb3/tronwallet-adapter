@@ -39,7 +39,10 @@ async function settleProviderDetection() {
 }
 
 describe('TrustEvmAdapter', () => {
+    let cleanupFns: (() => void)[];
+
     beforeEach(() => {
+        cleanupFns = [];
         vi.useFakeTimers();
         // @ts-ignore
         window.ethereum = undefined;
@@ -48,8 +51,10 @@ describe('TrustEvmAdapter', () => {
     });
 
     afterEach(() => {
+        for (const fn of cleanupFns) fn();
         vi.clearAllTimers();
         vi.restoreAllMocks();
+        vi.unstubAllGlobals();
     });
 
     test('base props should be valid when provider is unavailable', async () => {
@@ -69,39 +74,35 @@ describe('TrustEvmAdapter', () => {
 
     test('should discover Trust Wallet provider via EIP-6963', async () => {
         const provider = new TrustWalletProvider();
-        const cleanup = installTrustWalletProvider(provider);
+        cleanupFns.push(installTrustWalletProvider(provider));
 
         const adapter = new TrustEvmAdapter();
         await flushPromises();
 
         expect(adapter.readyState).toEqual('Found');
         await expect(adapter.getProvider()).resolves.toBe(provider);
-
-        cleanup();
     });
 
     test('should prefer Trust Wallet provider when multiple wallets are announced', async () => {
-        const cleanupOther = installTrustWalletProvider(new TrustWalletProvider(), {
-            name: 'Other Wallet',
-            rdns: 'io.other.wallet',
-        });
+        cleanupFns.push(
+            installTrustWalletProvider(new TrustWalletProvider(), {
+                name: 'Other Wallet',
+                rdns: 'io.other.wallet',
+            })
+        );
         const trustProvider = new TrustWalletProvider();
-        const cleanupTrust = installTrustWalletProvider(trustProvider);
+        cleanupFns.push(installTrustWalletProvider(trustProvider));
 
         const adapter = new TrustEvmAdapter();
         await flushPromises();
 
         await expect(adapter.getProvider()).resolves.toBe(trustProvider);
-
-        cleanupOther();
-        cleanupTrust();
     });
 
     test('should auto connect by eth_accounts', async () => {
         const provider = new TrustWalletProvider();
         provider._setAccountsRes(['0x123']);
-        // @ts-ignore
-        window.trustwallet = { ethereum: provider };
+        cleanupFns.push(installTrustWalletProvider(provider));
 
         const adapter = new TrustEvmAdapter();
         await settleProviderDetection();
@@ -113,8 +114,7 @@ describe('TrustEvmAdapter', () => {
     test('connect should work fine when provider returns account list', async () => {
         const provider = new TrustWalletProvider();
         provider._setRequestAccountsRes(['0xabc']);
-        // @ts-ignore
-        window.trustwallet = { ethereum: provider };
+        cleanupFns.push(installTrustWalletProvider(provider));
 
         const adapter = new TrustEvmAdapter();
         const addressPromise = adapter.connect();
@@ -142,8 +142,7 @@ describe('TrustEvmAdapter', () => {
             message: 'User rejected the request.',
             code: 4001,
         });
-        // @ts-ignore
-        window.trustwallet = { ethereum: provider };
+        cleanupFns.push(installTrustWalletProvider(provider));
 
         const adapter = new TrustEvmAdapter();
         const connectPromise = adapter.connect();
@@ -181,11 +180,15 @@ describe('TrustEvmAdapter', () => {
         );
     });
 
-    test('should discover injected Trust Wallet provider on mobile browsers', async () => {
+    test('should discover Trust Wallet provider via EIP-6963 on mobile webview', async () => {
         const provider = new TrustWalletProvider();
         provider._setAccountsRes(['0x123']);
+        // Simulate Trust Wallet mobile WebView by injecting trustwallet namespace
+        // so isTrustWalletMobileWebView() returns true
         // @ts-ignore
-        window.trustwallet = { ethereum: provider };
+        window.ethereum = provider;
+        cleanupFns.push(installTrustWalletProvider(provider));
+
         vi.stubGlobal('navigator', {
             ...window.navigator,
             userAgent:
@@ -204,11 +207,11 @@ describe('TrustEvmAdapter', () => {
         const provider = new TrustWalletProvider();
         provider._setAccountsRes(['0x123']);
         provider._setSignTypedDataRes('0xsigned');
-        // @ts-ignore
-        window.trustwallet = { ethereum: provider };
+        cleanupFns.push(installTrustWalletProvider(provider));
 
         const adapter = new TrustEvmAdapter();
         await settleProviderDetection();
+        await flushPromises();
 
         const request = vi.spyOn(provider, 'request');
         const signature = await adapter.signTypedData({ typedData });

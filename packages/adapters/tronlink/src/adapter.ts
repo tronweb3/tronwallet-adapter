@@ -87,7 +87,7 @@ export interface TronLinkAdapterConfig extends BaseAdapterConfig {
 }
 
 export const TronLinkAdapterName = 'TronLink' as AdapterName<'TronLink'>;
-const TRONLINK_RDNS = 'com.tronlink.wallet';
+const TRONLINK_RDNS = 'org.tronlink.www';
 const DESKTOP_TIP6963_FALLBACK_DELAY = 300;
 
 export class TronLinkAdapter extends Adapter {
@@ -136,10 +136,7 @@ export class TronLinkAdapter extends Adapter {
             this.setState(AdapterState.NotFound);
             return;
         }
-        if (!isInMobileBrowser() && this.isLegacyTronLinkProvider(window.tron)) {
-            this._readyState = WalletReadyState.Found;
-            this._updateWallet();
-        } else if (!isInMobileBrowser() && isInBrowser()) {
+        if (!isInMobileBrowser()) {
             this._checkWallet().then(() => {
                 if (this.connected) {
                     this.emit('connect', this.address || '');
@@ -439,17 +436,32 @@ export class TronLinkAdapter extends Adapter {
                 let handled = false;
                 let timer: ReturnType<typeof setTimeout> | null = null;
                 let interval: ReturnType<typeof setInterval> | null = null;
+                let handler: ((event: TIP6963AnnounceProviderEvent) => void) | null = null;
+
+                const cleanupDesktopDetection = () => {
+                    if (interval) {
+                        clearInterval(interval);
+                        interval = null;
+                    }
+                    if (timer) {
+                        clearTimeout(timer);
+                        timer = null;
+                    }
+                    if (typeof window !== 'undefined' && handler) {
+                        window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
+                    }
+                };
 
                 const finishWithLegacyDetection = () => {
                     if (handled) {
                         return;
                     }
                     handled = true;
-                    if (interval) {
-                        clearInterval(interval);
-                        interval = null;
+                    cleanupDesktopDetection();
+                    if (typeof window === 'undefined') {
+                        resolve(false);
+                        return;
                     }
-                    window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
                     // Fallback to legacy detection
                     this._updateWallet();
                     const isSupport = this.state !== AdapterState.NotFound;
@@ -463,7 +475,7 @@ export class TronLinkAdapter extends Adapter {
                     this.hasDesktopLegacyTronLinkProvider() ? DESKTOP_TIP6963_FALLBACK_DELAY : this.config.checkTimeout
                 );
 
-                const handler = (event: TIP6963AnnounceProviderEvent) => {
+                handler = (event: TIP6963AnnounceProviderEvent) => {
                     if (handled) {
                         return;
                     }
@@ -483,15 +495,7 @@ export class TronLinkAdapter extends Adapter {
                         this.setAddress(address);
                         this.setState(state);
                         this.emit('readyStateChanged', this.readyState);
-                        if (interval) {
-                            clearInterval(interval);
-                            interval = null;
-                        }
-                        window.removeEventListener(TIP6963AnnounceProviderEventName, handler);
-                        if (timer) {
-                            clearTimeout(timer);
-                            timer = null;
-                        }
+                        cleanupDesktopDetection();
                         resolve(true);
                     }
                 };

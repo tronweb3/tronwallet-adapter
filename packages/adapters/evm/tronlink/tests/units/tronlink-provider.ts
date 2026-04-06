@@ -27,10 +27,10 @@ export function installTronLinkEIP6963Provider(
 ) {
     const detail = {
         info: {
-            uuid: `${options.rdns || 'org.tronlink.app'}-${options.name || 'TronLink'}`,
+            uuid: `${options.rdns || 'org.tronlink.www'}-${options.name || 'TronLink'}`,
             name: options.name || 'TronLink',
             icon: '',
-            rdns: options.rdns || 'org.tronlink.app',
+            rdns: options.rdns || 'org.tronlink.www',
         },
         provider,
     };

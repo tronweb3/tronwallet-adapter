@@ -14,7 +14,7 @@ import {
     isInBrowser,
     WalletError,
 } from '@tronweb3/abstract-adapter-evm';
-import { getTronLinkEvmProvider } from './utils.js';
+import { getTronLinkEvmProvider, TRONLINK_EVM_RDNS } from './utils.js';
 
 declare global {
     interface Window {
@@ -44,42 +44,40 @@ export class TronLinkEvmAdapter extends Adapter {
         this.options = options;
         this.eip6963Info.support = true;
         this.eip6963Info.name = 'TronLink';
-        const provider = getTronLinkEvmProvider();
-        if (provider) {
-            this.readyState = WalletReadyState.Found;
-            this.listenEvents(provider);
-            this.autoConnect(provider);
-        } else {
-            this.getProvider().then((res) => {
-                if (res) {
-                    this.readyState = WalletReadyState.Found;
-                    this.listenEvents(res);
-                    this.autoConnect(res);
-                } else {
-                    this.readyState = WalletReadyState.NotFound;
-                }
-                this.emit('readyStateChanged', this.readyState);
-            });
-        }
+        this.eip6963Info.rdns = TRONLINK_EVM_RDNS;
+
+        void this.getProvider().then((provider) => {
+            if (provider) {
+                this.readyState = WalletReadyState.Found;
+                this.listenEvents(provider);
+                void this.autoConnect(provider);
+            } else {
+                this.readyState = WalletReadyState.NotFound;
+            }
+            this.emit('readyStateChanged', this.readyState);
+        });
     }
 
     async connect() {
         this.connecting = true;
 
-        const provider = await this.getProvider();
-        if (!provider) {
-            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                window.open(this.url, '_blank');
+        try {
+            const provider = await this.getProvider();
+            if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
             }
-            throw new WalletNotFoundError();
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
+            if (!accounts.length) {
+                throw new WalletConnectionError('No accounts is avaliable.');
+            }
+            this.address = accounts[0];
+            return this.address as string;
+        } finally {
+            this.connecting = false;
         }
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
-        if (!accounts.length) {
-            throw new WalletConnectionError('No accounts is avaliable.');
-        }
-        this.address = accounts[0];
-        this.connecting = false;
-        return this.address as string;
     }
 
     async signTypedData(params: { typedData: TypedData; address?: string }): Promise<string> {
@@ -95,7 +93,10 @@ export class TronLinkEvmAdapter extends Adapter {
     }
 
     protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
-        return Boolean((provider as any).isTronLink) || info?.name === this.eip6963Info.name;
+        if (!info?.rdns) {
+            return false;
+        }
+        return info.rdns === TRONLINK_EVM_RDNS;
     }
 
     async getProvider(): Promise<EIP1193Provider | null> {

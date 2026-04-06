@@ -102,6 +102,12 @@ describe('#AbstractAdapter', () => {
 
         await expect(detectAdapter.getProvider()).resolves.toBe(injectedProvider);
     });
+    test('#autoConnect() should swallow eth_accounts errors and reset address', async () => {
+        provider.request = vi.fn(() => Promise.reject(new Error('eth_accounts failed')));
+
+        await expect((adapter as any).autoConnect(provider)).resolves.toBeUndefined();
+        expect(adapter.address).toBeNull();
+    });
     test('#connected should be correct', () => {
         expect(adapter.connected).toEqual(true);
         adapter.address = '';

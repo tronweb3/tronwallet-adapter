@@ -2,9 +2,12 @@ import { isInBinance, getDeepLink, isExtensionInstalled } from '@binance/w3w-uti
 
 import { isInBrowser, isInMobileBrowser, type EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 
+export const BINANCE_RDNS = 'com.binance.wallet';
+
 export function supportBinanceEvm() {
     return isInBrowser() && (isExtensionInstalled() || isInBinance());
 }
+
 export function getBinanceEvmProvider(): null | EIP1193Provider {
     if (supportBinanceEvm()) {
         const context = window as Window & {
@@ -17,9 +20,7 @@ export function getBinanceEvmProvider(): null | EIP1193Provider {
             ...(context.ethereum?.providers || []),
         ].filter(Boolean) as EIP1193Provider[];
 
-        return (
-            providers.find((provider) => (provider as any).isBinance) || context.binancew3w?.ethereum || context.ethereum
-        );
+        return providers.find((provider) => (provider as any).isBinance) || null;
     }
     return null;
 }

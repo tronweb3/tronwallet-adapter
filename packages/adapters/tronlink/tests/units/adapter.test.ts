@@ -19,10 +19,10 @@ const noop = () => {
 function installTIP6963Provider(provider: MockTron, options: { name?: string; rdns?: string } = {}) {
     const detail = {
         info: {
-            uuid: `${options.rdns || 'com.tronlink.wallet'}-${options.name || 'TronLink'}`,
+            uuid: `${options.rdns || 'org.tronlink.www'}-${options.name || 'TronLink'}`,
             name: options.name || 'TronLink',
             icon: '',
-            rdns: options.rdns || 'com.tronlink.wallet',
+            rdns: options.rdns || 'org.tronlink.www',
         },
         provider,
     };
@@ -83,6 +83,44 @@ describe('TronLinkAdapter', function () {
             vi.advanceTimersByTime(ONE_MINUTE);
             await Promise.resolve();
             expect(adapter.state).toEqual(AdapterState.NotFound);
+        });
+        test('should not throw when desktop detection timer fires after window teardown', async () => {
+            const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+            const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document');
+            const originalNavigator = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+
+            new TronLinkAdapter({ checkTimeout: 100 });
+
+            try {
+                Object.defineProperty(globalThis, 'window', {
+                    configurable: true,
+                    writable: true,
+                    value: undefined,
+                });
+                Object.defineProperty(globalThis, 'document', {
+                    configurable: true,
+                    writable: true,
+                    value: undefined,
+                });
+                Object.defineProperty(globalThis, 'navigator', {
+                    configurable: true,
+                    writable: true,
+                    value: undefined,
+                });
+
+                expect(() => vi.advanceTimersByTime(200)).not.toThrow();
+                await Promise.resolve();
+            } finally {
+                if (originalWindow) {
+                    Object.defineProperty(globalThis, 'window', originalWindow);
+                }
+                if (originalDocument) {
+                    Object.defineProperty(globalThis, 'document', originalDocument);
+                }
+                if (originalNavigator) {
+                    Object.defineProperty(globalThis, 'navigator', originalNavigator);
+                }
+            }
         });
         test('should work fine when TronLink is installed but not connected', function () {
             (window as any).tronLink = {

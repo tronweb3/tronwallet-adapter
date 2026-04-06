@@ -3,7 +3,12 @@ import type { EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 
 export class BinanceProvider extends EventEmitter {
     isMetaMask = false;
-    isBinance = true;
+    isBinance: boolean;
+
+    constructor(options: { isBinance?: boolean } = {}) {
+        super();
+        this.isBinance = options.isBinance ?? true;
+    }
 
     request<P = unknown[], T = unknown>({ method }: { method: string; params?: P }): Promise<T> {
         if (method === 'eth_accounts') {

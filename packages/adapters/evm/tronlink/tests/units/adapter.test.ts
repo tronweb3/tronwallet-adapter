@@ -1,4 +1,5 @@
 import { vi, describe, beforeEach, test, expect } from 'vitest';
+import { WalletNotFoundError } from '@tronweb3/abstract-adapter-evm';
 import { TronLinkEvmAdapter } from '../../src/adapter.js';
 import { TronLinkProvider, installTronLinkEIP6963Provider } from './tronlink-provider.js';
 
@@ -45,5 +46,16 @@ describe('TronLinkEvmAdapter', () => {
         expect(adapter.address).toEqual('0x123');
 
         cleanup();
+    });
+
+    test('connect should reset connecting after WalletNotFoundError', async () => {
+        const adapter = new TronLinkEvmAdapter();
+        const res = adapter.connect();
+
+        vi.advanceTimersByTime(3100);
+        await flushPromises();
+
+        await expect(res).rejects.toBeInstanceOf(WalletNotFoundError);
+        expect(adapter.connecting).toBe(false);
     });
 });

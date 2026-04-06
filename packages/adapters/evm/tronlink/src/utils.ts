@@ -1,5 +1,7 @@
 import type { EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 
+export const TRONLINK_EVM_RDNS = 'org.tronlink.www';
+
 export function getTronLinkEvmProvider(): null | EIP1193Provider {
     const context = window as Window & {
         TronLinkEVM?: EIP1193Provider;

@@ -323,11 +323,15 @@ export abstract class Adapter<Name extends string = string>
         return provider;
     }
     protected async autoConnect(provider: EIP1193Provider) {
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
+        try {
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
 
-        this.address = accounts?.[0] || null;
-        if (this.address) {
-            this.emit('accountsChanged', accounts);
+            this.address = accounts?.[0] || null;
+            if (this.address) {
+                this.emit('accountsChanged', accounts);
+            }
+        } catch {
+            this.address = null;
         }
     }
 }

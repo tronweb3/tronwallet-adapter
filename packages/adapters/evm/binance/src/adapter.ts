@@ -8,7 +8,7 @@ import {
     isInBrowser,
     WalletError,
 } from '@tronweb3/abstract-adapter-evm';
-import { getBinanceEvmProvider, openBinanceWithDeeplink, supportBinanceEvm } from './utils.js';
+import { BINANCE_RDNS, getBinanceEvmProvider, openBinanceWithDeeplink, supportBinanceEvm } from './utils.js';
 
 export interface BinanceEvmAdapterOptions {
     useDeeplink?: boolean;
@@ -30,23 +30,19 @@ export class BinanceEvmAdapter extends Adapter {
         super();
         this.options = options;
         this.eip6963Info.support = true;
-        const provider = getBinanceEvmProvider();
-        if (provider) {
-            this.readyState = WalletReadyState.Found;
-            this.listenEvents(provider);
-            this.autoConnect(provider);
-        } else {
-            this.getProvider().then((res) => {
-                if (res) {
-                    this.readyState = WalletReadyState.Found;
-                    this.listenEvents(res);
-                    this.autoConnect(res);
-                } else {
-                    this.readyState = WalletReadyState.NotFound;
-                }
-                this.emit('readyStateChanged', this.readyState);
-            });
-        }
+        this.eip6963Info.name = 'Binance Wallet';
+        this.eip6963Info.rdns = BINANCE_RDNS;
+
+        void this.getProvider().then((provider) => {
+            if (provider) {
+                this.readyState = WalletReadyState.Found;
+                this.listenEvents(provider);
+                void this.autoConnect(provider);
+            } else {
+                this.readyState = WalletReadyState.NotFound;
+            }
+            this.emit('readyStateChanged', this.readyState);
+        });
     }
 
     async connect() {
@@ -58,35 +54,35 @@ export class BinanceEvmAdapter extends Adapter {
         }
         this.connecting = true;
 
-        const provider = await this.getProvider();
-        if (!provider) {
-            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                window.open(this.url, '_blank');
-            }
-            throw new WalletNotFoundError();
-        }
-        let accounts: string[] = [];
         try {
-            accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
-        } catch (e: any) {
-            throw new WalletConnectionError('Connection error: ' + e?.message, e);
+            const provider = await this.getProvider();
+            if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
+            }
+            let accounts: string[] = [];
+            try {
+                accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
+            } catch (e: any) {
+                throw new WalletConnectionError('Connection error: ' + e?.message, e);
+            }
+            if (!accounts.length) {
+                throw new WalletConnectionError('No accounts is avaliable.');
+            }
+            this.address = accounts[0];
+            this.emit('accountsChanged', accounts);
+            return this.address as string;
+        } finally {
+            this.connecting = false;
         }
-        if (!accounts.length) {
-            throw new WalletConnectionError('No accounts is avaliable.');
-        }
-        this.address = accounts[0];
-        this.connecting = false;
-        this.emit('accountsChanged', accounts);
-        return this.address as string;
     }
 
     async addChain(): Promise<null> {
         throw new WalletError('[BinanceEvm] The wallet does not support addChain() currently.');
     }
 
-    protected getInjectedProvider(): EIP1193Provider | null {
-        return getBinanceEvmProvider();
-    }
     protected listenEvents(provider: EIP1193Provider) {
         // Fix error when use binance extension in unsupported region
         try {
@@ -113,14 +109,25 @@ export class BinanceEvmAdapter extends Adapter {
         this.emit('accountsChanged', accounts);
     };
     protected async autoConnect(provider: EIP1193Provider) {
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
-        this.address = accounts?.[0] || null;
-        if (this.address) {
-            this.emit('accountsChanged', accounts);
+        try {
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
+            this.address = accounts?.[0] || null;
+            if (this.address) {
+                this.emit('accountsChanged', accounts);
+            }
+        } catch {
+            this.address = null;
         }
     }
 
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return getBinanceEvmProvider();
+    }
+
     protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
-        return Boolean((provider as any).isBinance) || !!info?.name?.toLowerCase().includes('binance');
+        if (!info?.rdns) {
+            return false;
+        }
+        return info.rdns === BINANCE_RDNS;
     }
 }

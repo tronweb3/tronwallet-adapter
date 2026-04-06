@@ -8,7 +8,7 @@ import {
     isInBrowser,
     WalletDisconnectedError,
 } from '@tronweb3/abstract-adapter-evm';
-import { getMetaMaskProvider, isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
+import { isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
 declare global {
     interface Window {
         ethereum: EIP1193Provider;
@@ -38,23 +38,17 @@ export class MetaMaskEvmAdapter extends Adapter {
         this.eip6963Info.support = true;
         this.eip6963Info.name = 'MetaMask';
         this.eip6963Info.rdns = METAMASK_RDNS;
-        const provider = getMetaMaskProvider();
-        if (provider) {
-            this.readyState = WalletReadyState.Found;
-            this.listenEvents(provider);
-            this.autoConnect(provider);
-        } else {
-            this.getProvider().then((res) => {
-                if (res) {
-                    this.readyState = WalletReadyState.Found;
-                    this.listenEvents(res);
-                    this.autoConnect(res);
-                } else {
-                    this.readyState = WalletReadyState.NotFound;
-                }
-                this.emit('readyStateChanged', this.readyState);
-            });
-        }
+
+        void this.getProvider().then((provider) => {
+            if (provider) {
+                this.readyState = WalletReadyState.Found;
+                this.listenEvents(provider);
+                void this.autoConnect(provider);
+            } else {
+                this.readyState = WalletReadyState.NotFound;
+            }
+            this.emit('readyStateChanged', this.readyState);
+        });
     }
 
     async connect() {
@@ -66,20 +60,23 @@ export class MetaMaskEvmAdapter extends Adapter {
         }
         this.connecting = true;
 
-        const provider = await this.getProvider();
-        if (!provider) {
-            if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                window.open(this.url, '_blank');
+        try {
+            const provider = await this.getProvider();
+            if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
             }
-            throw new WalletNotFoundError();
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
+            if (!accounts.length) {
+                throw new WalletConnectionError('No accounts is avaliable.');
+            }
+            this.address = accounts[0];
+            return this.address as string;
+        } finally {
+            this.connecting = false;
         }
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
-        if (!accounts.length) {
-            throw new WalletConnectionError('No accounts is avaliable.');
-        }
-        this.address = accounts[0];
-        this.connecting = false;
-        return this.address as string;
     }
 
     async signTypedData({
@@ -99,24 +96,11 @@ export class MetaMaskEvmAdapter extends Adapter {
         });
     }
 
-    protected getInjectedProvider(): EIP1193Provider | null {
-        return getMetaMaskProvider();
-    }
-
     protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
-        if ((provider as any).isTrust || (provider as any).isTrustWallet) {
+        if (!info?.rdns) {
             return false;
         }
-
-        if (info?.rdns) {
-            return info.rdns === METAMASK_RDNS;
-        }
-
-        if (info?.name) {
-            return info.name === this.eip6963Info.name;
-        }
-
-        return Boolean((provider as any).isMetaMask) && !(provider as any).overrideIsMetaMask;
+        return info.rdns === METAMASK_RDNS;
     }
 
     async getProvider(): Promise<EIP1193Provider | null> {
@@ -129,18 +113,11 @@ export class MetaMaskEvmAdapter extends Adapter {
         }
 
         this.getProviderPromise = new Promise((resolve) => {
-            const provider = this.getInjectedProvider();
-            if (provider) {
-                return resolve(provider);
-            }
-
             let handled = false;
             let timeout: ReturnType<typeof setTimeout> | null = null;
             let eip6963Handler: ((event: Event) => void) | null = null;
 
             const cleanup = () => {
-                window.removeEventListener('ethereum#initialized', handleEthereum);
-
                 if (timeout) {
                     clearTimeout(timeout);
                     timeout = null;
@@ -159,40 +136,29 @@ export class MetaMaskEvmAdapter extends Adapter {
 
                 handled = true;
                 cleanup();
+                resolve(nextProvider);
+            };
 
-                if (nextProvider) {
-                    resolve(nextProvider);
-                } else {
-                    console.error('MetaMaskEvmAdapter: Unable to detect window.ethereum.');
-                    resolve(null);
+            eip6963Handler = (event: Event) => {
+                const customEvent = event as CustomEvent<{
+                    info?: EIP6963ProviderInfo;
+                    provider?: EIP1193Provider;
+                }>;
+                const announcedProvider = customEvent.detail?.provider;
+
+                if (!announcedProvider || !this.isEIP6963Provider(announcedProvider, customEvent.detail?.info)) {
+                    return;
                 }
+
+                finish(announcedProvider);
             };
 
-            const handleEthereum = () => {
-                finish(this.getInjectedProvider());
-            };
+            window.addEventListener('eip6963:announceProvider', eip6963Handler);
+            window.dispatchEvent(new Event('eip6963:requestProvider'));
 
-            if (this.eip6963Info.support) {
-                eip6963Handler = (event: Event) => {
-                    const customEvent = event as CustomEvent<{
-                        info?: EIP6963ProviderInfo;
-                        provider?: EIP1193Provider;
-                    }>;
-                    const announcedProvider = customEvent.detail?.provider;
-
-                    if (!announcedProvider || !this.isEIP6963Provider(announcedProvider, customEvent.detail?.info)) {
-                        return;
-                    }
-
-                    finish(announcedProvider);
-                };
-
-                window.addEventListener('eip6963:announceProvider', eip6963Handler);
-                window.dispatchEvent(new Event('eip6963:requestProvider'));
-            }
-
-            window.addEventListener('ethereum#initialized', handleEthereum, { once: true });
-            timeout = setTimeout(handleEthereum, 3000);
+            timeout = setTimeout(() => {
+                finish(null);
+            }, 3000);
         });
 
         return this.getProviderPromise;

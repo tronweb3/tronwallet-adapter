@@ -8,7 +8,6 @@ import {
     isInMobileBrowser,
     isInBrowser,
 } from '@tronweb3/abstract-adapter-evm';
-import type { TrustWalletProvider } from './utils.js';
 import {
     getTrustWalletProvider,
     isTrustWalletMobileWebView,
@@ -111,11 +110,10 @@ export class TrustEvmAdapter extends Adapter {
     }
 
     protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
-        if (info) {
-            return info.rdns === TRUST_WALLET_RDNS || info.name === this.eip6963Info.name;
+        if (!info?.rdns) {
+            return false;
         }
-
-        return Boolean((provider as TrustWalletProvider).isTrust || (provider as TrustWalletProvider).isTrustWallet);
+        return info.rdns === TRUST_WALLET_RDNS;
     }
 
     async getProvider(): Promise<EIP1193Provider | null> {
