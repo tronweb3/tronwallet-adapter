@@ -88,7 +88,6 @@ export interface TronLinkAdapterConfig extends BaseAdapterConfig {
 
 export const TronLinkAdapterName = 'TronLink' as AdapterName<'TronLink'>;
 const TRONLINK_RDNS = 'org.tronlink.www';
-const DESKTOP_TIP6963_FALLBACK_DELAY = 300;
 
 export class TronLinkAdapter extends Adapter {
     name = TronLinkAdapterName;
@@ -470,19 +469,14 @@ export class TronLinkAdapter extends Adapter {
                     resolve(isSupport);
                 };
 
-                timer = setTimeout(
-                    finishWithLegacyDetection,
-                    this.hasDesktopLegacyTronLinkProvider() ? DESKTOP_TIP6963_FALLBACK_DELAY : this.config.checkTimeout
-                );
+                timer = setTimeout(finishWithLegacyDetection, this.config.checkTimeout);
 
                 handler = (event: TIP6963AnnounceProviderEvent) => {
                     if (handled) {
                         return;
                     }
                     const { info, provider } = event.detail;
-                    const isTronLinkProvider =
-                        (info.rdns === TRONLINK_RDNS && info.name === 'TronLink') ||
-                        (!info.rdns && !info.name && (provider as unknown as Tron)?.isTronLink === true);
+                    const isTronLinkProvider = info.name === 'TronLink';
                     if (isTronLinkProvider) {
                         handled = true;
                         this._supportNewTronProtocol = true;
@@ -502,22 +496,6 @@ export class TronLinkAdapter extends Adapter {
 
                 window.addEventListener(TIP6963AnnounceProviderEventName, handler);
                 window.dispatchEvent(new Event(TIP6963RequestProviderEventName));
-                interval = setInterval(() => {
-                    if (typeof window === 'undefined') {
-                        if (interval) {
-                            clearInterval(interval);
-                            interval = null;
-                        }
-                        if (timer) {
-                            clearTimeout(timer);
-                            timer = null;
-                        }
-                        return;
-                    }
-                    if (this.hasDesktopLegacyTronLinkProvider()) {
-                        finishWithLegacyDetection();
-                    }
-                }, 100);
             });
             return this._checkPromise;
         }
