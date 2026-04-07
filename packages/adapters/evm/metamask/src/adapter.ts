@@ -8,7 +8,7 @@ import {
     isInBrowser,
     WalletDisconnectedError,
 } from '@tronweb3/abstract-adapter-evm';
-import { isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
+import { getMetaMaskProvider, isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
 declare global {
     interface Window {
         ethereum: EIP1193Provider;
@@ -103,9 +103,21 @@ export class MetaMaskEvmAdapter extends Adapter {
         return info.rdns === METAMASK_RDNS;
     }
 
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return getMetaMaskProvider();
+    }
+
     async getProvider(): Promise<EIP1193Provider | null> {
-        if (isInMobileBrowser() && !isMetaMaskMobileWebView()) {
+        if (typeof window === 'undefined') {
             return null;
+        }
+
+        if (isInMobileBrowser()) {
+            if (!isMetaMaskMobileWebView()) {
+                return null;
+            }
+
+            return this.getInjectedProvider();
         }
 
         if (this.getProviderPromise !== null) {

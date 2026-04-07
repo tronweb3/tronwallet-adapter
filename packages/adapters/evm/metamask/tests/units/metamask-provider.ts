@@ -2,9 +2,10 @@ import { EventEmitter } from '@tronweb3/abstract-adapter-evm';
 import type { EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 export class MetaMaskProvider extends EventEmitter {
     isMetaMask = true;
-    providers = [MetaMaskProvider];
+    providers: EIP1193Provider[] = [];
     constructor() {
         super();
+        this.providers = [this];
     }
 
     request<P = unknown[], T = unknown>({ method }: { method: string; params?: P }): Promise<T> {

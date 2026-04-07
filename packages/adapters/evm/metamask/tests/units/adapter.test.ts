@@ -19,6 +19,11 @@ afterEach(() => {
         cleanupEIP6963();
         cleanupEIP6963 = null;
     }
+    (window as any).ethereum = null;
+    (window as any).ReactNativeWebView = undefined;
+    vi.clearAllTimers();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
 });
 
 async function flushPromises() {
@@ -67,6 +72,33 @@ describe('MetaMaskEvmAdapter', () => {
 
             expect(adapter.readyState).toEqual('Found');
             await expect(adapter.getProvider()).resolves.toBe(provider);
+        });
+
+        test('adapter should discover injected provider in MetaMask mobile webview without EIP-6963', async () => {
+            (window as any).ethereum = provider;
+            (window as any).ReactNativeWebView = {};
+            vi.stubGlobal('navigator', {
+                ...window.navigator,
+                userAgent:
+                    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Mobile MetaMaskMobile',
+            });
+
+            const adapter = new MetaMaskEvmAdapter();
+            await flushPromises();
+
+            expect(adapter.readyState).toEqual('Found');
+            await expect(adapter.getProvider()).resolves.toBe(provider);
+        });
+
+        test('adapter should not discover desktop injected provider without EIP-6963', async () => {
+            (window as any).ethereum = provider;
+
+            const adapter = new MetaMaskEvmAdapter();
+            vi.advanceTimersByTime(3000);
+            await flushPromises();
+
+            expect(adapter.readyState).toEqual('NotFound');
+            await expect(adapter.getProvider()).resolves.toBeNull();
         });
 
         test('adapter should not treat Trust Wallet as MetaMask provider', async () => {
