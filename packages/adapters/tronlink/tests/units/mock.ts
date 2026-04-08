@@ -4,9 +4,11 @@ import type { TronWeb } from '../../src/types.js';
 import type { Tron } from '../../src/types.js';
 import { TronLinkAdapter as _TronLinkAdapter } from '../../src/index.js';
 
+const TEST_CHECK_TIMEOUT = 1000;
+
 export class TronLinkAdapter extends _TronLinkAdapter {
     constructor(config: any = {}) {
-        super({ ...config, checkTimeout: 2000 });
+        super({ checkTimeout: TEST_CHECK_TIMEOUT, ...config });
     }
 }
 export class MockTronWeb implements TronWeb {

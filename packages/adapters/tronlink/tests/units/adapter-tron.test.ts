@@ -17,7 +17,7 @@ import { describe, test, expect, beforeEach, beforeAll, afterAll, vi } from 'vit
 const noop = () => {
     //
 };
-const DESKTOP_TIP6963_FALLBACK_DELAY = 300;
+const DESKTOP_TIP6963_FALLBACK_DELAY = 1100;
 
 async function waitForDesktopDetection(delay = DESKTOP_TIP6963_FALLBACK_DELAY) {
     vi.advanceTimersByTime(delay);

@@ -7,7 +7,7 @@ import {
     TIP6963AnnounceProviderEventName,
     TIP6963RequestProviderEventName,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import { TronLinkAdapter } from '../../src/index.js';
+import { TronLinkAdapter as _TronLinkAdapter } from '../../src/index.js';
 import { wait, ONE_MINUTE } from './utils.js';
 import { MockTron, MockTronLink } from './mock.js';
 import { waitFor } from '@testing-library/dom';
@@ -15,6 +15,13 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 const noop = () => {
     //
 };
+const TEST_CHECK_TIMEOUT = 1000;
+
+class TronLinkAdapter extends _TronLinkAdapter {
+    constructor(config: ConstructorParameters<typeof _TronLinkAdapter>[0] = {}) {
+        super({ checkTimeout: TEST_CHECK_TIMEOUT, ...config });
+    }
+}
 
 function installTIP6963Provider(provider: MockTron, options: { name?: string; rdns?: string } = {}) {
     const detail = {
