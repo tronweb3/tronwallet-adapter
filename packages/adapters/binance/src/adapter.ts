@@ -358,10 +358,12 @@ export class BinanceWalletAdapter extends Adapter {
             if (!this.connected) throw new WalletDisconnectedError();
             try {
                 const res = await this._provider.signAndSendTransaction(transaction);
-                try {
-                    res.transaction = JSON.parse(res.transaction);
-                } catch (e) {
-                    console.error(`[BinanceWalletAdapter] parse transaction error: ${e}`);
+                if (typeof res.transaction === 'string') {
+                    try {
+                        res.transaction = JSON.parse(res.transaction);
+                    } catch (e) {
+                        console.error(`[BinanceWalletAdapter] parse transaction error: ${e}`);
+                    }
                 }
                 return res;
             } catch (error: any) {

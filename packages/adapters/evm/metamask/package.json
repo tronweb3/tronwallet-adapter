@@ -46,8 +46,8 @@
         "@tronweb3/abstract-adapter-evm": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "shx": "^0.3.4",
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
         "vitest": "3.2.4"
     }
 }

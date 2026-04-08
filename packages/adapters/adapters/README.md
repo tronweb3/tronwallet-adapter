@@ -36,7 +36,7 @@ Each adapter offers a consistent interface. You can use this collective package 
 | **Binance EVM** | [`@tronweb3/tronwallet-adapter-binance-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-binance-evm) | Adapter for [Binance Wallet](https://www.binance.com/en/binancewallet) (EVM) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/binance) |
 | **MetaMask EVM** | [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm) | Native EVM support | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask) |
 | **TronLink EVM** | [`@tronweb3/tronwallet-adapter-tronlink-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink-evm) | Adapter for [TronLink](https://www.tronlink.org/) (EVM) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/tronlink) |
-| **Trust Wallet EVM** | [`@tronweb3/tronwallet-adapter-trust-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust-evm) | Adapter for [Trust Wallet](https://trustwallet.com/) browser extension (EVM) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/trust) |
+| **Trust Wallet EVM** | [`@tronweb3/tronwallet-adapter-trust-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-trust-evm) | Adapter for [Trust Wallet](https://trustwallet.com/) (EVM) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/trust) |
 
 > ℹ️ For the full list of 15+ supported wallets, visit our [documentation](https://walletadapter.org/docs/guide/wallet-reference.html#supported-wallets-by-adapter).
 

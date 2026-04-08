@@ -729,10 +729,10 @@ importers:
         version: link:../abstract-adapter
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
       vitest:
         specifier: 3.2.4
@@ -745,10 +745,10 @@ importers:
         version: link:../abstract-adapter
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
       vitest:
         specifier: 3.2.4
@@ -761,13 +761,13 @@ importers:
         version: link:../abstract-adapter
     devDependencies:
       '@testing-library/dom':
-        specifier: ^8.20.0
+        specifier: 8.20.1
         version: 8.20.1
       happy-dom:
         specifier: 20.8.9
         version: 20.8.9(bufferutil@4.0.8)(utf-8-validate@6.0.3)
       shx:
-        specifier: ^0.3.4
+        specifier: 0.3.4
         version: 0.3.4
       vitest:
         specifier: 3.2.4
@@ -3168,7 +3168,7 @@ packages:
     resolution: {integrity: sha512-2+DEJbNBoPROPkgTDNe8/1YXWcqxbN5DTjASVIOx8HS+pITXushyNiBV56RB08zuptzz8gT3YfkqriTBVycepg==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-      rollup: '>=4.59.0'
+      rollup: 4.59.0
     peerDependenciesMeta:
       rollup:
         optional: true

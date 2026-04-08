@@ -1,6 +1,6 @@
 # `@tronweb3/tronwallet-adapter-trust-evm`
 
-This package provides an adapter to enable DApps to connect to the [Trust Wallet browser extension](https://trustwallet.com/browser-extension).
+This package provides an adapter to enable DApps to connect to the [Trust Wallet](https://trustwallet.com/browser-extension).
 
 ## Demo
 
