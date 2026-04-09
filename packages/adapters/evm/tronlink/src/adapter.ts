@@ -1,13 +1,20 @@
-import type { AdapterName, Chain, EIP1193Provider, TypedData } from '@tronweb3/abstract-adapter-evm';
+import type {
+    AdapterName,
+    Chain,
+    EIP1193Provider,
+    EIP6963ProviderInfo,
+    TypedData,
+} from '@tronweb3/abstract-adapter-evm';
 import {
     Adapter,
     WalletReadyState,
     WalletNotFoundError,
     WalletConnectionError,
     isInMobileBrowser,
+    isInBrowser,
     WalletError,
 } from '@tronweb3/abstract-adapter-evm';
-import { getTronLinkEvmProvider } from './utils.js';
+import { getTronLinkEvmProvider, TRONLINK_EVM_RDNS } from './utils.js';
 
 declare global {
     interface Window {
@@ -16,6 +23,11 @@ declare global {
 }
 
 export const TronLinkEvmAdapterName = 'TronLink' as AdapterName<'TronLink'>;
+
+export interface TronLinkEvmAdapterOptions {
+    openUrlWhenWalletNotFound?: boolean;
+}
+
 export class TronLinkEvmAdapter extends Adapter {
     name = TronLinkEvmAdapterName;
     // @prettier-ignore
@@ -25,42 +37,47 @@ export class TronLinkEvmAdapter extends Adapter {
     readyState = WalletReadyState.Loading;
     address: string | null = null;
     connecting = false;
+    options: TronLinkEvmAdapterOptions;
 
-    constructor() {
+    constructor(options: TronLinkEvmAdapterOptions = {}) {
         super();
-        const provider = getTronLinkEvmProvider();
-        if (provider) {
-            this.readyState = WalletReadyState.Found;
-            this.listenEvents(provider);
-            this.autoConnect(provider);
-        } else {
-            this.getProvider().then((res) => {
-                if (res) {
-                    this.readyState = WalletReadyState.Found;
-                    this.listenEvents(res);
-                    this.autoConnect(res);
-                } else {
-                    this.readyState = WalletReadyState.NotFound;
-                }
-                this.emit('readyStateChanged', this.readyState);
-            });
-        }
+        this.options = options;
+        this.eip6963Info.support = true;
+        this.eip6963Info.name = 'TronLink';
+        this.eip6963Info.rdns = TRONLINK_EVM_RDNS;
+
+        void this.getProvider().then((provider) => {
+            if (provider) {
+                this.readyState = WalletReadyState.Found;
+                this.listenEvents(provider);
+                void this.autoConnect(provider);
+            } else {
+                this.readyState = WalletReadyState.NotFound;
+            }
+            this.emit('readyStateChanged', this.readyState);
+        });
     }
 
     async connect() {
         this.connecting = true;
 
-        const provider = await this.getProvider();
-        if (!provider) {
-            throw new WalletNotFoundError();
+        try {
+            const provider = await this.getProvider();
+            if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
+            }
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
+            if (!accounts.length) {
+                throw new WalletConnectionError('No accounts is avaliable.');
+            }
+            this.address = accounts[0];
+            return this.address as string;
+        } finally {
+            this.connecting = false;
         }
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
-        if (!accounts.length) {
-            throw new WalletConnectionError('No accounts is avaliable.');
-        }
-        this.address = accounts[0];
-        this.connecting = false;
-        return this.address as string;
     }
 
     async signTypedData(params: { typedData: TypedData; address?: string }): Promise<string> {
@@ -71,70 +88,26 @@ export class TronLinkEvmAdapter extends Adapter {
         throw new WalletError('[TronLinkEvm] The wallet does not support addChain() currently.');
     }
 
-    private getProviderPromise: Promise<EIP1193Provider | null> | null = null;
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return getTronLinkEvmProvider();
+    }
+
+    protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
+        if (!info?.rdns) {
+            return false;
+        }
+        return info.rdns === TRONLINK_EVM_RDNS;
+    }
+
     async getProvider(): Promise<EIP1193Provider | null> {
         if (isInMobileBrowser()) {
             // Currently only extension support EVM
             return null;
         }
-        if (this.getProviderPromise !== null) {
-            return this.getProviderPromise;
-        }
-        this.getProviderPromise = new Promise((resolve) => {
-            const provider = getTronLinkEvmProvider();
-            if (provider) {
-                return resolve(provider);
-            }
-            let handled = false;
-            let interval: null | ReturnType<typeof setInterval> = null;
-            const handleEthereum = () => {
-                if (handled) {
-                    return;
-                }
-                handled = true;
-                const provider = getTronLinkEvmProvider();
-                if (provider) {
-                    resolve(provider);
-                } else {
-                    console.error('[TronLinkEvmAdapter]: Unable to detect window.TronLinkEVM.');
-                    resolve(null);
-                }
-            };
-            interval = setInterval(() => {
-                const provider = getTronLinkEvmProvider();
-                if (provider) {
-                    handleEthereum();
-                    interval && clearInterval(interval);
-                }
-            }, 100);
-            setTimeout(() => {
-                interval && clearInterval(interval);
-                handleEthereum();
-            }, 3000);
-        });
-        return this.getProviderPromise;
+
+        return super.getProvider();
     }
-    private listenEvents(provider: EIP1193Provider) {
-        provider.on('connect', (connectInfo) => {
-            this.emit('connect', connectInfo);
-        });
-        provider.on('disconnect', (error) => {
-            this.emit('disconnect', error);
-        });
-        provider.on('accountsChanged', this.onAccountsChanged);
-        provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', chainId);
-        });
-    }
-    private onAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-            this.address = null;
-        } else {
-            this.address = accounts[0];
-        }
-        this.emit('accountsChanged', accounts);
-    };
-    private async autoConnect(provider: EIP1193Provider) {
+    protected async autoConnect(provider: EIP1193Provider) {
         setTimeout(() => {
             this.address = (provider as any).selectedAddress || null;
             if (this.address) {

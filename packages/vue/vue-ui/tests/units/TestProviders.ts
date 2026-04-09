@@ -8,7 +8,14 @@ export const Providers = defineComponent({
         autoConnect: { type: Boolean, default: true },
     },
     setup(props, { slots }) {
-        return () => h(WalletProvider, { ...props }, slots);
+        return () =>
+            h(
+                WalletProvider,
+                { ...props },
+                {
+                    default: () => slots.default?.(),
+                }
+            );
     },
 });
 
@@ -18,6 +25,13 @@ export const NoAutoConnectProviders = defineComponent({
         adapters: { type: Array },
     },
     setup(props, { slots }) {
-        return () => h(WalletProvider, { ...props, autoConnect: false }, slots);
+        return () =>
+            h(
+                WalletProvider,
+                { ...props, autoConnect: false },
+                {
+                    default: () => slots.default?.(),
+                }
+            );
     },
 });

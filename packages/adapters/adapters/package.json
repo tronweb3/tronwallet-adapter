@@ -62,10 +62,11 @@
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
         "@tronweb3/tronwallet-adapter-backpack": "workspace:^",
+        "@tronweb3/tronwallet-adapter-trust-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },
     "devDependencies": {
-        "happy-dom": "20.8.3",
+        "happy-dom": "20.8.9",
         "shx": "0.3.4",
         "vitest": "3.2.4"
     }

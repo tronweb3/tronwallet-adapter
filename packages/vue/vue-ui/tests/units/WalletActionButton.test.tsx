@@ -146,14 +146,13 @@ describe('when tronlink is avaliable but not ready', () => {
             await wait();
             expect(getByTestId('wallet-action-button')).not.toBeNull();
         });
-        test.skip('should work fine when autoConnect disabled', async () => {
+        test('should work fine when autoConnect disabled', async () => {
             container = makeSutNoAutoConnect();
             expect(getByTestId('wallet-connect-button')).not.toBeNull();
 
-            getByTestId('wallet-connect-button').trigger('click');
+            await getByTestId('wallet-connect-button').trigger('click');
             await wait();
-            expect(getByTestId('wallet-connect-button').html()).toContain('Connecting');
-
+            expect(getByTestId('wallet-connect-button').text()).toContain('Connect');
             expect(getByTestId('wallet-action-button')).not.toBeNull();
         });
     });

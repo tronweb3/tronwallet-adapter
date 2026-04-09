@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/abstract-adapter-evm",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "Abstract interface definition of Evm Wallet Adapters.",
     "author": "tronweb3",
     "repository": {
@@ -41,6 +41,7 @@
         "eventemitter3": "4.0.7"
     },
     "devDependencies": {
+        "happy-dom": "20.8.9",
         "shx": "0.3.4",
         "vitest": "3.2.4"
     }

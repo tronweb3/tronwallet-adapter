@@ -93,6 +93,20 @@ const adapter = new BinanceWalletAdapter({
 });
 ```
 
+-   `signAndSendTransaction(transaction: Transaction): Promise<{ signature: string; txHash: string; transaction: SignedTransaction }>`
+
+    Sign a transaction and broadcast it using the Binance Wallet's selected network in a single call.
+
+    ```typescript
+    const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(
+        targetAddress,
+        100,
+        adapter.address
+    );
+    const { signature, txHash, transaction } = await adapter.signAndSendTransaction(unSignedTransaction);
+    console.log('txHash:', txHash);
+    ```
+
 -   `setOnWalletConnectUri(callback: ((uri: string) => void) | undefined): void`
 
     Set the onWalletConnectUri callback for custom QR code rendering. This allows dynamic configuration of the URI handler after adapter initialization.
