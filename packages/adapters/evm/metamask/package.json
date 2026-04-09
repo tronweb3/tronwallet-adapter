@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-metamask-evm",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Wallet adapter for Metamask wallet extension and app on EVM-Compatible Chains.",
     "keywords": [
         "EVM",
@@ -46,8 +46,8 @@
         "@tronweb3/abstract-adapter-evm": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "^8.20.0",
-        "shx": "^0.3.4",
+        "@testing-library/dom": "8.20.1",
+        "shx": "0.3.4",
         "vitest": "3.2.4"
     }
 }

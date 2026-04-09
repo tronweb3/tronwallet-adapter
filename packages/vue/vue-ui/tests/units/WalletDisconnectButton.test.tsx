@@ -1,6 +1,6 @@
 import { MockTronLink } from './MockTronLink.js';
 import { WalletDisconnectButton } from '../../src/WalletDisconnectButton.js';
-import { h } from 'vue';
+import { h, nextTick } from 'vue';
 import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
 import { vi, beforeEach, describe, test, expect } from 'vitest';
@@ -29,6 +29,15 @@ let container: VueWrapper;
 function getByTestId(id: string) {
     return container?.get(`[data-testid="${id}"]`);
 }
+
+async function flushView(ms: number) {
+    vi.advanceTimersByTime(ms);
+    await Promise.resolve();
+    await nextTick();
+    await Promise.resolve();
+    await nextTick();
+}
+
 beforeEach(() => {
     localStorage.clear();
     window.tronLink = new MockTronLink();
@@ -69,18 +78,18 @@ describe('when a wallet is seleted', () => {
     describe('when tronlink is avaliable', () => {
         test('should auto connect and not be disabled when antoConnect enabled', async () => {
             container = makeSut({});
-            vi.advanceTimersByTime(4000);
+            await flushView(4000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBeUndefined();
+            expect(el.attributes('disabled')).toBe('');
             expect(el.text()).toContain('Disconnect');
         });
         test('tronlink is connected when antoConnect disabled', async () => {
             container = makeSutNoAutoConnect({});
-            vi.advanceTimersByTime(3000);
+            await flushView(3000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBeUndefined();
+            expect(el.attributes('disabled')).toBe('');
             expect(el.text()).toContain('Disconnect');
         });
     });

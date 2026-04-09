@@ -56,6 +56,9 @@
             "path": "../evm/tronlink/tsconfig.all.json"
         },
         {
+            "path": "../evm/trust/tsconfig.all.json"
+        },
+        {
             "path": "../evm/binance/tsconfig.all.json"
         },
         {

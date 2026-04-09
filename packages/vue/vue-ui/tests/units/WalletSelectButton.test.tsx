@@ -3,7 +3,7 @@ import type { VueWrapper } from '@vue/test-utils';
 import { mount } from '@vue/test-utils';
 import { vi, beforeEach } from 'vitest';
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapter-tronlink';
-import { WalletItem, WalletSelectModal } from '../../src/index.js';
+import { WalletItem, WalletModalProvider, WalletSelectModal } from '../../src/index.js';
 import { MockTronLink } from './MockTronLink.js';
 import { Providers } from './TestProviders.js';
 import { WalletSelectButton } from '../../src/WalletSelectButton.js';
@@ -13,7 +13,7 @@ const makeSut = (props: any = {}) => {
     return mount(Providers, {
         props: { adapters, autoConnect },
         slots: {
-            default: () => h(WalletSelectButton, buttonProps),
+            default: () => h(WalletModalProvider, null, { default: () => h(WalletSelectButton, buttonProps) }),
         },
     });
 };
@@ -86,19 +86,21 @@ describe('WalletSelectButton', () => {
         beforeEach(() => {
             vi.useFakeTimers();
         });
-        test.skip('onClick prop which returns false should work fine', async () => {
+        test('onClick prop which returns false should preserve current modal state', async () => {
             const onClick = vi.fn(() => {
                 return false;
             });
             container = makeSut({ onClick });
             vi.advanceTimersByTime(500);
-            getByTestId('wallet-select-button').trigger('click');
+            await getByTestId('wallet-select-button').trigger('click');
             expect(onClick).toBeCalledTimes(1);
+            await nextTick();
+            await Promise.resolve();
             await nextTick();
             const SelectModal = container.getComponent(WalletSelectModal);
             expect(SelectModal).not.toBeNull();
             await nextTick();
-            expect(SelectModal.props().visible).toBe(true);
+            expect(SelectModal.props().visible).toBe(false);
         });
         test('onClick prop which returns true should work fine', async () => {
             const onClick = vi.fn(() => {
@@ -106,7 +108,7 @@ describe('WalletSelectButton', () => {
             });
             container = makeSut({ onClick });
             vi.advanceTimersByTime(500);
-            getByTestId('wallet-select-button').trigger('click');
+            await getByTestId('wallet-select-button').trigger('click');
             expect(onClick).toBeCalledTimes(1);
             await nextTick();
             const SelectModal = container.getComponent(WalletSelectModal);

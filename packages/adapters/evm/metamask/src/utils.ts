@@ -1,17 +1,30 @@
 import type { EIP1193Provider } from '@tronweb3/abstract-adapter-evm';
 
+export const METAMASK_RDNS = 'io.metamask';
+
+function isMetaMaskProvider(provider: EIP1193Provider | null | undefined): boolean {
+    return Boolean(provider?.isMetaMask && !(provider as any).overrideIsMetaMask);
+}
+
 export function getMetaMaskProvider(): null | EIP1193Provider {
-    if (!window.ethereum) {
+    if (typeof window === 'undefined') {
         return null;
     }
-    if (window.ethereum.isMetaMask && !(window.ethereum as any).overrideIsMetaMask) {
-        return window.ethereum as EIP1193Provider;
+
+    const context = window as Window & {
+        ethereum?: EIP1193Provider & { providers?: EIP1193Provider[] };
+    };
+
+    const ethereum = context.ethereum;
+    if (!ethereum) {
+        return null;
     }
-    /**
-     * When install CoinBase Wallet and MetaMask Wallet, ethereum will be override by CoinBase.
-     */
-    // @ts-ignore
-    return window.ethereum.providers?.find((item: EIP1193Provider) => item.isMetaMask) || null;
+
+    if (isMetaMaskProvider(ethereum)) {
+        return ethereum;
+    }
+
+    return ethereum.providers?.find((item: EIP1193Provider) => isMetaMaskProvider(item)) || null;
 }
 
 export function isMetaMaskMobileWebView() {
