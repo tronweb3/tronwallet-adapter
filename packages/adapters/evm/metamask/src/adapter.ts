@@ -1,13 +1,14 @@
-import type { AdapterName, EIP1193Provider, TypedData } from '@tronweb3/abstract-adapter-evm';
+import type { AdapterName, EIP1193Provider, EIP6963ProviderInfo, TypedData } from '@tronweb3/abstract-adapter-evm';
 import {
     Adapter,
     WalletReadyState,
     WalletNotFoundError,
     WalletConnectionError,
     isInMobileBrowser,
+    isInBrowser,
     WalletDisconnectedError,
 } from '@tronweb3/abstract-adapter-evm';
-import { getMetaMaskProvider, isMetaMaskMobileWebView, openMetaMaskWithDeeplink } from './utils.js';
+import { getMetaMaskProvider, isMetaMaskMobileWebView, METAMASK_RDNS, openMetaMaskWithDeeplink } from './utils.js';
 declare global {
     interface Window {
         ethereum: EIP1193Provider;
@@ -16,6 +17,7 @@ declare global {
 
 export interface MetaMaskEvmAdapterOptions {
     useDeeplink?: boolean;
+    openUrlWhenWalletNotFound?: boolean;
 }
 
 export const MetaMaskEvmAdapterName = 'MetaMask' as AdapterName<'MetaMask'>;
@@ -33,23 +35,20 @@ export class MetaMaskEvmAdapter extends Adapter {
     constructor(options: MetaMaskEvmAdapterOptions = { useDeeplink: true }) {
         super();
         this.options = options;
-        const provider = getMetaMaskProvider();
-        if (provider) {
-            this.readyState = WalletReadyState.Found;
-            this.listenEvents(provider);
-            this.autoConnect(provider);
-        } else {
-            this.getProvider().then((res) => {
-                if (res) {
-                    this.readyState = WalletReadyState.Found;
-                    this.listenEvents(res);
-                    this.autoConnect(res);
-                } else {
-                    this.readyState = WalletReadyState.NotFound;
-                }
-                this.emit('readyStateChanged', this.readyState);
-            });
-        }
+        this.eip6963Info.support = true;
+        this.eip6963Info.name = 'MetaMask';
+        this.eip6963Info.rdns = METAMASK_RDNS;
+
+        void this.getProvider().then((provider) => {
+            if (provider) {
+                this.readyState = WalletReadyState.Found;
+                this.listenEvents(provider);
+                void this.autoConnect(provider);
+            } else {
+                this.readyState = WalletReadyState.NotFound;
+            }
+            this.emit('readyStateChanged', this.readyState);
+        });
     }
 
     async connect() {
@@ -61,17 +60,23 @@ export class MetaMaskEvmAdapter extends Adapter {
         }
         this.connecting = true;
 
-        const provider = await this.getProvider();
-        if (!provider) {
-            throw new WalletNotFoundError();
+        try {
+            const provider = await this.getProvider();
+            if (!provider) {
+                if (this.options.openUrlWhenWalletNotFound !== false && isInBrowser()) {
+                    window.open(this.url, '_blank');
+                }
+                throw new WalletNotFoundError();
+            }
+            const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
+            if (!accounts.length) {
+                throw new WalletConnectionError('No accounts is avaliable.');
+            }
+            this.address = accounts[0];
+            return this.address as string;
+        } finally {
+            this.connecting = false;
         }
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_requestAccounts' });
-        if (!accounts.length) {
-            throw new WalletConnectionError('No accounts is avaliable.');
-        }
-        this.address = accounts[0];
-        this.connecting = false;
-        return this.address as string;
     }
 
     async signTypedData({
@@ -91,67 +96,83 @@ export class MetaMaskEvmAdapter extends Adapter {
         });
     }
 
-    private getProviderPromise: Promise<EIP1193Provider | null> | null = null;
+    protected isEIP6963Provider(provider: EIP1193Provider, info?: EIP6963ProviderInfo): boolean {
+        if (!info?.rdns) {
+            return false;
+        }
+        return info.rdns === METAMASK_RDNS;
+    }
+
+    protected getInjectedProvider(): EIP1193Provider | null {
+        return getMetaMaskProvider();
+    }
+
     async getProvider(): Promise<EIP1193Provider | null> {
-        if (isInMobileBrowser() && !isMetaMaskMobileWebView()) {
+        if (typeof window === 'undefined') {
             return null;
         }
+
+        if (isInMobileBrowser()) {
+            if (!isMetaMaskMobileWebView()) {
+                return null;
+            }
+
+            return this.getInjectedProvider();
+        }
+
         if (this.getProviderPromise !== null) {
             return this.getProviderPromise;
         }
+
         this.getProviderPromise = new Promise((resolve) => {
-            const provider = getMetaMaskProvider();
-            if (provider) {
-                return resolve(provider);
-            }
             let handled = false;
-            const handleEthereum = () => {
+            let timeout: ReturnType<typeof setTimeout> | null = null;
+            let eip6963Handler: ((event: Event) => void) | null = null;
+
+            const cleanup = () => {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+
+                if (eip6963Handler) {
+                    window.removeEventListener('eip6963:announceProvider', eip6963Handler);
+                    eip6963Handler = null;
+                }
+            };
+
+            const finish = (nextProvider: EIP1193Provider | null) => {
                 if (handled) {
                     return;
                 }
+
                 handled = true;
-                window.removeEventListener('ethereum#initialized', handleEthereum);
-                const provider = getMetaMaskProvider();
-                if (provider) {
-                    resolve(provider);
-                } else {
-                    console.error('MetaMaskEvmAdapter: Unable to detect window.ethereum.');
-                    resolve(null);
-                }
+                cleanup();
+                resolve(nextProvider);
             };
-            window.addEventListener('ethereum#initialized', handleEthereum, { once: true });
-            setTimeout(() => {
-                handleEthereum();
+
+            eip6963Handler = (event: Event) => {
+                const customEvent = event as CustomEvent<{
+                    info?: EIP6963ProviderInfo;
+                    provider?: EIP1193Provider;
+                }>;
+                const announcedProvider = customEvent.detail?.provider;
+
+                if (!announcedProvider || !this.isEIP6963Provider(announcedProvider, customEvent.detail?.info)) {
+                    return;
+                }
+
+                finish(announcedProvider);
+            };
+
+            window.addEventListener('eip6963:announceProvider', eip6963Handler);
+            window.dispatchEvent(new Event('eip6963:requestProvider'));
+
+            timeout = setTimeout(() => {
+                finish(null);
             }, 3000);
         });
-        return this.getProviderPromise;
-    }
-    private listenEvents(provider: EIP1193Provider) {
-        provider.on('connect', (connectInfo) => {
-            this.emit('connect', connectInfo);
-        });
-        provider.on('disconnect', (error) => {
-            this.emit('disconnect', error);
-        });
-        provider.on('accountsChanged', this.onAccountsChanged);
-        provider.on('chainChanged', (chainId) => {
-            this.emit('chainChanged', chainId);
-        });
-    }
-    private onAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-            this.address = null;
-        } else {
-            this.address = accounts[0];
-        }
-        this.emit('accountsChanged', accounts);
-    };
-    private async autoConnect(provider: EIP1193Provider) {
-        const accounts = await provider.request<undefined, string[]>({ method: 'eth_accounts' });
 
-        this.address = accounts?.[0] || null;
-        if (this.address) {
-            this.emit('accountsChanged', [...(accounts || null)]);
-        }
+        return this.getProviderPromise;
     }
 }

@@ -87,5 +87,6 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
 ### Caveats
 
 -   **TronLink Doesn't support `disconnect` by DApp**. As TronLinkAdapter doesn't support disconnect by DApp website, call `adapter.disconnect()` won't disconnect from TronLink extension really.
+-   **Desktop discovery is asynchronous**. On desktop, the adapter requests TIP-6963 providers first and then falls back to legacy `window.tron` / `window.tronLink` detection before `checkTimeout`, so `readyState` may stay `Loading` briefly after construction.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

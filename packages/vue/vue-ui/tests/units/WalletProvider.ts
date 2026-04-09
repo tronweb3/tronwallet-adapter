@@ -29,7 +29,14 @@ export const NewWalletProvider = defineComponent({
                     ...props,
                 },
                 {
-                    default: () => h(WalletModalProvider, {}, slots),
+                    default: () =>
+                        h(
+                            WalletModalProvider,
+                            {},
+                            {
+                                default: () => slots.default?.(),
+                            }
+                        ),
                 }
             );
     },

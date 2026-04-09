@@ -343,6 +343,38 @@ export class BinanceWalletAdapter extends Adapter {
         }
     }
 
+    /**
+     * Sign transaction and broadcast the signed transaction with Binance wallet selected network.
+     * @param transaction
+     * @returns
+     */
+    async signAndSendTransaction(transaction: Transaction): Promise<{
+        signature: string;
+        txHash: string;
+        transaction: SignedTransaction;
+        wcResult?: { result: boolean; txid: string };
+    }> {
+        try {
+            if (!this.connected) throw new WalletDisconnectedError();
+            try {
+                const res = await this._provider.signAndSendTransaction(transaction);
+                if (typeof res.transaction === 'string') {
+                    try {
+                        res.transaction = JSON.parse(res.transaction);
+                    } catch (e) {
+                        console.error(`[BinanceWalletAdapter] parse transaction error: ${e}`);
+                    }
+                }
+                return res;
+            } catch (error: any) {
+                throw new WalletSignTransactionError(error?.message, error);
+            }
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        }
+    }
+
     private _onAccountsChanged = (address: string[] | string) => {
         const preAddr = this.address || '';
         this.setAddress(Array.isArray(address) ? address[0] : address);
