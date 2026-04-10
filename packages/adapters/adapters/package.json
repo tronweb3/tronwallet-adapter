@@ -46,6 +46,7 @@
         "@tronweb3/tronwallet-adapter-binance": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bitkeep": "workspace:^",
+        "@tronweb3/tronwallet-adapter-okxwallet-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",

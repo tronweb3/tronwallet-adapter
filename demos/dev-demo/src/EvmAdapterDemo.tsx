@@ -7,6 +7,7 @@ import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
 import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
 import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
 import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
+import { OkxWalletEvmAdapter } from '@tronweb3/tronwallet-adapter-okxwallet-evm';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
@@ -123,7 +124,7 @@ const SectionButton = styled(Button)({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter(), new TrustEvmAdapter()], []);
+  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter(), new TrustEvmAdapter(), new OkxWalletEvmAdapter()], []);
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
@@ -424,6 +425,7 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter, connected
         }}
       >
         <MenuItem value="0x1">Ethereum Mainnet</MenuItem>
+        <MenuItem value="0xaa36a7">Ethereum Sepolia Testnet</MenuItem>
         <MenuItem value="0x38">BSC Mainnet</MenuItem>
         <MenuItem value="0x61">BSC Testnet</MenuItem>
         <MenuItem value="0x2105">Base Mainnet</MenuItem>

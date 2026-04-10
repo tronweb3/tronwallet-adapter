@@ -78,6 +78,9 @@
         },
         {
             "path": "./packages/adapters/evm/binance/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/evm/okxwallet/tsconfig.all.json"
         }
     ]
 }
