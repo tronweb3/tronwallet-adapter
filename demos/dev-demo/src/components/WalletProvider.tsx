@@ -4,6 +4,7 @@ import QRCodeModal from './QRCodeModal';
 import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 import {
   BitKeepAdapter,
+  CatWalletAdapter,
   GateWalletAdapter,
   ImTokenAdapter,
   LedgerAdapter,
@@ -89,6 +90,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       new LedgerAdapter(),
       new GuardaAdapter(),
       new OneKeyAdapter(),
+      new CatWalletAdapter(),
       new WalletConnectAdapter(walletconnectConfig),
       new MetaMaskAdapter() as any,
     ];
