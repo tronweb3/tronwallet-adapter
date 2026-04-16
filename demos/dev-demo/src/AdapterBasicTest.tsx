@@ -57,7 +57,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     adapter.on('connect', async () => {
       log('connect: ', adapter.address);
     });
-    adapter.on('accountsChanged', (accounts) => {
+    adapter.on('accountsChanged', (accounts: string[]) => {
       log('accountsChanged: current', accounts);
       setAccount(adapter.address || '');
       if (adapter.address) {
@@ -75,7 +75,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
       }
     });
 
-    adapter.on('chainChanged', (data) => {
+    adapter.on('chainChanged', (data: any) => {
       log('chainChanged: ', data);
       setChainId(data);
     });
