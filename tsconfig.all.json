@@ -78,6 +78,12 @@
         },
         {
             "path": "./packages/adapters/evm/binance/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/catwallet/tsconfig.all.json"
+        },
+        {
+            "path": "./packages/adapters/evm/catwallet/tsconfig.all.json"
         }
     ]
 }

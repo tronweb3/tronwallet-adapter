@@ -3,6 +3,7 @@
     "include": ["src"],
     "compilerOptions": {
         "outDir": "lib/cjs",
+        "target": "ES2020",
         "skipLibCheck": true
     }
 }
