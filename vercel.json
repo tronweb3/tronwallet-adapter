@@ -1,5 +1,6 @@
 {
     "buildCommand": "pnpm run build-dev-demo",
     "outputDirectory": "demos/dev-demo/dist",
-    "framework": "vite"
+    "framework": "vite",
+    "nodeVersion": "20.x"
 }
