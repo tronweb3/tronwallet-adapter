@@ -18,3 +18,5 @@ export * from '@tronweb3/tronwallet-adapter-metamask-evm';
 export * from '@tronweb3/tronwallet-adapter-tronlink-evm';
 export * from '@tronweb3/tronwallet-adapter-trust-evm';
 export * from '@tronweb3/tronwallet-adapter-binance-evm';
+export * from '@tronweb3/tronwallet-adapter-catwallet';
+export * from '@tronweb3/tronwallet-adapter-catwallet-evm';

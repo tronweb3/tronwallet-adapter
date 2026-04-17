@@ -1,10 +1,11 @@
 import { ref, computed, watch } from 'vue';
 const { TronLinkEvmAdapter } = window['@tronweb3/tronwallet-adapter-tronlink-evm'];
 const { MetaMaskEvmAdapter } = window['@tronweb3/tronwallet-adapter-metamask-evm'];
+const { CatWalletEvmAdapter } = window['@tronweb3/tronwallet-adapter-catwallet-evm'];
 
 export default {
     setup() {
-        const options = [new TronLinkEvmAdapter(), new MetaMaskEvmAdapter()];
+        const options = [new TronLinkEvmAdapter(), new MetaMaskEvmAdapter(), new CatWalletEvmAdapter()];
 
         const queryString = window.location.search || '';
         const params = new URLSearchParams(queryString);
