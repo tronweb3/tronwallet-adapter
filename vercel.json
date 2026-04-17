@@ -1,4 +1,5 @@
 {
     "buildCommand": "pnpm -w run build-dev-demo",
-    "outputDirectory": "demos/dev-demo/dist"
+    "outputDirectory": "demos/dev-demo/dist",
+    "framework": "vite"
 }
