@@ -1,4 +1,4 @@
-import { Box, Input, Link, Snackbar, Stack, styled, Typography } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, Input, Link, Snackbar, Stack, styled, Typography } from '@mui/material';
 import { Button } from './common';
 import { useEffect, useMemo, useState } from 'react';
 import SuccessIcon from './SuccessIcon';
@@ -7,7 +7,6 @@ import { useWallet } from './WalletProvider';
 import { CHAIN_ID, TRONSCAN_URL } from '../config';
 import { tronWeb } from '../tronweb';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import type { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
 
 export const UsageBox = styled(Box)(({ background }: { background: string }) => ({
   width: '280px',
@@ -60,6 +59,64 @@ const MessageInput = styled(Input)(({ marginTop }: { marginTop?: string }) => ({
   },
 }));
 
+const TypedDataInput = styled(Input)({
+  width: '100%',
+  borderRadius: '10px',
+  backgroundColor: 'rgba(20, 18, 118, 0.7)',
+  marginTop: '10px',
+  marginBottom: '8px',
+  padding: '10px 20px',
+  border: '1px solid transparent',
+  transition: 'border-color 0.5s ease',
+  '&.Mui-focused': {
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+  },
+  '& .MuiInput-input': {
+    caretColor: 'white',
+    color: 'white',
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    fontSize: '12px',
+    lineHeight: 1.4,
+  },
+  '& .MuiInput-input::placeholder': {
+    color: 'rgba(255, 255, 255, 0.5)',
+    opacity: 1,
+  },
+});
+
+const TypedDataErrorText = styled('div')({
+  color: '#ffb4b4',
+  fontSize: '12px',
+  marginBottom: '12px',
+  minHeight: '16px',
+});
+
+const TypedDataActions = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  gap: '8px',
+  marginTop: '14px',
+  marginBottom: '-6px',
+});
+
+const TypedDataActionButton = styled('button')({
+  background: 'transparent',
+  border: '1px solid rgba(255, 255, 255, 0.5)',
+  borderRadius: '6px',
+  color: '#fff',
+  cursor: 'pointer',
+  fontSize: '12px',
+  padding: '4px 10px',
+  transition: 'background 0.2s',
+  '&:hover:not(:disabled)': {
+    background: 'rgba(255, 255, 255, 0.15)',
+  },
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+});
+
 const InformAlert = styled(Snackbar)({
   padding: '10px',
   marginTop: '20px',
@@ -90,6 +147,22 @@ export default function SignUsage() {
   const [signature, setSignature] = useState('');
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState<'Transfer' | 'Sign Message' | 'Sign TypedData'>('Transfer');
+  const [typedDataInput, setTypedDataInput] = useState('');
+  const [typedDataError, setTypedDataError] = useState('');
+  const [chainIdAsString, setChainIdAsString] = useState(false);
+  const onClearTypedData = () => {
+    setTypedDataInput('');
+    setTypedDataError('');
+  };
+  const onPasteTypedData = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setTypedDataInput(text);
+      setTypedDataError('');
+    } catch {
+      setTypedDataError('Failed to read clipboard. Please paste manually.');
+    }
+  };
   const onSignMessage = async () => {
     if (!adapter) {
       return;
@@ -112,32 +185,23 @@ export default function SignUsage() {
     if (!adapter) {
       return;
     }
+    let typedData;
     try {
-      const typedData = {
-        domain: {
-          name: 'Permit',
-          version: '1',
-          chainId: (await (adapter as TronLinkAdapter).network()).chainId,
-          verifyingContract: adapter.address,
-        },
-        types: {
-          Permit: [
-            { name: 'owner', type: 'address' },
-            { name: 'spender', type: 'address' },
-            { name: 'value', type: 'uint256' },
-            { name: 'nonce', type: 'uint256' },
-            { name: 'deadline', type: 'uint256' },
-          ],
-        },
-        message: {
-          owner: adapter.address || '',
-          spender: adapter.address,
-          value: '1000000',
-          nonce: '0',
-          deadline: '9999999999',
-        },
+      typedData = JSON.parse(typedDataInput);
+      setTypedDataError('');
+    } catch {
+      setTypedDataError('Invalid JSON. Please check the TypedData input.');
+      return;
+    }
+    if (chainIdAsString && typedData?.domain && typedData.domain.chainId !== undefined) {
+      typedData = {
+        ...typedData,
+        domain: { ...typedData.domain, chainId: String(typedData.domain.chainId) },
       };
+    }
+    try {
       const res = await adapter.signTypedData(typedData);
+      console.log('typedData signature: ', res);
       const verified = tronWeb.trx.verifyTypedData(typedData.domain, typedData.types, typedData.message, res, adapter.address || '');
       setSignature(res);
       setSuccess(verified);
@@ -224,6 +288,37 @@ export default function SignUsage() {
   useEffect(() => {
     setIsReceiverError(!!receiver && !tronWeb.isAddress(receiver));
   }, [receiver, setIsReceiverError]);
+
+  useEffect(() => {
+    if (!adapter || !connectionState.connected) return;
+    const address = adapter.address || '';
+    const chainId = connectionState.chainId ? parseInt(connectionState.chainId, 16) : 0;
+    const defaults = {
+      domain: {
+        name: 'Permit',
+        version: '1',
+        chainId,
+        verifyingContract: address,
+      },
+      types: {
+        Permit: [
+          { name: 'owner', type: 'address' },
+          { name: 'spender', type: 'address' },
+          { name: 'value', type: 'uint256' },
+          { name: 'nonce', type: 'uint256' },
+          { name: 'deadline', type: 'uint256' },
+        ],
+      },
+      message: {
+        owner: address,
+        spender: address,
+        value: 1000000,
+        nonce: 0,
+        deadline: 9999999999,
+      },
+    };
+    setTypedDataInput((prev) => prev || JSON.stringify(defaults, null, 2));
+  }, [adapter, connectionState.connected, connectionState.chainId]);
   return (
     <UsageBox background="linear-gradient(210deg, #CEA5BA -1.29%, #4643DF 21.87%, #4643DF 74.72%, #41B7E9 98.71%)">
       <UsageTitle>Sign Usage</UsageTitle>
@@ -231,7 +326,34 @@ export default function SignUsage() {
       <Button disabled={!connectionState.connected} onClick={onSignMessage}>
         Sign Message
       </Button>
-      <Button disabled={!connectionState.connected} onClick={onSignTypedData} sx={{ marginTop: '20px' }}>
+      <TypedDataActions>
+        <TypedDataActionButton type="button" onClick={onPasteTypedData}>
+          Paste
+        </TypedDataActionButton>
+        <TypedDataActionButton type="button" onClick={onClearTypedData} disabled={!typedDataInput}>
+          Clear
+        </TypedDataActionButton>
+      </TypedDataActions>
+      <TypedDataInput
+        placeholder="TypedData JSON"
+        disableUnderline={!typedDataError}
+        value={typedDataInput}
+        onChange={(e) => {
+          setTypedDataInput(e.target.value);
+          if (typedDataError) setTypedDataError('');
+        }}
+        multiline
+        minRows={6}
+        maxRows={14}
+        error={!!typedDataError}
+      />
+      <TypedDataErrorText>{typedDataError}</TypedDataErrorText>
+      <FormControlLabel
+        control={<Checkbox checked={chainIdAsString} onChange={(e) => setChainIdAsString(e.target.checked)} sx={{ color: '#fff', padding: '4px 8px', '&.Mui-checked': { color: '#fff' } }} />}
+        label="Pass domain.chainId as string"
+        sx={{ color: '#fff', marginLeft: '-4px', marginBottom: '8px', '& .MuiFormControlLabel-label': { fontSize: '13px' } }}
+      />
+      <Button disabled={!connectionState.connected} onClick={onSignTypedData}>
         Sign TypedData (TIP-712)
       </Button>
       <MessageInput placeholder="Receiver Address" disableUnderline={!isReceiverError} value={receiver} onChange={(e) => setReceiver(e.target.value)} error={isReceiverError} />
