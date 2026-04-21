@@ -783,7 +783,7 @@ describe('methods should work fine', () => {
 
             const result = await adapter.signTypedData(mockTypedData);
             expect(_signTypedData).toHaveBeenCalledWith(
-                mockTypedData.domain,
+                { ...mockTypedData.domain, chainId: Number(mockTypedData.domain.chainId) },
                 mockTypedData.types,
                 mockTypedData.message
             );

@@ -326,7 +326,7 @@ export class TronLinkAdapter extends Adapter {
         return this._checkAndSign(async (wallet) => wallet.tronWeb.trx.signMessageV2(message), WalletSignMessageError);
     }
 
-    async signTypedData(typedData: TypedData): Promise<string> {
+    protected async _signTypedData(typedData: TypedData): Promise<string> {
         return this._checkAndSign(
             async (wallet) => wallet.tronWeb.trx._signTypedData(typedData.domain, typedData.types, typedData.message),
             WalletSignTypedDataError

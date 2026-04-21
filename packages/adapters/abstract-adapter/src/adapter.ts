@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import type { WalletError } from './errors.js';
+import { normalizeAndValidateTypedData } from './typedData.js';
 import type { SignedTransaction, Transaction, TypedData } from './types.js';
 
 export { EventEmitter };
@@ -108,8 +109,17 @@ export abstract class Adapter<Name extends string = string>
     multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<any> {
         return Promise.reject("The current wallet doesn't support multiSign.");
     }
+    signTypedData(typedData: TypedData): Promise<string> {
+        let normalized: TypedData;
+        try {
+            normalized = normalizeAndValidateTypedData(typedData);
+        } catch (error) {
+            return Promise.reject(error);
+        }
+        return this._signTypedData(normalized);
+    }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    signTypedData(_typedData: TypedData): Promise<string> {
+    protected _signTypedData(_typedData: TypedData): Promise<string> {
         return Promise.reject("The current wallet doesn't support signTypedData.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
