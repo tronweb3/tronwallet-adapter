@@ -3,10 +3,7 @@ import { Box, Button, Input, MenuItem, Select, Stack, Typography, styled } from 
 import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
-import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
-import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
-import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
+import { TronLinkEvmAdapter, BinanceEvmAdapter, MetaMaskEvmAdapter, TrustEvmAdapter } from '@tronweb3/tronwallet-adapters';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
@@ -176,7 +173,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
         setChainId('');
       }
     });
-    adapter.on('chainChanged', (data) => {
+    adapter.on('chainChanged', (data: any) => {
       setChainId(data);
     });
     adapter.on('disconnect', () => {
@@ -245,7 +242,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
             <Typography sx={{ color: '#555', fontSize: 13 }}>{chainId || '—'}</Typography>
           </InfoCard>
           <ConnectButton onClick={onConnect} disabled={!!account}>
-            {!!account ? 'Connected to Wallet' : 'Connect Wallet'}
+            {account ? 'Connected to Wallet' : 'Connect Wallet'}
           </ConnectButton>
         </BasicInfoWrap>
 

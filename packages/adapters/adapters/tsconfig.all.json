@@ -50,6 +50,9 @@
             "path": "../onekey/tsconfig.all.json"
         },
         {
+            "path": "../backpack/tsconfig.all.json"
+        },
+        {
             "path": "../evm/metamask/tsconfig.all.json"
         },
         {

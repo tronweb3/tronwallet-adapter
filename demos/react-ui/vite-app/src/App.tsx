@@ -11,17 +11,7 @@ import {
 } from '@tronweb3/tronwallet-adapter-react-ui';
 import toast from 'react-hot-toast';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Alert } from '@mui/material';
-import {
-    TronLinkAdapter,
-    TokenPocketAdapter,
-    BitKeepAdapter,
-    OkxWalletAdapter,
-    GateWalletAdapter,
-    BybitWalletAdapter,
-    LedgerAdapter,
-    WalletConnectAdapter,
-    MetaMaskAdapter,
-} from '@tronweb3/tronwallet-adapters';
+import * as Adapters from '@tronweb3/tronwallet-adapters';
 import { tronWeb } from './tronweb';
 import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
 const rows = [
@@ -47,8 +37,7 @@ export function App() {
         } else toast.error(e.message);
     }
     const adapters = useMemo(function () {
-        const tronLink1 = new TronLinkAdapter();
-        const walletConnect1 = new WalletConnectAdapter({
+        const walletConnect1 = new Adapters.WalletConnectAdapter({
             network: 'Nile',
             options: {
                 relayUrl: import.meta.env.VITE_WALLETCONNECT_RELAY_URL,
@@ -86,25 +75,13 @@ export function App() {
                 // ]
             },
         });
-        const ledger = new LedgerAdapter({
-            accountNumber: 2,
-        });
-        const tokenPocket = new TokenPocketAdapter();
-        const bitKeep = new BitKeepAdapter();
-        const okxWalletAdapter = new OkxWalletAdapter();
-        const gateAdapter = new GateWalletAdapter();
-        const bybitAdapter = new BybitWalletAdapter();
-        const metaMaskAdapter = new MetaMaskAdapter();
         return [
-            tronLink1,
-            metaMaskAdapter,
             walletConnect1,
-            ledger,
-            tokenPocket,
-            bitKeep,
-            okxWalletAdapter,
-            gateAdapter,
-            bybitAdapter,
+            ...Object.entries(Adapters)
+                .filter(
+                    ([key]) => key.endsWith('Adapter') && !key.endsWith('EvmAdapter') && !key.includes('WalletConnect')
+                )
+                .map(([key, value]) => new (value as any)()),
         ];
     }, []);
     function onConnect() {

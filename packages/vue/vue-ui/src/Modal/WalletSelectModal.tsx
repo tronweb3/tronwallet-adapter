@@ -18,7 +18,6 @@ export const WalletSelectModal = defineComponent({
         const wrapperId = 'vue-portal-modal-container';
         let element: HTMLDivElement | null;
         let systemCreated = false;
-        const nodeRef = ref<HTMLDivElement | null>();
         const { wallets, select } = useWallet();
         const walletsList = computed(() => [
             ...wallets.value.filter((a: any) => a.state !== AdapterState.NotFound),
@@ -53,7 +52,6 @@ export const WalletSelectModal = defineComponent({
             <VuePortal wrapperId={wrapperId}>
                 <div
                     data-testid="wallet-select-modal"
-                    ref={(el) => (nodeRef.value = el as HTMLDivElement)}
                     class={`adapter-modal ${props.visible && 'adapter-modal-fade-in'}`}
                 >
                     <div class="adapter-modal-wrapper">
