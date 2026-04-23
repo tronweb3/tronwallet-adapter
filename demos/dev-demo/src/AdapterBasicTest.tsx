@@ -3,17 +3,21 @@ import { Alert, Box, Button, Grid2, Input, MenuItem, Select, Stack, TextField, T
 import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
-import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
-import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
-import { TrustEvmAdapter } from '@tronweb3/tronwallet-adapter-trust-evm';
+import Adapters from '@tronweb3/tronwallet-adapters';
 import type { ReactNode } from 'react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
 
 export const AdapterBasicTest = memo(function AdapterBasicTest() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter(), new TrustEvmAdapter()], []);
+  const adapters = useMemo(
+    () => [
+      ...Object.entries(Adapters)
+        .filter(([key]) => key.endsWith('EvmAdapter'))
+        .map(([key, value]) => new (value as any)()),
+    ],
+    []
+  );
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
@@ -53,7 +57,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
     adapter.on('connect', async () => {
       log('connect: ', adapter.address);
     });
-    adapter.on('accountsChanged', (accounts) => {
+    adapter.on('accountsChanged', (accounts: string[]) => {
       log('accountsChanged: current', accounts);
       setAccount(adapter.address || '');
       if (adapter.address) {
@@ -71,7 +75,7 @@ export const AdapterBasicTest = memo(function AdapterBasicTest() {
       }
     });
 
-    adapter.on('chainChanged', (data) => {
+    adapter.on('chainChanged', (data: any) => {
       log('chainChanged: ', data);
       setChainId(data);
     });

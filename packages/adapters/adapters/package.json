@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.24",
+    "version": "1.2.25",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
@@ -24,9 +24,9 @@
     "module": "./lib/esm/index.js",
     "types": "./lib/types/index.d.ts",
     "exports": {
-        "require": "./lib/cjs/index.js",
+        "types": "./lib/types/index.d.ts",
         "import": "./lib/esm/index.js",
-        "types": "./lib/types/index.d.ts"
+        "require": "./lib/cjs/index.js"
     },
     "files": [
         "lib",
@@ -61,6 +61,7 @@
         "@tronweb3/tronwallet-adapter-tronlink": "workspace:^",
         "@tronweb3/tronwallet-adapter-tronlink-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust": "workspace:^",
+        "@tronweb3/tronwallet-adapter-backpack": "workspace:^",
         "@tronweb3/tronwallet-adapter-trust-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-walletconnect": "workspace:^"
     },

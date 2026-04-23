@@ -1,4 +1,5 @@
 import type { TronWeb } from 'tronweb';
+import type { TypedDataDomain, TypedDataField } from 'tronweb/utils';
 export type { TronWeb } from 'tronweb';
 export enum NetworkType {
     Mainnet = 'Mainnet',
@@ -35,6 +36,15 @@ export type NetworkNodeConfig = {
 };
 
 export type { Transaction, SignedTransaction } from 'tronweb/lib/esm/types/Transaction';
+
+/**
+ * Typed data object for signTypedData, following [TIP-712](https://github.com/tronprotocol/tips/blob/master/tip-712.md) style structure.
+ */
+export interface TypedData {
+    domain: TypedDataDomain;
+    types: Record<string, TypedDataField[]>;
+    message: Record<string, unknown>;
+}
 
 export const TIP6963AnnounceProviderEventName = 'TIP6963:announceProvider' as const;
 export const TIP6963RequestProviderEventName = 'TIP6963:requestProvider' as const;
