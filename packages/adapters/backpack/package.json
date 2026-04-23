@@ -1,7 +1,7 @@
 {
     "name": "@tronweb3/tronwallet-adapter-backpack",
     "version": "1.0.0",
-    "description": "Wallet adapter for Backpack Wallet extension and App wallet.",
+    "description": "Wallet adapter for Backpack Wallet.",
     "keywords": [
         "TRON",
         "TronWeb",

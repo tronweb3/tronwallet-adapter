@@ -82,6 +82,7 @@ try {
 
 ## Caveats
 
+-   Currently Backpack wallet only support TRON on Browser Extension wallet.
 -   Backpack wallet does not support `multiSign`.
 -   Backpack wallet only support `Mainnet` and `Shasta`.
 -   Backpack extension cannot be connected automatically after page refresh.
