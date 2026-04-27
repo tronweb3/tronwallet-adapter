@@ -5,11 +5,10 @@ import type { Adapter, WalletError } from '@tronweb3/tronwallet-abstract-adapter
 import { WalletDisconnectedError, WalletNotFoundError } from '@tronweb3/tronwallet-abstract-adapter';
 // @ts-ignore
 import { toast } from 'react-hot-toast';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { WalletProvider } from '@tronweb3/tronwallet-adapter-react-hooks';
 import { WalletModalProvider } from '@tronweb3/tronwallet-adapter-react-ui';
 import '@tronweb3/tronwallet-adapter-react-ui/style.css';
-import { LedgerAdapter } from '@tronweb3/tronwallet-adapters';
 export default function App({ Component, pageProps }: AppProps) {
     function onError(e: WalletError) {
         if (e instanceof WalletNotFoundError) {
@@ -21,18 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const [adapters, setAdapters] = useState<Adapter[]>([]);
     useEffect(() => {
         import('@tronweb3/tronwallet-adapters').then((res) => {
-            const {
-                BitKeepAdapter,
-                OkxWalletAdapter,
-                TokenPocketAdapter,
-                TronLinkAdapter,
-                WalletConnectAdapter,
-                MetaMaskAdapter,
-            } = res;
-            const tronLinkAdapter = new TronLinkAdapter();
-            const ledger = new LedgerAdapter({
-                accountNumber: 2,
-            });
+            const { WalletConnectAdapter } = res;
             const walletConnectAdapter = new WalletConnectAdapter({
                 network: 'Nile',
                 options: {
@@ -52,18 +40,14 @@ export default function App({ Component, pageProps }: AppProps) {
                     },
                 },
             });
-            const bitKeepAdapter = new BitKeepAdapter();
-            const tokenPocketAdapter = new TokenPocketAdapter();
-            const okxwalletAdapter = new OkxWalletAdapter();
-            const metaMaskAdapter = new MetaMaskAdapter();
             setAdapters([
-                tronLinkAdapter,
-                bitKeepAdapter,
-                tokenPocketAdapter,
-                okxwalletAdapter,
-                metaMaskAdapter,
                 walletConnectAdapter,
-                ledger,
+                ...Object.entries(res)
+                    .filter(
+                        ([key]) =>
+                            key.endsWith('Adapter') && !key.endsWith('EvmAdapter') && !key.includes('WalletConnect')
+                    )
+                    .map(([key, value]) => new (value as any)()),
             ]);
         });
     }, [setAdapters]);

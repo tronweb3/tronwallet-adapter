@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Check if staged files include source or test changes under packages/
+if git diff --cached --name-only | grep -qE '^packages/.+/(src|tests)/'; then
+  echo "📦 Detected source/test changes in packages, running build & test..."
+  pnpm build && pnpm test && pnpm build-demos
+fi
+
 npx lint-staged
 node scripts/check-repo-version.js

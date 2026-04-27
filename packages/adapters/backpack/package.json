@@ -1,11 +1,11 @@
 {
-    "name": "@tronweb3/tronwallet-adapter-tronlink",
-    "version": "1.1.16",
-    "description": "Wallet adapter for TronLink Wallet extension and TronLink app.",
+    "name": "@tronweb3/tronwallet-adapter-backpack",
+    "version": "1.0.0",
+    "description": "Wallet adapter for Backpack Wallet.",
     "keywords": [
         "TRON",
         "TronWeb",
-        "TronLink"
+        "Backpack"
     ],
     "author": "tronweb3",
     "repository": {
@@ -45,7 +45,7 @@
         "@tronweb3/tronwallet-abstract-adapter": "workspace:^"
     },
     "devDependencies": {
-        "@testing-library/dom": "8.20.1",
+        "@testing-library/dom": "^8.20.0",
         "shx": "0.3.4",
         "vitest": "3.2.4"
     }

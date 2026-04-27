@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, RadioGroup, Radio, Button, FormControlLabel } from '@mui/material';
-import type { Account, GetAccounts } from '@tronweb3/tronwallet-adapter-ledger';
+import type { Account, GetAccounts } from '@tronweb3/tronwallet-adapters';
 import { useEffect, useState } from 'react';
 interface Props {
   onConfirm: (acc: Account) => void;

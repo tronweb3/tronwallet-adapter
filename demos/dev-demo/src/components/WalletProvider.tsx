@@ -1,30 +1,11 @@
 import type { PropsWithChildren } from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import QRCodeModal from './QRCodeModal';
-import { TronLinkAdapter } from '@tronweb3/tronwallet-adapters';
-import {
-  BitKeepAdapter,
-  GateWalletAdapter,
-  ImTokenAdapter,
-  LedgerAdapter,
-  OkxWalletAdapter,
-  TokenPocketAdapter,
-  WalletConnectAdapter,
-  FoxWalletAdapter,
-  BybitWalletAdapter,
-  TomoWalletAdapterName,
-  TomoWalletAdapter,
-  TronLinkAdapterName,
-  TrustAdapter,
-  GuardaAdapter,
-  BinanceWalletAdapter,
-  OneKeyAdapter,
-  MetaMaskAdapter,
-} from '@tronweb3/tronwallet-adapters';
+import * as Adapters from '@tronweb3/tronwallet-adapters';
 import { walletconnectConfig } from '../config';
 import type { Adapter, AdapterName } from '@tronweb3/tronwallet-abstract-adapter';
 import { WalletReadyState } from '@tronweb3/tronwallet-abstract-adapter';
-
+const { TronLinkAdapterName } = Adapters;
 export interface WalletContextType {
   selectedAdapterName: AdapterName;
   setSelectedAdapterName: (name: AdapterName) => void;
@@ -67,17 +48,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
 
   const adapters = useMemo(() => {
     return [
-      new TomoWalletAdapter(),
-      new TronLinkAdapter(),
-      new TokenPocketAdapter(),
-      new OkxWalletAdapter(),
-      new BitKeepAdapter(),
-      new TrustAdapter(),
-      new GateWalletAdapter(),
-      new ImTokenAdapter(),
-      new FoxWalletAdapter(),
-      new BybitWalletAdapter(),
-      new BinanceWalletAdapter({
+      new Adapters.BinanceWalletAdapter({
         useWalletConnectWhenWalletNotFound: true,
         walletConnectConfig: walletconnectConfig,
         onWalletConnectUri: (uri: string) => {
@@ -86,11 +57,10 @@ export default function WalletProvider({ children }: PropsWithChildren) {
           setQrModalOpenRef.current(true);
         },
       }),
-      new LedgerAdapter(),
-      new GuardaAdapter(),
-      new OneKeyAdapter(),
-      new WalletConnectAdapter(walletconnectConfig),
-      new MetaMaskAdapter() as any,
+      new Adapters.WalletConnectAdapter(walletconnectConfig),
+      ...Object.entries(Adapters)
+        .filter(([key]) => key.endsWith('Adapter') && !key.endsWith('EvmAdapter') && !key.includes('WalletConnect') && !key.includes('Binance'))
+        .map(([key, value]) => new (value as any)()),
     ];
   }, []);
   const walletName = decodeURIComponent(new URLSearchParams(location.search).get('wallet') || '');
@@ -129,7 +99,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       connected: true,
       address: adapter?.address || '',
     }));
-    (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
+    (adapter as unknown as Adapters.TronLinkAdapter)?.network?.().then((network) => {
       setConnectionState((preState) => ({
         ...preState,
         chainId: network.chainId,
@@ -174,7 +144,7 @@ export default function WalletProvider({ children }: PropsWithChildren) {
       adapter.on('disconnect', onDisconnect);
       adapter.on('chainChanged', onChainChanged);
       if (adapter?.connected) {
-        (adapter as unknown as TronLinkAdapter)?.network?.().then((network) => {
+        (adapter as unknown as Adapters.TronLinkAdapter)?.network?.().then((network) => {
           setConnectionState((preState) => ({
             ...preState,
             chainId: network.chainId,

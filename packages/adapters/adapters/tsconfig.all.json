@@ -50,6 +50,9 @@
             "path": "../onekey/tsconfig.all.json"
         },
         {
+            "path": "../backpack/tsconfig.all.json"
+        },
+        {
             "path": "../evm/metamask/tsconfig.all.json"
         },
         {
@@ -60,6 +63,9 @@
         },
         {
             "path": "../evm/binance/tsconfig.all.json"
+        },
+        {
+            "path": "../evm/okxwallet/tsconfig.all.json"
         },
         {
             "path": "./tsconfig.cjs.json"

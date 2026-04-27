@@ -1,9 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { LedgerAdapter } from '@tronweb3/tronwallet-adapter-ledger';
-import type { Account } from '@tronweb3/tronwallet-adapter-ledger';
+import { LedgerAdapter } from '@tronweb3/tronwallet-adapters';
+import type { Account } from '@tronweb3/tronwallet-adapters';
 import '../tronweb';
-import type { LedgerUtils, SelectAccount } from '@tronweb3/tronwallet-adapter-ledger/lib/types/LedgerWallet.js';
+import type { LedgerUtils, SelectAccount } from '@tronweb3/tronwallet-adapters';
 import { ConnectTip } from './ConnectTip.js';
 import { Button } from '@mui/material';
 import { SelectAccountSection } from './SelectAccountSection.js';

@@ -1,7 +1,7 @@
-import type { SessionData } from '@metamask/multichain-api-client';
 import {
     type CaipAccountId,
     type MultichainApiClient,
+    type SessionData,
     type Transport,
     getDefaultTransport,
     getMultichainClient,
@@ -50,14 +50,14 @@ export class MetaMaskAdapter extends Adapter {
     url = 'https://metamask.io';
 
     private _config: MetaMaskAdapterConfig;
-    private _readyState: WalletReadyState = WalletReadyState.Loading;
+    private _readyState: WalletReadyState = WalletReadyState.NotFound;
     private _state: AdapterState = AdapterState.Disconnect;
     private _connecting = false;
     private _switchingChain = false;
     private _address: string | null = null;
     private _scope: Scope | undefined;
     private _selectedAddressOnPageLoadPromise: Promise<string | undefined> | undefined;
-    private _checkWalletPromise: Promise<boolean> | undefined;
+    private _checkWalletPromise: Promise<void> | undefined;
     private _removeAccountsChangedListener: (() => void) | undefined;
     private _transport: Transport;
     private _client: MultichainApiClient;
@@ -74,8 +74,8 @@ export class MetaMaskAdapter extends Adapter {
         this._checkWalletPromise = this.checkWallet();
         this._selectedAddressOnPageLoadPromise = this.getInitialSelectedAddress();
         // Auto-restore session on page refresh
-        this._checkWalletPromise.then((walletReady) => {
-            if (walletReady) {
+        this._checkWalletPromise.then(() => {
+            if (this._readyState === WalletReadyState.Found) {
                 this.tryRestoringSession()
                     .then(() => {
                         if (this.address) {
@@ -120,8 +120,10 @@ export class MetaMaskAdapter extends Adapter {
             if (this.connected || this.connecting) {
                 return;
             }
-            const walletReady = await this._checkWalletPromise;
-            if (!walletReady) {
+            this._connecting = true;
+            // Wait for the wallet check to complete before trying to check readyState
+            await this._checkWalletPromise;
+            if (this._readyState !== WalletReadyState.Found) {
                 if (
                     isInBrowser() &&
                     !this.openAppWithDeepLinkIfNeed() &&
@@ -131,7 +133,6 @@ export class MetaMaskAdapter extends Adapter {
                 }
                 throw new WalletNotFoundError('Wallet not found or not ready');
             }
-            this._connecting = true;
             try {
                 // Try restoring session
                 await this.tryRestoringSession();
@@ -351,18 +352,22 @@ export class MetaMaskAdapter extends Adapter {
      * By default, the _readyState is set to Found to avoid issues on page reloads.
      * But if the wallet is not actually available, we need to update the _readyState accordingly.
      * Average time for wallet to be available is around 50ms.
-     * @returns A promise that resolves to true if the wallet is found.
+     * @returns A promise that resolves when the wallet check is complete.
      */
-    private async checkWallet(): Promise<boolean> {
+    private async checkWallet(): Promise<void> {
+        if (this._readyState === WalletReadyState.Loading) {
+            return;
+        }
+        this._readyState = WalletReadyState.Loading;
+        this.emit('readyStateChanged', this.readyState);
         const metamaskInstalled = await isMetamaskInstalled();
         if (metamaskInstalled) {
             this._readyState = WalletReadyState.Found;
             this.emit('readyStateChanged', this.readyState);
-            return true;
+            return;
         }
         this._readyState = WalletReadyState.NotFound;
         this.emit('readyStateChanged', this.readyState);
-        return false;
     }
 
     /**
