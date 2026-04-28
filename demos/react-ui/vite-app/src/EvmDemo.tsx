@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { OkxWalletEvmAdapter } from '@tronweb3/tronwallet-adapter-okxwallet-evm';
 import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
 import type { Adapter } from '@tronweb3/abstract-adapter-evm';
+import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
 
 export function EvmDemo() {
     const adapters = useMemo(() => [new OkxWalletEvmAdapter(), new MetaMaskEvmAdapter()], []);
@@ -42,10 +43,10 @@ export function EvmDemo() {
     }, [adapter]);
 
     return (
-        <div style={{ marginTop: 40, padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
+        <div style={{ marginBottom: 200 }}>
             <h2>EVM Wallet Adapter Demo</h2>
-            <div style={{ marginBottom: 12 }}>
-                <label>Select EVM Wallet: </label>
+            <p>
+                <span>Select EVM Wallet:</span>
                 <select value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
                     {adapters.map((a) => (
                         <option key={a.name} value={a.name}>
@@ -53,20 +54,24 @@ export function EvmDemo() {
                         </option>
                     ))}
                 </select>
-            </div>
-            <p>
-                <strong>Ready State:</strong> {readyState}
             </p>
             <p>
-                <strong>Address:</strong> {account || 'Not connected'}
+                <span>Ready State:</span> {readyState}
             </p>
-            <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={onConnect} disabled={!!account}>
+            <p>
+                <span>Address:</span> {account || 'Not connected'}
+            </p>
+            <div>
+                <Button style={{ marginRight: '20px', marginBottom: '10px' }} onClick={onConnect} disabled={!!account}>
                     Connect
-                </button>
-                <button onClick={onSignMessage} disabled={!account}>
-                    Sign Message
-                </button>
+                </Button>
+                <Button
+                    style={{ marginRight: '20px', marginBottom: '10px' }}
+                    onClick={onSignMessage}
+                    disabled={!account}
+                >
+                    SignMessage
+                </Button>
             </div>
         </div>
     );

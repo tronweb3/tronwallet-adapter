@@ -6,6 +6,8 @@ import { OkxWalletProvider, installOkxWalletEIP6963Provider } from './okxwallet-
 let provider: OkxWalletProvider;
 let cleanupEIP6963: (() => void) | null = null;
 
+window.open = vi.fn();
+
 beforeEach(() => {
     vi.useFakeTimers();
     provider = new OkxWalletProvider();
