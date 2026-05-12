@@ -17,3 +17,5 @@ out
 *.tsbuildinfo
 *.log
 coverage
+requires
+.claude

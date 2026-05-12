@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapters",
-    "version": "1.2.25",
+    "version": "1.2.26",
     "description": "Wallet adapters to help developers interact with Tron wallets using consistent API.",
     "keywords": [
         "TRON",
@@ -46,6 +46,7 @@
         "@tronweb3/tronwallet-adapter-binance": "workspace:^",
         "@tronweb3/tronwallet-adapter-binance-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bitkeep": "workspace:^",
+        "@tronweb3/tronwallet-adapter-okxwallet-evm": "workspace:^",
         "@tronweb3/tronwallet-adapter-bybit": "workspace:^",
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",

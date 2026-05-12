@@ -43,16 +43,18 @@ function App() {
   const [tabIndex, setTabIndex] = useLocalStorage('TabIndex', 0);
   return (
     <Container className="App">
-      <WalletProvider>
-        <Box>
-          <StyledTabs value={tabIndex} onChange={(_e, v) => setTabIndex(v)} centered>
-            <StyledTab label="Tron Wallet Adapter" />
-            <StyledTab label="EVM Wallet Adapter" />
-          </StyledTabs>
-          {tabIndex === 0 && <TronAdapterDemo />}
-          {tabIndex === 1 && <EvmAdapterDemo />}
-        </Box>
-      </WalletProvider>
+      <Box>
+        <StyledTabs value={tabIndex} onChange={(_e, v) => setTabIndex(v)} centered>
+          <StyledTab label="Tron Wallet Adapter" />
+          <StyledTab label="EVM Wallet Adapter" />
+        </StyledTabs>
+        {tabIndex === 0 && (
+          <WalletProvider>
+            <TronAdapterDemo />
+          </WalletProvider>
+        )}
+        {tabIndex === 1 && <EvmAdapterDemo />}
+      </Box>
     </Container>
   );
 }
