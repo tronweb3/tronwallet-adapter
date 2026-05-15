@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextF
 import * as Adapters from '@tronweb3/tronwallet-adapters';
 import { tronWeb } from './tronweb';
 import { Button } from '@tronweb3/tronwallet-adapter-react-ui';
+import { EvmDemo } from './EvmDemo';
 const rows = [
     { name: 'Connect Button', reactUI: WalletConnectButton },
     { name: 'Disconnect Button', reactUI: WalletDisconnectButton },
@@ -107,6 +108,7 @@ export function App() {
                 <UIComponent></UIComponent>
                 <Profile></Profile>
                 <SignDemo></SignDemo>
+                <EvmDemo />
             </WalletModalProvider>
         </WalletProvider>
     );

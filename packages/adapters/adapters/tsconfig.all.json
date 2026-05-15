@@ -65,6 +65,9 @@
             "path": "../evm/binance/tsconfig.all.json"
         },
         {
+            "path": "../evm/okxwallet/tsconfig.all.json"
+        },
+        {
             "path": "./tsconfig.cjs.json"
         },
         {

@@ -21,18 +21,10 @@ npm install @tronweb3/tronwallet-abstract-adapter @tronweb3/tronwallet-adapter-w
 
 ## 🔌 Supported Wallets
 
-Each adapter offers a consistent interface. You can use this collective package or import individual ones.
+We support a wide range of TRON and EVM wallets, including TronLink, MetaMask, WalletConnect, Ledger, and [more](https://walletadapter.org/docs/guide/wallet-reference.html#supported-wallets-by-adapter). Each adapter offers a consistent interface — use the collective `@tronweb3/tronwallet-adapters` package and import individual adapters.
 
-| Wallet            | NPM Package                                                                                                          | Description                                             | Source                                                                                           |
-| :---------------- | :------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------------------------------------------------- |
-| **All-in-One**    | [`@tronweb3/tronwallet-adapters`](https://npmjs.com/package/@tronweb3/tronwallet-adapters)                           | Includes all adapters below                             | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)      |
-| **TronLink**      | [`@tronweb3/tronwallet-adapter-tronlink`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-tronlink)           | Adapter for [TronLink](https://www.tronlink.org/)       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/tronlink)      |
-| **WalletConnect** | [`@tronweb3/tronwallet-adapter-walletconnect`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-walletconnect) | Adapter for [WalletConnect](https://walletconnect.com/) | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/walletconnect) |
-| **MetaMask**      | [`@tronweb3/tronwallet-adapter-metamask-tron`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-tron) | Tron support via [MetaMask](https://metamask.io/)       | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/metamask-tron) |
-| **Ledger**        | [`@tronweb3/tronwallet-adapter-ledger`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-ledger)               | Hardware wallet support                                 | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/ledger)        |
-| **MetaMask EVM**  | [`@tronweb3/tronwallet-adapter-metamask-evm`](https://npmjs.com/package/@tronweb3/tronwallet-adapter-metamask-evm)   | Native EVM support                                      | [View](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/evm/metamask)  |
+👉 For the complete list of supported wallets and their adapters, visit our [documentation](https://walletadapter.org/docs/guide/wallet-reference.html#supported-wallets-by-adapter).
 
-> ℹ️ For the full list of supported wallets, visit our [documentation](https://walletadapter.org/docs/guide/wallet-reference.html#supported-wallets-by-adapter).
 
 ---
 
