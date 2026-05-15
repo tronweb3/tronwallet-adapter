@@ -55,14 +55,10 @@ export function getAddressFromCaipAccountId(caipAccountId: string): string {
 }
 
 /**
- * Checks if the given data represents an accountsChanged event.
- * @param data - The event data.
- * @returns True if it's an accountsChanged event, false otherwise.
+ * Checks if the given data represents a sessionChanged event.
+ * @param event - The event data.
+ * @returns True if it's a sessionChanged event, false otherwise.
  */
-export function isAccountChangedEvent(event: any): boolean {
-    return event?.method === 'wallet_notify' && event?.params?.notification?.method === 'metamask_accountsChanged';
-}
-
 export function isSessionChangedEvent(event: any): boolean {
     return event?.method === 'wallet_sessionChanged';
 }
@@ -86,6 +82,10 @@ export function scopeToNetworkType(scope: Scope): NetworkType {
     }
 }
 
+/**
+ * Checks if the current environment is a MetaMask mobile webview.
+ * @returns True if it's a MetaMask mobile webview, false otherwise.
+ */
 export function isMetaMaskMobileWebView() {
     if (typeof window === 'undefined') {
         return false;

@@ -21,4 +21,7 @@ export enum Scope {
     NILE = 'tron:3448148188',
 }
 
+/**
+ * Type representing the string values of the Scope
+ */
 export type ScopeValue = `${Scope}`;
