@@ -1,5 +1,4 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
@@ -9,6 +8,8 @@ import {
     WalletConnectionError,
     WalletSignTransactionError,
     WalletGetNetworkError,
+    AddonAdapter,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -33,23 +34,11 @@ declare global {
     }
 }
 
-export interface TrustAdapterConfig extends BaseAdapterConfig {
-    /**
-     * Timeout in millisecond for checking if Trust wallet exists.
-     * Default is 2 * 1000ms
-     */
-    checkTimeout?: number;
-
-    /**
-     * Set if open app using DeepLink.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
-}
+export type TrustAdapterConfig = BaseAdapterConfig;
 
 export const TrustAdapterName = 'Trust' as AdapterName<'Trust'>;
 
-export class TrustAdapter extends Adapter {
+export class TrustAdapter extends AddonAdapter {
     name = TrustAdapterName;
     url = 'https://trustwallet.com';
     icon =
@@ -64,17 +53,10 @@ export class TrustAdapter extends Adapter {
     private _address: string | null;
 
     constructor(config: TrustAdapterConfig = {}) {
-        super();
-        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = true } = config;
-
-        if (typeof checkTimeout !== 'number') {
-            throw new Error('[TrustAdapter] config.checkTimeout should be a number');
-        }
+        super(config);
 
         this.config = {
-            checkTimeout,
-            openAppWithDeeplink,
-            openUrlWhenWalletNotFound,
+            ...this.commonConfig,
         };
         this._connecting = false;
         this._wallet = null;
@@ -87,7 +69,11 @@ export class TrustAdapter extends Adapter {
         }
         if (supportTrust()) {
             this._readyState = WalletReadyState.Found;
-            this._updateWallet();
+            this._updateWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
         } else {
             this._checkWallet().then(() => {
                 if (this.connected) {
@@ -136,33 +122,21 @@ export class TrustAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            this.checkIfopenTrustWallet();
-            if (this.connected || this.connecting) return;
-            await this._checkWallet();
-            if (this.state === AdapterState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
+            if (!(await this._beforeConnect())) return;
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TronLinkWallet;
-            try {
-                const res = await wallet.request({ method: 'tron_requestAccounts' });
-                if (!res) {
-                    throw new WalletConnectionError('Request connect error.');
-                }
-                if (res.code === 4000) {
-                    throw new WalletConnectionError(
-                        'The same DApp has already initiated a request to connect to trustwallet, and the pop-up window has not been closed.'
-                    );
-                }
-                if (res.code === 4001) {
-                    throw new WalletConnectionError('The user rejected connection.');
-                }
-            } catch (error: any) {
-                throw new WalletConnectionError(error?.message, error);
+            const res = await wallet.request({ method: 'tron_requestAccounts' });
+            if (!res) {
+                throw new WalletConnectionError('Request connect error.');
+            }
+            if (res.code === 4000) {
+                throw new WalletConnectionError(
+                    'The same DApp has already initiated a request to connect to trustwallet, and the pop-up window has not been closed.'
+                );
+            }
+            if (res.code === 4001) {
+                throw new WalletConnectionError('The user rejected connection.');
             }
 
             const address = wallet.tronWeb.defaultAddress?.base58 || '';
@@ -171,8 +145,9 @@ export class TrustAdapter extends Adapter {
             this._listenEvent();
             this.connected && this.emit('connect', this.address || '');
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err = error instanceof WalletError ? error : new WalletConnectionError(error?.message, error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
@@ -268,15 +243,23 @@ export class TrustAdapter extends Adapter {
         window.removeEventListener('message', this.messageHandler);
     }
 
-    private messageHandler = (e: TronLinkMessageEvent) => {
+    private messageHandler = async (e: TronLinkMessageEvent) => {
         const message = e.data?.message;
         if (!message) {
             return;
         }
         if (message.action === 'accountsChanged') {
-            setTimeout(() => {
+            setTimeout(async () => {
                 const preAddr = this.address || '';
                 if ((this._wallet as TronLinkWallet)?.ready) {
+                    // Gate the connect transition with the security check.
+                    try {
+                        await this.checkSecurity();
+                    } catch {
+                        this.setAddress(null);
+                        this.setState(AdapterState.Disconnect);
+                        return;
+                    }
                     const address = (message.data as AccountsChangedEventData).address;
                     this.setAddress(address);
                     this.setState(AdapterState.Connected);
@@ -298,6 +281,18 @@ export class TrustAdapter extends Adapter {
             const isCurConnected = this.connected;
             const preAddress = this.address || '';
             const address = (this._wallet as TronLinkWallet).tronWeb?.defaultAddress?.base58 || '';
+            // Trust may post a `connect` message before the address is available;
+            // ignore it so we don't report a connection (and emit connect) with no address.
+            if (!address) {
+                return;
+            }
+            try {
+                await this.checkSecurity();
+            } catch {
+                this.setAddress(null);
+                this.setState(AdapterState.Disconnect);
+                return;
+            }
             this.setAddress(address);
             this.setState(AdapterState.Connected);
             if (!isCurConnected) {
@@ -321,12 +316,19 @@ export class TrustAdapter extends Adapter {
         }
     }
 
+    protected _openAppByDeepLinkIfNeed(): boolean {
+        if (this.config.openAppWithDeeplink === false) {
+            return false;
+        }
+        return openTrustWallet();
+    }
+
     private _checkPromise: Promise<boolean> | null = null;
     /**
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
      * @returns if trustwallet exists
      */
-    private _checkWallet(): Promise<boolean> {
+    protected _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }
@@ -355,14 +357,26 @@ export class TrustAdapter extends Adapter {
         return this._checkPromise;
     }
 
-    private _updateWallet = () => {
+    private _updateWallet = async () => {
         let state = this.state;
         let address = this.address;
         if (supportTrust()) {
             this._wallet = window.trustwallet!.tronLink;
             this._listenEvent();
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;
-            state = this._wallet.ready ? AdapterState.Connected : AdapterState.Disconnect;
+            if (address) {
+                // Only run the security check once the wallet is actually connected.
+                try {
+                    await this.checkSecurity();
+                } catch {
+                    this.setAddress(null);
+                    this.setState(AdapterState.Disconnect);
+                    return;
+                }
+                state = AdapterState.Connected;
+            } else {
+                state = AdapterState.Disconnect;
+            }
         } else {
             this._wallet = null;
             address = null;

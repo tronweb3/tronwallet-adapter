@@ -4,6 +4,7 @@ import WalletProvider from './components/WalletProvider.js';
 import BgImg from './images/bg.png';
 import TronAdapterDemo from './TronAdapterDemo.js';
 import { EvmAdapterDemo } from './EvmAdapterDemo.js';
+import SecurityDemo from './SecurityDemo.js';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
 
 const Container = styled('div')({
@@ -46,11 +47,13 @@ function App() {
       <WalletProvider>
         <Box>
           <StyledTabs value={tabIndex} onChange={(_e, v) => setTabIndex(v)} centered>
-            <StyledTab label="Tron Wallet Adapter" />
-            <StyledTab label="EVM Wallet Adapter" />
+            <StyledTab label="Tron" />
+            <StyledTab label="EVM" />
+            <StyledTab label="Security Policy" />
           </StyledTabs>
           {tabIndex === 0 && <TronAdapterDemo />}
           {tabIndex === 1 && <EvmAdapterDemo />}
+          {tabIndex === 2 && <SecurityDemo />}
         </Box>
       </WalletProvider>
     </Container>

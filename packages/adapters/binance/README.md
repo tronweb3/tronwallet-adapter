@@ -19,11 +19,7 @@ const tronWeb = new TronWeb({
 });
 
 // create a send TRX transaction
-const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(
-    targetAddress,
-    100,
-    adapter.address
-);
+const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
 // using adapter to sign the transaction
 const signedTransaction = await adapter.signTransaction(unSignedTransaction);
 // broadcast the transaction
@@ -93,6 +89,18 @@ const adapter = new BinanceWalletAdapter({
 });
 ```
 
+-   `signAndSendTransaction(transaction: Transaction): Promise<{ signature: string; txHash: string; transaction: SignedTransaction }>`
+
+    Sign a transaction and broadcast it using the Binance Wallet's selected network in a single call.
+
+    ```typescript
+    const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
+    const { signature, txHash, transaction } = await adapter.signAndSendTransaction(unSignedTransaction);
+    console.log('txHash:', txHash);
+    ```
+
+    > **Note:** This method is **not supported** when connected via the WalletConnect fallback (`useWalletConnectWhenWalletNotFound`). In that case it throws a `WalletSignTransactionError`. Use `signTransaction()` and broadcast the signed transaction yourself instead.
+
 -   `setOnWalletConnectUri(callback: ((uri: string) => void) | undefined): void`
 
     Set the onWalletConnectUri callback for custom QR code rendering. This allows dynamic configuration of the URI handler after adapter initialization.
@@ -126,12 +134,32 @@ const adapter = new BinanceWalletAdapter({
     };
     ```
 
+### Security Check
+
+`BinanceWalletAdapter` supports an optional `securityOptions` field for detecting wallet risks before `connect()`. When enabled, the adapter fetches a remote risk configuration and calls `onRiskDetected` if the wallet is flagged.
+
+```typescript
+const adapter = new BinanceWalletAdapter({
+    securityOptions: {
+        enabled: true,
+        configUrls: ['https://your-server.com/security-config.json'],
+        onRiskDetected: async ({ risks }) => {
+            // Throw to block the connection, or log a warning
+            throw new Error(`Wallet risk detected: ${risks[0].title}`);
+        },
+    },
+});
+```
+
+For the full `SecurityOptions` API reference, see [walletadapter.org/docs](https://walletadapter.org/docs/index.html).
+
 ### Caveats
 
 -   Binance Wallet App doesn't implement `multiSign()` and `switchChain()`.
 -   Binance Wallet App supports the following events:
-    - `connect`
-    - `disconnect`
-    - `accountsChanged`
+    -   `connect`
+    -   `disconnect`
+    -   `accountsChanged`
+-   Binance Wallet does not support auto-reconnect after a page reload.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

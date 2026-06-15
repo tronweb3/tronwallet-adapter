@@ -1,5 +1,5 @@
 import { OneKeyAdapter } from '../../src/index.js';
-import { vi, describe, test, expect, beforeEach } from 'vitest';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 
 window.open = vi.fn();
 beforeEach(function () {
@@ -8,6 +8,16 @@ beforeEach(function () {
     global.navigator = window.navigator;
     window.tronLink = undefined;
     window.tron = undefined;
+    vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({}),
+        })
+    );
+});
+afterEach(function () {
+    vi.unstubAllGlobals();
 });
 
 describe('OneKeyAdapter', function () {

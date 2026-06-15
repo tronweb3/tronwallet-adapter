@@ -1,6 +1,10 @@
 import EventEmitter from 'eventemitter3';
-import type { WalletError } from './errors.js';
-import type { SignedTransaction, Transaction } from './types.js';
+import { normalizeAndValidateTypedData } from './typedData.js';
+import type { SignedTransaction, Transaction, TypedData } from './types.js';
+import { type WalletError } from './errors.js';
+import type { WalletReadyState } from './types.js';
+import { AdapterState } from './types.js';
+import type { SecurityOptions } from './security.js';
 
 export { EventEmitter };
 
@@ -11,7 +15,7 @@ export interface AdapterEvents {
     readyStateChanged(state: WalletReadyState): void;
     stateChanged(state: AdapterState): void;
     accountsChanged(address: string, preAddr: string): void;
-    chainChanged(chainData: unknown): void;
+    chainChanged(chainData: { chainId: string }): void;
 }
 
 export type AdapterName<T extends string = string> = T & { __brand__: 'AdapterName' };
@@ -30,53 +34,33 @@ export interface AdapterProps<Name extends string = string> {
     disconnect(): Promise<void>;
     signMessage(message: string): Promise<string>;
     signTransaction(transaction: Transaction): Promise<SignedTransaction>;
+    signTypedData(typedData: TypedData): Promise<string>;
     switchChain(chainId: string): Promise<void>;
 }
-/**
- * Wallet ready state.
- */
-export enum WalletReadyState {
-    /**
-     * Adapter will start to check if wallet exists after adapter instance is created.
-     */
-    Loading = 'Loading',
-    /**
-     * When checking ends and wallet is not found, readyState will be NotFound.
-     */
-    NotFound = 'NotFound',
-    /**
-     * When checking ends and wallet is found, readyState will be Found.
-     */
-    Found = 'Found',
-}
-/**
- * Adapter state
- */
-export enum AdapterState {
-    /**
-     * If adapter is checking the wallet, the state is Loading.
-     */
-    Loading = 'Loading',
-    /**
-     * If wallet is not installed, the state is NotFound.
-     */
-    NotFound = 'NotFound',
-    /**
-     * If wallet is installed but is not connected to current Dapp, the state is Disconnected.
-     */
-    Disconnect = 'Disconnected',
-    /**
-     * Wallet is connected to current Dapp.
-     */
-    Connected = 'Connected',
-}
+
 export interface BaseAdapterConfig {
     /**
      * Set if open Wallet's website url when wallet is not installed.
      * Default is true.
      */
     openUrlWhenWalletNotFound?: boolean;
+    /**
+     * Timeout in millisecond for checking if BybitWallet wallet exists.
+     * Default is 2 * 1000ms
+     */
+    checkTimeout?: number;
+    /**
+     * Set if open BybitWallet app using DeepLink.
+     * Default is true.
+     */
+    openAppWithDeeplink?: boolean;
+    /**
+     * Set security check config.
+     * @see SecurityOptions
+     */
+    securityOptions?: SecurityOptions;
 }
+
 export abstract class Adapter<Name extends string = string>
     extends EventEmitter<AdapterEvents>
     implements AdapterProps
@@ -106,6 +90,19 @@ export abstract class Adapter<Name extends string = string>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<any> {
         return Promise.reject("The current wallet doesn't support multiSign.");
+    }
+    signTypedData(typedData: TypedData): Promise<string> {
+        let normalized: TypedData;
+        try {
+            normalized = normalizeAndValidateTypedData(typedData);
+        } catch (error) {
+            return Promise.reject(error);
+        }
+        return this._signTypedData(normalized);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    protected _signTypedData(_typedData: TypedData): Promise<string> {
+        return Promise.reject("The current wallet doesn't support signTypedData.");
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     switchChain(_chainId: string): Promise<void> {

@@ -1,7 +1,5 @@
 packages:
-    - 'packages/*'
     - 'packages/*/*'
-    - '!packages/adapters/evm'
     - 'packages/adapters/evm/*'
     - 'demos/*/*'
     - 'demos/dev-demo'

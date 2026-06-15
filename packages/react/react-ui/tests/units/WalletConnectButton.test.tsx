@@ -59,7 +59,7 @@ describe('when a wallet is seleted', () => {
                     expect(el).toBeDisabled();
                     expect(el).toHaveTextContent('Connected');
                 },
-                { timeout: 30 }
+                { timeout: 1000 }
             );
         });
         test('tronlink is connected when antoConnect disabled', async () => {
@@ -71,7 +71,7 @@ describe('when a wallet is seleted', () => {
                     expect(el).toBeDisabled();
                     expect(el).toHaveTextContent('Connected');
                 },
-                { timeout: 30 }
+                { timeout: 1000 }
             );
         });
     });

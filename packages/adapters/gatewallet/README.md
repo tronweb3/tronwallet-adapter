@@ -74,11 +74,33 @@ interface GateWalletAdapterConfig {
     };
     ```
 
+### Security Check
+
+`GateWalletAdapter` supports an optional `securityOptions` field for detecting wallet risks before `connect()`. When enabled, the adapter fetches a remote risk configuration and calls `onRiskDetected` if the wallet is flagged.
+
+```typescript
+const adapter = new GateWalletAdapter({
+    securityOptions: {
+        enabled: true,
+        configUrls: ['https://your-server.com/security-config.json'],
+        onRiskDetected: async ({ risks }) => {
+            // Throw to block the connection, or log a warning
+            throw new Error(`Wallet risk detected: ${risks[0].title}`);
+        },
+    },
+});
+```
+
+For the full `SecurityOptions` API reference, see [walletadapter.org/docs](https://walletadapter.org/docs/index.html).
+
 ### Caveats
 
 -   GateWallet App and extension doesn't implement `multiSign()` and `switchChain()` and will throw error when call them.
+-   GateWallet **v8.22.0 and later** temporarily cannot sign messages; `signMessage()` is unavailable until the wallet restores support.
 -   Wallet imported by keystore in GateWallet does not support Tron Dapp.
 -   It may doesn't support Tron Dapp on some **old Android devices**.
 -   Dapps can access all accounts in GateWallet Extension once the connection is built.
+-   GateWallet Extension supports auto-reconnect after a page refresh, while the GateWallet App does not.
+-   On mobile browsers the deeplink can only launch the GateWallet App itself; it cannot open the current dapp inside GateWallet's in-app browser. The original dapp-aware deeplink no longer works and an up-to-date replacement is not yet available.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

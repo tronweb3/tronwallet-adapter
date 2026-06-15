@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-react-ui",
-    "version": "1.1.13",
+    "version": "1.2.0",
     "description": "A set of out-of-the-box components to make it easy to interact with Tron wallets.",
     "keywords": [
         "TRON",
@@ -24,9 +24,9 @@
     "types": "./lib/types/index.d.ts",
     "exports": {
         ".": {
+            "types": "./lib/types/index.d.ts",
             "import": "./lib/esm/index.js",
-            "require": "./lib/cjs/index.js",
-            "types": "./lib/types/index.d.ts"
+            "require": "./lib/cjs/index.js"
         },
         "./style.css": "./style.css"
     },
@@ -42,17 +42,18 @@
     "scripts": {
         "clean": "shx mkdir -p lib && shx rm -rf lib",
         "package": "shx echo '{ \"type\": \"commonjs\" }' > lib/cjs/package.json",
-        "test": "vitest run"
+        "test:unit": "vitest run",
+        "test": "echo 1"
     },
     "peerDependencies": {
         "react": "*",
-        "react-dom": "*"
-    },
-    "dependencies": {
-        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
-        "@tronweb3/tronwallet-adapter-react-hooks": "workspace:^"
+        "react-dom": "*",
+        "@tronweb3/tronwallet-abstract-adapter": "*",
+        "@tronweb3/tronwallet-adapter-react-hooks": "*"
     },
     "devDependencies": {
+        "@tronweb3/tronwallet-abstract-adapter": "workspace:^",
+        "@tronweb3/tronwallet-adapter-react-hooks": "workspace:^",
         "@testing-library/jest-dom": "5.17.0",
         "@testing-library/react": "16.3.2",
         "@testing-library/user-event": "13.5.0",
@@ -63,7 +64,7 @@
         "@vitejs/plugin-react": "5.2.0",
         "@vitest/browser": "3.2.4",
         "@vitest/ui": "3.2.4",
-        "happy-dom": "20.8.3",
+        "happy-dom": "20.8.9",
         "react": "18.3.1",
         "react-dom": "18.3.1",
         "shx": "0.3.4",

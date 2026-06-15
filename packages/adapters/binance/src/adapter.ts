@@ -1,16 +1,17 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
     WalletSignMessageError,
-    WalletNotFoundError,
     WalletDisconnectedError,
     WalletConnectionError,
     WalletSignTransactionError,
     type Network,
     WalletGetNetworkError,
     NetworkType,
+    AddonAdapter,
+    WalletError,
+    WalletNotFoundError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -65,9 +66,13 @@ const chainIdNetworkMap: Record<string, NetworkType> = {
     '0x2b6653dc': NetworkType.Mainnet,
     '0x94a9059e': NetworkType.Shasta,
     '0xcd8690dc': NetworkType.Nile,
+    CT_195: NetworkType.Mainnet,
+};
+const CHAIN_ID_MAP: Record<string, string> = {
+    CT_195: '0x2b6653dc',
 };
 
-export class BinanceWalletAdapter extends Adapter {
+export class BinanceWalletAdapter extends AddonAdapter {
     name = BinanceWalletAdapterName;
     url = 'https://www.binance.com/en/binancewallet';
     icon =
@@ -86,23 +91,11 @@ export class BinanceWalletAdapter extends Adapter {
     private _wcDisconnectHandler: (() => void) | null = null;
 
     constructor(config: BinanceWalletAdapterConfig = {}) {
-        super();
-        const {
-            checkTimeout = 2 * 1000,
-            openUrlWhenWalletNotFound = true,
-            useWalletConnectWhenWalletNotFound = false,
-            walletConnectConfig,
-            onWalletConnectUri,
-        } = config;
-        if (typeof checkTimeout !== 'number') {
-            throw new Error('[BinanceWalletAdapter] config.checkTimeout should be a number');
-        }
+        super(config);
         this.config = {
-            checkTimeout,
-            openUrlWhenWalletNotFound,
-            useWalletConnectWhenWalletNotFound,
-            walletConnectConfig,
-            onWalletConnectUri,
+            ...this.commonConfig,
+            useWalletConnectWhenWalletNotFound: false,
+            ...config,
         };
         this._connecting = false;
         this._provider = null;
@@ -187,7 +180,7 @@ export class BinanceWalletAdapter extends Adapter {
                 const chainId = this._provider.getChainId();
                 return {
                     networkType: chainIdNetworkMap[chainId] || NetworkType.Unknown,
-                    chainId,
+                    chainId: CHAIN_ID_MAP[chainId] || chainId,
                     fullNode: '',
                     solidityNode: '',
                     eventServer: '',
@@ -219,6 +212,7 @@ export class BinanceWalletAdapter extends Adapter {
                     }
                     throw new WalletNotFoundError();
                 }
+                await this.checkSecurity();
 
                 // Use WalletConnect as fallback
                 if (!this.config.walletConnectConfig) {
@@ -241,9 +235,22 @@ export class BinanceWalletAdapter extends Adapter {
                         : undefined;
 
                     await this._walletConnectAdapter.connect(wcOptions);
-                    this.setAddress(this._walletConnectAdapter.address);
+
+                    // Validate that a real, fresh connection was established. The underlying
+                    // WalletConnectWallet.connect() may silently resolve by reusing a stale/persisted
+                    // session (e.g. after a previously aborted QR attempt), so a resolved promise alone
+                    // does not guarantee a valid connection. Verify the WalletConnect adapter is actually
+                    // connected and returned a non-empty address before flipping our own state.
+                    const wcAddress = this._walletConnectAdapter.address;
+                    if (!wcAddress || this._walletConnectAdapter.state !== AdapterState.Connected) {
+                        throw new WalletConnectionError(
+                            '[BinanceWalletAdapter] WalletConnect did not establish a valid connection'
+                        );
+                    }
+
+                    this.setAddress(wcAddress);
                     this.setState(AdapterState.Connected);
-                    this.emit('connect', this._walletConnectAdapter.address as string);
+                    this.emit('connect', wcAddress);
 
                     // Listen to WalletConnect events (only if not already listening)
                     if (!this._wcDisconnectHandler) {
@@ -256,12 +263,22 @@ export class BinanceWalletAdapter extends Adapter {
                         this._walletConnectAdapter.on('disconnect', this._wcDisconnectHandler);
                     }
                 } catch (error: any) {
-                    // Don't clear the adapter instance on error, keep it for retry
+                    // Keep the adapter instance for retry, but tear down any half-open/stale session so
+                    // the next connect() starts a fresh handshake (and shows the QR again) instead of
+                    // silently reusing a leftover session.
+                    try {
+                        await this._walletConnectAdapter?.disconnect();
+                    } catch {
+                        // ignore cleanup errors
+                    }
+                    this._walletConnectAdapter = null;
+                    this._connecting = false;
                     throw new WalletConnectionError(error?.message, error);
                 }
                 return;
             }
 
+            await this.checkSecurity();
             try {
                 const { address } = await this._provider.getAccount();
                 this.setAddress(address);
@@ -272,31 +289,43 @@ export class BinanceWalletAdapter extends Adapter {
                 throw new WalletConnectionError(error?.message, error);
             }
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err = error instanceof WalletError ? error : new WalletConnectionError(error?.message, error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
     }
 
     async disconnect(): Promise<void> {
-        if (this.state !== AdapterState.Connected) {
-            return;
-        }
-
-        // Disconnect WalletConnect if used
-        if (this._walletConnectAdapter) {
+        if (this._walletConnectAdapter && !this._provider) {
+            const wasConnected = this.connected;
             this._walletConnectAdapter.off('accountsChanged', this._onAccountsChanged);
             if (this._wcDisconnectHandler) {
                 this._walletConnectAdapter.off('disconnect', this._wcDisconnectHandler);
                 this._wcDisconnectHandler = null;
             }
-            await this._walletConnectAdapter.disconnect();
-            // Keep the adapter instance for reuse, don't set to null
-        } else {
-            await this._provider.disconnect();
-            this._stopListenEvent();
+            try {
+                await this._walletConnectAdapter.disconnect();
+            } catch {
+                // ignore cleanup errors
+            }
+            this._walletConnectAdapter = null;
+            this._connecting = false;
+            this.setAddress(null);
+            this.setState(AdapterState.NotFound);
+            if (wasConnected) {
+                this.emit('disconnect');
+            }
+            return;
         }
+
+        if (this.state !== AdapterState.Connected) {
+            return;
+        }
+
+        await this._provider.disconnect();
+        this._stopListenEvent();
 
         this.setAddress(null);
         this.setState(AdapterState.Disconnect);
@@ -343,6 +372,47 @@ export class BinanceWalletAdapter extends Adapter {
         }
     }
 
+    /**
+     * Sign transaction and broadcast the signed transaction with Binance wallet selected network.
+     * @param transaction
+     * @returns
+     */
+    async signAndSendTransaction(transaction: Transaction): Promise<{
+        signature: string;
+        txHash: string;
+        transaction: SignedTransaction;
+        wcResult?: { result: boolean; txid: string };
+    }> {
+        try {
+            if (!this.connected) throw new WalletDisconnectedError();
+
+            // WalletConnect fallback does not support sign-and-send. Throw a stable,
+            // identifiable error instead of dereferencing a null `_provider`.
+            if (this._walletConnectAdapter) {
+                throw new WalletSignTransactionError(
+                    '[BinanceWalletAdapter] signAndSendTransaction() is not supported when connected via WalletConnect fallback. Use signTransaction() and broadcast the transaction yourself.'
+                );
+            }
+
+            try {
+                const res = await this._provider.signAndSendTransaction(transaction);
+                if (typeof res.transaction === 'string') {
+                    try {
+                        res.transaction = JSON.parse(res.transaction);
+                    } catch (e) {
+                        console.error(`[BinanceWalletAdapter] parse transaction error: ${e}`);
+                    }
+                }
+                return res;
+            } catch (error: any) {
+                throw new WalletSignTransactionError(error?.message, error);
+            }
+        } catch (error: any) {
+            this.emit('error', error);
+            throw error;
+        }
+    }
+
     private _onAccountsChanged = (address: string[] | string) => {
         const preAddr = this.address || '';
         this.setAddress(Array.isArray(address) ? address[0] : address);
@@ -357,7 +427,7 @@ export class BinanceWalletAdapter extends Adapter {
     }
 
     private _checkPromise: Promise<boolean> | null = null;
-    private async _checkWallet(): Promise<boolean> {
+    protected async _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return true;
         }
@@ -417,5 +487,9 @@ export class BinanceWalletAdapter extends Adapter {
             this._state = state;
             this.emit('stateChanged', state);
         }
+    }
+
+    protected _openAppByDeepLinkIfNeed(): boolean {
+        return false;
     }
 }

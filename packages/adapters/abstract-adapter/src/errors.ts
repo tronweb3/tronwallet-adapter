@@ -90,3 +90,9 @@ export class WalletSwitchChainError extends WalletError {
 export class WalletGetNetworkError extends WalletError {
     name = 'WalletGetNetworkError';
 }
+/**
+ * Occurs when call `signTypedData()`.
+ */
+export class WalletSignTypedDataError extends WalletError {
+    name = 'WalletSignTypedDataError';
+}

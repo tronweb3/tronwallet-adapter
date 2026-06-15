@@ -1,5 +1,4 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
@@ -11,6 +10,7 @@ import {
     WalletConnectionError,
     isInMobileBrowser,
     WalletError,
+    AddonAdapter,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -29,18 +29,7 @@ import {
     TIP6963RequestProviderEventName,
 } from '@tronweb3/tronwallet-abstract-adapter';
 
-export interface TokenPocketAdapterConfig extends BaseAdapterConfig {
-    /**
-     * Timeout in millisecond for checking if is in TokenPocket App.
-     * Default is 2 * 1000ms
-     */
-    checkTimeout?: number;
-    /**
-     * Set if open TokenPocket app using DeepLink.
-     * Default is true.
-     */
-    openAppWithDeeplink?: boolean;
-}
+export type TokenPocketAdapterConfig = BaseAdapterConfig;
 
 export const TokenPocketAdapterName = 'TokenPocket' as AdapterName<'TokenPocket'>;
 
@@ -56,7 +45,7 @@ declare global {
     }
 }
 
-export class TokenPocketAdapter extends Adapter {
+export class TokenPocketAdapter extends AddonAdapter {
     name = TokenPocketAdapterName;
     url = 'https://tokenpocket.pro/';
     icon =
@@ -68,17 +57,17 @@ export class TokenPocketAdapter extends Adapter {
     private _connecting: boolean;
     private _wallet: TokenPocketWallet | null;
     private _address: string | null;
+    /**
+     * Whether the most recent security check passed. Gates the auto-connect
+     * paths (e.g. `onAccountsChanged`) so a wallet that failed the security
+     * check cannot silently connect when the extension emits account events.
+     */
+    private _securityPassed = false;
 
     constructor(config: TokenPocketAdapterConfig = {}) {
-        super();
-        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true, openAppWithDeeplink = true } = config;
-        if (typeof checkTimeout !== 'number') {
-            throw new Error('[TokenPocketAdapter] config.checkTimeout should be a number');
-        }
+        super(config);
         this.config = {
-            checkTimeout,
-            openAppWithDeeplink,
-            openUrlWhenWalletNotFound,
+            ...this.commonConfig,
         };
         this._connecting = false;
         this._wallet = null;
@@ -86,7 +75,11 @@ export class TokenPocketAdapter extends Adapter {
 
         if (isInMobileBrowser() && supportTokenPocket()) {
             this._readyState = WalletReadyState.Found;
-            this._updateWallet();
+            this._updateWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
         } else {
             this._checkWallet().then(() => {
                 if (this.connected) {
@@ -134,38 +127,24 @@ export class TokenPocketAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            this.checkIfOpenApp();
-            if (this.connected || this.connecting) return;
-            await this._checkWallet();
-            if (this.readyState === WalletReadyState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
+            if (!(await this._beforeConnect())) return;
+            this._securityPassed = true;
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TokenPocketWallet;
-            try {
-                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-                if (!res?.[0]) {
-                    throw new WalletConnectionError('Request connect error.');
-                }
-                const address = res[0];
-
-                this.setAddress(address);
-                this.setState(AdapterState.Connected);
-                this.emit('connect', this.address || '');
-            } catch (e: any) {
-                if (e instanceof WalletError) {
-                    throw e;
-                } else {
-                    throw new WalletConnectionError(e?.message, e);
-                }
+            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+            if (!res?.[0]) {
+                throw new WalletConnectionError('Request connect error.');
             }
+            const address = res[0];
+
+            this.setAddress(address);
+            this.setState(AdapterState.Connected);
+            this.emit('connect', this.address || '');
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err = error instanceof WalletError ? error : new WalletConnectionError(error?.message, error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
@@ -175,6 +154,7 @@ export class TokenPocketAdapter extends Adapter {
         if (this.state !== AdapterState.Connected) {
             return;
         }
+        this._securityPassed = false;
         this.setAddress(null);
         this.setState(AdapterState.Disconnect);
         this.emit('disconnect');
@@ -241,6 +221,8 @@ export class TokenPocketAdapter extends Adapter {
     }
 
     private onAccountsChanged: TronAccountsChangedCallback = (accounts) => {
+        // Do not auto-connect via account events when the security check has not passed.
+        if (!this._securityPassed) return;
         const preAddr = this.address || '';
         const curAddr = accounts?.[0] || '';
         if (!curAddr) {
@@ -295,6 +277,13 @@ export class TokenPocketAdapter extends Adapter {
         }
     }
 
+    protected _openAppByDeepLinkIfNeed(): boolean {
+        if (this.config.openAppWithDeeplink === false) {
+            return false;
+        }
+        return openTokenPocket();
+    }
+
     private checkReadyInterval: ReturnType<typeof setInterval> | null = null;
     private checkForWalletReady() {
         if (this.checkReadyInterval) {
@@ -332,7 +321,7 @@ export class TokenPocketAdapter extends Adapter {
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
      * @returns if wallet exists
      */
-    private _checkWallet(): Promise<boolean> {
+    protected _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }
@@ -354,7 +343,7 @@ export class TokenPocketAdapter extends Adapter {
                     }
                     this.emit('readyStateChanged', this._readyState);
                 }, this.config.checkTimeout);
-                const handler = (event: TIP6963AnnounceProviderEvent) => {
+                const handler = async (event: TIP6963AnnounceProviderEvent) => {
                     const { info, provider } = event.detail;
                     if (info.name === 'TokenPocket') {
                         this._wallet = {
@@ -366,6 +355,18 @@ export class TokenPocketAdapter extends Adapter {
                         this._readyState = WalletReadyState.Found;
                         const address = this._wallet.tronWeb.defaultAddress?.base58 || null;
                         const state = address ? AdapterState.Connected : AdapterState.Disconnect;
+                        try {
+                            await this.checkSecurity();
+                            this._securityPassed = true;
+                        } catch {
+                            this._securityPassed = false;
+                            this.stopListenTronEvent();
+                            this.setAddress(null);
+                            this.setState(AdapterState.Disconnect);
+                            clearTimeout(timer);
+                            resolve(true);
+                            return;
+                        }
                         this.setState(state);
                         this.setAddress(address);
                         this.emit('readyStateChanged', this.readyState);
@@ -407,10 +408,20 @@ export class TokenPocketAdapter extends Adapter {
         return this._checkPromise;
     }
 
-    private _updateWallet = () => {
+    private _updateWallet = async () => {
         let state = this.state;
         let address = this.address;
         if (supportTokenPocket()) {
+            try {
+                await this.checkSecurity();
+                this._securityPassed = true;
+            } catch {
+                this._securityPassed = false;
+                this.stopListenTronEvent();
+                this.setAddress(null);
+                this.setState(AdapterState.Disconnect);
+                return;
+            }
             const tron = window.tokenpocket?.tron as Tron;
             this._wallet = isInMobileBrowser()
                 ? ({

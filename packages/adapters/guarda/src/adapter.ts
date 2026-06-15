@@ -1,15 +1,14 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
     WalletSignMessageError,
-    WalletNotFoundError,
     WalletDisconnectedError,
     WalletSignTransactionError,
     WalletGetNetworkError,
     WalletConnectionError,
     WalletError,
+    AddonAdapter,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -23,10 +22,7 @@ import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
 import type { Tron } from '@tronweb3/tronwallet-adapter-tronlink';
 import { supportGuarda } from './utils.js';
 
-export interface GuardaAdapterConfig extends BaseAdapterConfig {
-    checkTimeout?: number;
-    openUrlWhenWalletNotFound?: boolean;
-}
+export type GuardaAdapterConfig = BaseAdapterConfig;
 
 export const GuardaAdapterName = 'Guarda' as AdapterName<'Guarda'>;
 
@@ -42,7 +38,7 @@ declare global {
     }
 }
 
-export class GuardaAdapter extends Adapter {
+export class GuardaAdapter extends AddonAdapter {
     name = GuardaAdapterName;
     url = 'https://guarda.com?install=guarda-extensional';
     icon =
@@ -56,15 +52,9 @@ export class GuardaAdapter extends Adapter {
     private _address: string | null;
 
     constructor(config: GuardaAdapterConfig = {}) {
-        super();
-
-        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true } = config;
-        if (typeof checkTimeout !== 'number') {
-            throw new Error('[GuardaAdapter] config.checkTimeout should be a number');
-        }
+        super(config);
         this.config = {
-            checkTimeout,
-            openUrlWhenWalletNotFound,
+            ...this.commonConfig,
         };
         this._connecting = false;
         this._wallet = null;
@@ -121,45 +111,22 @@ export class GuardaAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) {
-                return;
-            }
-
-            await this._checkWallet();
-
-            if (this.readyState === WalletReadyState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
-
-            if (!this._wallet) {
-                return;
-            }
-
+            if (!(await this._beforeConnect())) return;
+            if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as GuardaWallet;
-
-            try {
-                const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
-                if (!res?.[0]) {
-                    throw new WalletConnectionError('Request connect error.');
-                }
-                const address = res[0];
-                this.setAddress(address);
-                this.setState(AdapterState.Connected);
-                this.emit('connect', this.address || '');
-            } catch (error: any) {
-                if (error instanceof WalletError) {
-                    throw error;
-                } else {
-                    throw new WalletConnectionError(error?.message, error);
-                }
+            const res = await wallet.tron.request({ method: 'eth_requestAccounts' });
+            if (!res?.[0]) {
+                throw new WalletConnectionError('Request connect error.');
             }
+            const address = res[0];
+            this.setAddress(address);
+            this.setState(AdapterState.Connected);
+            this.emit('connect', this.address || '');
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err = error instanceof WalletError ? error : new WalletConnectionError(error?.message, error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
@@ -226,7 +193,7 @@ export class GuardaAdapter extends Adapter {
 
     private _checkPromise: Promise<boolean> | null = null;
 
-    private _checkWallet(): Promise<boolean> {
+    protected _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }
@@ -277,5 +244,8 @@ export class GuardaAdapter extends Adapter {
     private setState(state: AdapterState) {
         this._state = state;
         this.emit('stateChanged', state);
+    }
+    protected _openAppByDeepLinkIfNeed() {
+        return false;
     }
 }

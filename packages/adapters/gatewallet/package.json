@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-gatewallet",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "description": "Wallet adapter for Gate Wallet app and extension.",
     "keywords": [
         "TRON",
@@ -24,9 +24,9 @@
     "module": "./lib/esm/index.js",
     "types": "./lib/types/index.d.ts",
     "exports": {
-        "require": "./lib/cjs/index.js",
+        "types": "./lib/types/index.d.ts",
         "import": "./lib/esm/index.js",
-        "types": "./lib/types/index.d.ts"
+        "require": "./lib/cjs/index.js"
     },
     "files": [
         "lib",

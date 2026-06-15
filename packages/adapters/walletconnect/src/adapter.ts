@@ -232,25 +232,44 @@ export class WalletConnectAdapter extends Adapter {
     }
 
     async disconnect(): Promise<void> {
-        if (this.state === AdapterState.NotFound || !this.connected) {
+        if (this.state === AdapterState.NotFound) {
             return;
         }
+        // When there is no underlying wallet to tear down there is nothing to do.
+        // Note: we intentionally do NOT bail out solely on `!this.connected`, because an aborted
+        // connection attempt can leave a half-open/persisted session behind that must still be
+        // cleaned up so the next connect() starts a fresh handshake instead of silently reusing it.
         const wallet = this._wallet;
-        if (wallet) {
-            wallet.off('disconnect', this._disconnected);
-            wallet.off('accountsChanged', this._accountsChanged);
+        if (!wallet) {
+            return;
+        }
 
-            this._address = null;
+        const wasConnected = this.connected;
 
-            try {
-                await wallet.disconnect();
-            } catch (error: any) {
+        wallet.off('disconnect', this._disconnected);
+        wallet.off('accountsChanged', this._accountsChanged);
+
+        this._address = null;
+
+        try {
+            await wallet.disconnect();
+        } catch (error: any) {
+            // Only surface disconnection failures when we were actually connected; when cleaning up
+            // an aborted/half-open attempt the underlying disconnect is best-effort.
+            if (wasConnected) {
                 this.emit('error', new WalletDisconnectionError(error?.message, error));
             }
         }
+
+        const preState = this._state;
         this._state = AdapterState.Disconnect;
-        this.emit('disconnect');
-        this.emit('stateChanged', this._state);
+        // Only notify a real disconnection if we had an active connection.
+        if (wasConnected) {
+            this.emit('disconnect');
+        }
+        if (this._state !== preState) {
+            this.emit('stateChanged', this._state);
+        }
     }
 
     async signTransaction(transaction: Transaction): Promise<SignedTransaction> {

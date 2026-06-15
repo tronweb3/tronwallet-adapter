@@ -1,5 +1,5 @@
 import type { PropType, CSSProperties } from 'vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 export const ButtonProps = {
     className: {
         type: String,
@@ -27,20 +27,19 @@ export const ButtonProps = {
     },
 };
 export const Button = defineComponent({
+    name: 'Button',
     props: ButtonProps,
     setup(props, { slots }) {
-        const buttonRef = ref<HTMLElement | null>();
-
-        function handleClick() {
+        function handleClick(e: MouseEvent) {
             props.onClick?.();
+            const target = e.currentTarget as HTMLElement | null;
             setTimeout(() => {
-                buttonRef.value?.blur();
+                target?.blur();
             }, 300);
         }
         return () => (
             <button
                 data-testid="wallet-button"
-                ref={(el) => (buttonRef.value = el as HTMLElement)}
                 onClick={handleClick}
                 class={`adapter-vue-button ${props.className}`}
                 tabindex={props.tabIndex}

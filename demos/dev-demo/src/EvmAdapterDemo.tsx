@@ -1,11 +1,9 @@
 import type { SelectChangeEvent } from '@mui/material';
 import { Box, Button, Input, MenuItem, Select, Stack, Typography, styled } from '@mui/material';
-import type { Adapter, Chain } from '@tronweb3/abstract-adapter-evm';
+import type { Adapter, Chain, LegacyTransaction, EIP1559Transaction, Transaction, Address, Quantity, Hex } from '@tronweb3/abstract-adapter-evm';
 import { WalletReadyState } from '@tronweb3/abstract-adapter-evm';
 import { useLocalStorage } from '@tronweb3/tronwallet-adapter-react-hooks';
-import { BinanceEvmAdapter } from '@tronweb3/tronwallet-adapter-binance-evm';
-import { TronLinkEvmAdapter } from '@tronweb3/tronwallet-adapter-tronlink-evm';
-import { MetaMaskEvmAdapter } from '@tronweb3/tronwallet-adapter-metamask-evm';
+import { TronLinkEvmAdapter, BinanceEvmAdapter, MetaMaskEvmAdapter, TrustEvmAdapter, OkxWalletEvmAdapter } from '@tronweb3/tronwallet-adapters';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { utils } from 'tronweb';
 import { ethers, keccak256, toUtf8Bytes } from 'ethers';
@@ -62,7 +60,12 @@ const ConnectButton = styled(Button)({
     backgroundColor: '#07094c',
   },
   '&.Mui-disabled': {
-    color: '#fff',
+    color: 'rgba(255, 255, 255, 0.92)',
+    background: 'linear-gradient(135deg, rgba(20, 18, 118, 0.58), rgba(70, 67, 223, 0.5))',
+    border: '1px solid rgba(255, 255, 255, 0.14)',
+    boxShadow: '0px 24px 24px -20px rgba(20, 18, 118, 0.45)',
+    cursor: 'not-allowed',
+    opacity: 1,
   },
 });
 
@@ -117,7 +120,7 @@ const SectionButton = styled(Button)({
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
-  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter()], []);
+  const adapters = useMemo(() => [new BinanceEvmAdapter(), new MetaMaskEvmAdapter(), new TronLinkEvmAdapter(), new TrustEvmAdapter(), new OkxWalletEvmAdapter()], []);
   const [selectedName, setSelectedName] = useLocalStorage('SelectedAdapter', 'BinanceEvm');
   const [account, setAccount] = useState('');
   const [readyState, setReadyState] = useState(WalletReadyState.Loading);
@@ -136,6 +139,7 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
   );
 
   useEffect(() => {
+    setChainId('');
     setAccount(adapter.address || '');
     setReadyState(adapter.readyState);
     if (adapter.connected) {
@@ -169,11 +173,12 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
         setChainId('');
       }
     });
-    adapter.on('chainChanged', (data) => {
+    adapter.on('chainChanged', (data: any) => {
       setChainId(data);
     });
     adapter.on('disconnect', () => {
       setAccount(adapter.address || '');
+      setChainId('');
     });
 
     return () => {
@@ -236,14 +241,16 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
             <Typography sx={{ color: '#333', fontSize: 13, fontWeight: 600 }}>Network</Typography>
             <Typography sx={{ color: '#555', fontSize: 13 }}>{chainId || '—'}</Typography>
           </InfoCard>
-          <ConnectButton onClick={onConnect}>{adapter.connected ? 'Disconnect' : 'Connect'}</ConnectButton>
+          <ConnectButton onClick={onConnect} disabled={!!account}>
+            {account ? 'Connected to Wallet' : 'Connect Wallet'}
+          </ConnectButton>
         </BasicInfoWrap>
 
         {/* Right Column: Action Cards */}
         <Box sx={{ flex: 1, display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          <SectionSign adapter={adapter} />
-          <SectionTriggerContract adapter={adapter} />
-          <SectionSwitchChain adapter={adapter} />
+          <SectionSign adapter={adapter} connected={!!account} />
+          <SectionTriggerContract adapter={adapter} connected={!!account} />
+          <SectionSwitchChain adapter={adapter} connected={!!account} />
         </Box>
       </MainContent>
     </Box>
@@ -252,14 +259,50 @@ export const EvmAdapterDemo = memo(function EvmAdapterDemo() {
 
 // ─── Section: Sign ───────────────────────────────────────────────────────────
 
-const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter }) {
+const SectionSign = memo(function SectionSign({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [message, setMessage] = useState('Hello, Adapter');
   const [signedMessage, setSignedMessage] = useState('');
   const [receiver, setReceiver] = useState('');
 
   async function onSignTransaction() {
     const cid = await adapter.network();
-    const tx = { value: '0x' + Number(11).toString(16), to: receiver, from: adapter.address, chainId: cid };
+
+    // ── Type 0x0: Legacy transaction ──────────────────────────────────────
+    // const tx: LegacyTransaction = {
+    //   ...(adapter.name === 'Trust Wallet' ? { data: '0x' as Hex } : {}),
+    //   from: adapter.address as Address,
+    //   to: receiver as Address,
+    //   value: ('0x' + Number(11).toString(16)) as Quantity,
+    //   chainId: cid as Quantity,
+    //   type: '0x0',
+    //   gasPrice: '0x3B9ACA00' as Quantity, // 1 Gwei
+    // };
+
+    // ── Type 0x1: EIP-2930 transaction (gasPrice + optional accessList) ───
+    // import EIP2930Transaction, AccessList from '@tronweb3/abstract-adapter-evm' when uncommenting
+    // const tx: EIP2930Transaction = {
+    //   ...(adapter.name === 'Trust Wallet' ? { data: '0x' as Hex } : {}),
+    //   from: adapter.address as Address,
+    //   to: receiver as Address,
+    //   value: ('0x' + Number(11).toString(16)) as Quantity,
+    //   chainId: cid as Quantity,
+    //   type: '0x1',
+    //   gasPrice: '0x3B9ACA00' as Quantity,
+    //   accessList: [], // e.g. [{ address: '0x...', storageKeys: ['0x...'] }]
+    // };
+
+    // ── Type 0x2: EIP-1559 transaction (maxFeePerGas + maxPriorityFeePerGas)
+    const tx: Transaction = {
+      from: adapter.address as Address,
+      to: receiver as Address,
+      value: ('0x' + Number(11).toString(16)) as Quantity,
+      chainId: cid as Quantity,
+      ...(adapter.name === 'Trust Wallet' ? { data: '0x' as Hex } : {}),
+      type: '0x2',
+      maxFeePerGas: '0x3B9ACA00', // 1 Gwei
+      maxPriorityFeePerGas: '0x77359400' as Quantity, // 2 Gwei
+    };
+
     await adapter.sendTransaction(tx);
   }
 
@@ -324,7 +367,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
       </SectionButton>
       <SectionButton onClick={onSignTypedData}>Sign Typed Data</SectionButton>
       <DarkInput placeholder="Receiver Address" disableUnderline value={receiver} onChange={(e) => setReceiver(e.target.value)} />
-      <SectionButton disabled={!adapter.connected || !receiver} onClick={onSignTransaction}>
+      <SectionButton disabled={!connected || !receiver} onClick={onSignTransaction}>
         Transfer
       </SectionButton>
     </SectionCard>
@@ -333,7 +376,7 @@ const SectionSign = memo(function SectionSign({ adapter }: { adapter: Adapter })
 
 // ─── Section: Smart Contract ─────────────────────────────────────────────────
 
-const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
+const SectionTriggerContract = function ({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [number, setNumber] = useState('0');
   const [contractAddress, setContractAddress] = useState('');
 
@@ -343,11 +386,12 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
     const provider1 = await adapter.getProvider();
     if (!provider1) return;
     const cid = await adapter.network();
-    const baseDeployTx = {
-      from: adapter.address,
-      to: adapter.name === 'TronLinkEvm' ? '0x0000000000000000000000000000000000000000' : null,
-      data: byteCode,
-      chainId: cid,
+    const baseDeployTx: EIP1559Transaction = {
+      from: adapter.address as Address,
+      // TronLinkEvm requires an explicit zero address for contract deployment
+      ...(adapter.name === 'TronLinkEvm' ? { to: '0x0000000000000000000000000000000000000000' as Address } : {}),
+      data: byteCode as Hex,
+      chainId: cid as Quantity,
     };
     console.log(baseDeployTx);
     const tx = await adapter.sendTransaction(baseDeployTx);
@@ -357,7 +401,12 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
   async function triggerContract() {
     const selector = `${keccak256(toUtf8Bytes('store(uint256)')).slice(0, 10)}`;
     const param1 = Number(number).toString(16).padStart(64, '0');
-    const tx = { from: adapter.address, to: contractAddress, data: selector + param1, gas: '0x19023' };
+    const tx: LegacyTransaction = {
+      from: adapter.address as Address,
+      to: contractAddress as Address,
+      data: (selector + param1) as Hex,
+      gas: '0x19023' as Quantity,
+    };
     const result = await adapter.sendTransaction(tx);
     console.log('signedTransaction', result);
   }
@@ -376,15 +425,15 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
       <Typography variant="h6" fontWeight={700} color="white">
         Smart Contract
       </Typography>
-      <SectionButton disabled={!adapter.connected} onClick={deployContract}>
+      <SectionButton disabled={!connected} onClick={deployContract}>
         Deploy Contract
       </SectionButton>
       <DarkInput placeholder="Contract Address" disableUnderline value={contractAddress} onChange={(e) => setContractAddress(e.target.value)} />
       <DarkInput placeholder="Number" disableUnderline value={number} onChange={(e) => setNumber(e.target.value)} />
-      <SectionButton disabled={!adapter.connected || !contractAddress} onClick={triggerContract}>
+      <SectionButton disabled={!connected || !contractAddress} onClick={triggerContract}>
         Store Number
       </SectionButton>
-      <SectionButton disabled={!adapter.connected || !contractAddress} onClick={readContract}>
+      <SectionButton disabled={!connected || !contractAddress} onClick={readContract}>
         Get Number
       </SectionButton>
     </SectionCard>
@@ -393,7 +442,7 @@ const SectionTriggerContract = function ({ adapter }: { adapter: Adapter }) {
 
 // ─── Section: Switch Chain ────────────────────────────────────────────────────
 
-const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapter: Adapter }) {
+const SectionSwitchChain = memo(function SectionSwitchChain({ adapter, connected }: { adapter: Adapter; connected: boolean }) {
   const [selectedChainId, setSelectedChainId] = useState<`0x${string}`>('0x1');
   return (
     <SectionCard background="linear-gradient(45deg, rgba(65, 183, 233, 0.75), rgba(70, 67, 223, 0.95))">
@@ -414,6 +463,7 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
         }}
       >
         <MenuItem value="0x1">Ethereum Mainnet</MenuItem>
+        <MenuItem value="0xaa36a7">Ethereum Sepolia Testnet</MenuItem>
         <MenuItem value="0x38">BSC Mainnet</MenuItem>
         <MenuItem value="0x61">BSC Testnet</MenuItem>
         <MenuItem value="0x2105">Base Mainnet</MenuItem>
@@ -422,7 +472,7 @@ const SectionSwitchChain = memo(function SectionSwitchChain({ adapter }: { adapt
         <MenuItem value="0xa4b1">Arbitrum One</MenuItem>
         <MenuItem value="0x539">Localhost Test</MenuItem>
       </Select>
-      <SectionButton disabled={!adapter.connected} onClick={() => adapter.switchChain(selectedChainId)}>
+      <SectionButton disabled={!connected} onClick={() => adapter.switchChain(selectedChainId).catch((e) => console.error('switchChain error:', e))}>
         Switch to {selectedChainId}
       </SectionButton>
     </SectionCard>

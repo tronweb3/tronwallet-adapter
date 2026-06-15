@@ -1,4 +1,4 @@
-import { vi, describe, test, expect, beforeEach } from 'vitest';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { GateWalletAdapter } from '../../src/index.js';
 
 window.open = vi.fn();
@@ -6,6 +6,16 @@ beforeEach(function () {
     vi.useFakeTimers();
     window.tronLink = undefined;
     window.tron = undefined;
+    vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({}),
+        })
+    );
+});
+afterEach(function () {
+    vi.unstubAllGlobals();
 });
 describe('GateWalletAdapter', function () {
     describe('#adapter()', function () {

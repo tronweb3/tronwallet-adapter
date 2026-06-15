@@ -1,5 +1,5 @@
 import { Alert, Button, TextField } from '@mui/material';
-import type { LedgerAdapter } from '@tronweb3/tronwallet-adapter-ledger';
+import type { LedgerAdapter } from '@tronweb3/tronwallet-adapters';
 import { useCallback, useState } from 'react';
 import { tronWeb } from '../tronweb.js';
 const receiver = '';

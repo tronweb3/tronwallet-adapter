@@ -6,7 +6,9 @@ import {
     WalletReadyState,
     WalletSignMessageError,
     WalletSignTransactionError,
+    WalletSignTypedDataError,
     WalletSwitchChainError,
+    TIP6963AnnounceProviderEventName,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type { TronWeb } from '../../src/types.js';
 import { MockTron, TronLinkAdapter } from './mock.js';
@@ -17,12 +19,44 @@ import { describe, test, expect, beforeEach, beforeAll, afterAll, vi } from 'vit
 const noop = () => {
     //
 };
+
+/**
+ * Dispatch a TIP-6963 announce event so the adapter discovers the provider
+ * via the standard protocol instead of direct window.tron injection.
+ */
+function announceTronLinkProvider(provider: MockTron) {
+    const announceEvent = new CustomEvent(TIP6963AnnounceProviderEventName, {
+        detail: Object.freeze({
+            info: { name: 'TronLink', uuid: 'tronlink-uuid', icon: '', rdns: 'org.tronlink.www' },
+            provider,
+        }),
+    });
+    window.dispatchEvent(announceEvent);
+}
+const DESKTOP_TIP6963_FALLBACK_DELAY = 1100;
+
+async function waitForDesktopDetection(delay = DESKTOP_TIP6963_FALLBACK_DELAY) {
+    vi.advanceTimersByTime(delay);
+    await Promise.resolve();
+    await Promise.resolve();
+}
 let tron: MockTron;
 beforeAll(() => {
     global.window.open = vi.fn() as any;
     global.document = window.document;
     global.navigator = window.navigator;
     vi.useFakeTimers();
+    vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({}),
+        })
+    );
+});
+
+afterAll(() => {
+    vi.unstubAllGlobals();
 });
 
 describe('TronLinkAdapter', function () {
@@ -184,17 +218,13 @@ describe('TronLinkAdapter', function () {
         });
         test('should work fine when TronLink is installed', async function () {
             const address = 'xxxxx';
-            (window as any).tron = {
-                ready: true,
-                tronWeb: {
-                    defaultAddress: {
-                        base58: address,
-                    },
-                },
-                request: noop,
-            };
+            const provider = new MockTron(address);
+            provider._unlock();
+            // Override request to return [address] as required by eth_requestAccounts
+            provider.request = vi.fn().mockResolvedValue([address]);
             const adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(3000);
+            // Announce provider via TIP-6963 — adapter resolves _checkWallet immediately
+            announceTronLinkProvider(provider);
             await adapter.connect();
             expect(adapter.state).toEqual(AdapterState.Connected);
             expect(adapter.address).toEqual(address);
@@ -219,11 +249,14 @@ describe('TronLinkAdapter', function () {
             await expect(adapter.signMessage('some str')).rejects.toThrow(WalletDisconnectedError);
         });
         test('should work fine when TronLink is connected', async function () {
-            const tronLink = ((window as any).tron = new MockTron('address'));
-            tronLink._unlock();
-            (tronLink.tronWeb as TronWeb).trx.signMessageV2 = () => Promise.resolve('123') as any;
+            const address = 'address';
+            const provider = new MockTron(address);
+            provider._unlock();
+            (provider.tronWeb as TronWeb).trx.signMessageV2 = () => Promise.resolve('123') as any;
+            provider.request = vi.fn().mockResolvedValue([address]);
             const adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(3000);
+            // Announce provider via TIP-6963
+            announceTronLinkProvider(provider);
             await adapter.connect();
             const signedMsg = await adapter.signMessage('some str');
             expect(signedMsg).toEqual('123');
@@ -250,11 +283,14 @@ describe('TronLinkAdapter', function () {
         });
         test('should work fine when TronLink is connected', async function () {
             vi.useFakeTimers();
-            const tronLink = ((window as any).tron = new MockTron('address'));
-            tronLink._unlock();
-            (tronLink.tronWeb as TronWeb).trx.sign = () => Promise.resolve('123') as any;
+            const address = 'address';
+            const provider = new MockTron(address);
+            provider._unlock();
+            (provider.tronWeb as TronWeb).trx.sign = () => Promise.resolve('123') as any;
+            provider.request = vi.fn().mockResolvedValue([address]);
             const adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(3000);
+            // Announce provider via TIP-6963
+            announceTronLinkProvider(provider);
             await adapter.connect();
             const signedTransaction = await adapter.signTransaction({} as any);
             expect(signedTransaction).toEqual('123');
@@ -304,11 +340,11 @@ describe('when tron is not found', () => {
     }, 3000);
     test('call signMessage() should throw WalletDisconnectedError', async () => {
         vi.advanceTimersByTime(ONE_MINUTE);
-        expect(adapter.signMessage('')).rejects.toThrow(WalletDisconnectedError);
+        await expect(adapter.signMessage('')).rejects.toThrow(WalletDisconnectedError);
     });
     test('call signTransaction() should throw WalletDisconnectedError', async () => {
         vi.advanceTimersByTime(ONE_MINUTE);
-        expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
+        await expect(adapter.signTransaction({} as any)).rejects.toThrow(WalletDisconnectedError);
     });
 });
 
@@ -425,17 +461,22 @@ describe('when tronlink is unlocked', () => {
             adapter = new TronLinkAdapter();
         });
         test('initial state should be fine', async () => {
+            expect(adapter.readyState).toEqual(WalletReadyState.Loading);
+            expect(adapter.state).toEqual(AdapterState.Loading);
+            await waitForDesktopDetection();
             expect(adapter.readyState).toEqual(WalletReadyState.Found);
             expect(adapter.state).toEqual(AdapterState.Connected);
             expect(adapter.address).toEqual(address);
         });
-        test('switch to a disconnected account should work fine', () => {
+        test('switch to a disconnected account should work fine', async () => {
+            await waitForDesktopDetection();
             tron._setAddress('');
             tron._emit('accountsChanged', []);
             expect(adapter.state).toEqual(AdapterState.Disconnect);
             expect(adapter.address).toEqual(null);
         });
-        test('then switch to connected account should work fine', () => {
+        test('then switch to connected account should work fine', async () => {
+            await waitForDesktopDetection();
             tron._setAddress(address);
             tron._emit('accountsChanged', [address]);
             expect(adapter.state).toEqual(AdapterState.Connected);
@@ -446,10 +487,11 @@ describe('when tronlink is unlocked', () => {
 
 describe('events should work fine', () => {
     let adapter: TronLinkAdapter;
-    beforeEach(() => {
+    beforeEach(async () => {
         window.tron = tron = new MockTron('address');
         tron._unlock();
         adapter = new TronLinkAdapter();
+        await waitForDesktopDetection();
     });
     test('readyStateChanged event should work fine when tron is avaliable', async () => {
         window.tron = undefined;
@@ -493,10 +535,11 @@ describe('events should work fine', () => {
         expect(_onAccountsChanged).toHaveBeenLastCalledWith('', 'address3');
         expect(_onDisconnect).toHaveBeenCalled();
     });
-    test('connect and stateChanged event should work fine', () => {
+    test('connect and stateChanged event should work fine', async () => {
         window.tron = tron = new MockTron('');
         tron._unlock();
         adapter = new TronLinkAdapter();
+        await waitForDesktopDetection();
         const _onConnect = vi.fn();
         adapter.on('connect', _onConnect);
         tron._setAddress('address2');
@@ -523,13 +566,14 @@ describe('events should work fine', () => {
 
 describe('methods should work fine', () => {
     let adapter: TronLinkAdapter;
-    beforeEach(() => {
+    beforeEach(async () => {
         window.open = vi.fn();
         tron = new MockTron();
         window.tron = tron;
         window.tronLink = window.tronWeb = undefined;
         tron._unlock();
         adapter = new TronLinkAdapter();
+        await waitForDesktopDetection();
     });
     describe('connect() should work fine', () => {
         test('when connect successfully', async () => {
@@ -608,7 +652,7 @@ describe('methods should work fine', () => {
             tron._unlock();
             tron._setAddress('address');
             adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(60 * 1000);
+            await waitForDesktopDetection();
             const onError = vi.fn();
             adapter.on('error', onError);
             const signMessageV2: any = vi.fn(() => {
@@ -660,6 +704,7 @@ describe('methods should work fine', () => {
             const onError = vi.fn();
             tron._setAddress('address');
             adapter = new TronLinkAdapter();
+            await waitForDesktopDetection();
             adapter.on('error', onError);
             const sign: any = vi.fn(() => Promise.reject('signedTransaction'));
             (tron.tronWeb as TronWeb).trx.sign = sign;
@@ -677,7 +722,7 @@ describe('methods should work fine', () => {
             vi.advanceTimersByTime(ONE_MINUTE);
             const onError = vi.fn();
             adapter.on('error', onError);
-            expect(adapter.multiSign({} as any)).rejects.toThrow(WalletDisconnectedError);
+            await expect(adapter.multiSign({} as any)).rejects.toThrow(WalletDisconnectedError);
             await wait();
             expect(onError).toHaveBeenCalledTimes(1);
         });
@@ -706,12 +751,85 @@ describe('methods should work fine', () => {
             const onError = vi.fn();
             tron._setAddress('address');
             adapter = new TronLinkAdapter();
+            await waitForDesktopDetection();
             adapter.on('error', onError);
             const sign: any = vi.fn(() => Promise.reject('multiSign error'));
             (tron.tronWeb as TronWeb).trx.multiSign = sign;
 
             await expect(adapter.multiSign({} as any)).rejects.toThrow('multiSign error');
             await expect(adapter.multiSign({} as any)).rejects.toThrow(WalletSignTransactionError);
+            expect(onError).toHaveBeenCalled();
+        });
+    });
+
+    describe('signTypedData() should work fine', () => {
+        const mockTypedData = {
+            domain: {
+                name: 'Permit',
+                version: '1',
+                chainId: '0x2b6653dc',
+                verifyingContract: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+            },
+            types: {
+                Permit: [
+                    { name: 'owner', type: 'address' },
+                    { name: 'spender', type: 'address' },
+                    { name: 'value', type: 'uint256' },
+                ],
+            },
+            message: {
+                owner: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+                spender: 'TYukBQZ2XXCcRCReAUgS9shzbhyMCE9mhQ',
+                value: '1000000',
+            },
+        };
+
+        test('when there is no wallet', async () => {
+            window.tron = undefined;
+            adapter = new TronLinkAdapter();
+            vi.advanceTimersByTime(ONE_MINUTE);
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletDisconnectedError);
+            await wait();
+            expect(onError).toHaveBeenCalledTimes(1);
+        });
+        test('when wallet is disconnected', async () => {
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletDisconnectedError);
+            expect(onError).toHaveBeenCalledTimes(1);
+        });
+        test('when signTypedData successfully', async () => {
+            tron.request = () => Promise.resolve(['address']);
+            const onError = vi.fn();
+            adapter.on('error', onError);
+            tron._setAddress('address');
+            await adapter.connect();
+            const _signTypedData: any = vi.fn(() => Promise.resolve('signedTypedData'));
+            (tron.tronWeb as TronWeb).trx._signTypedData = _signTypedData;
+
+            const result = await adapter.signTypedData(mockTypedData);
+            expect(_signTypedData).toHaveBeenCalledWith(
+                { ...mockTypedData.domain, chainId: Number(mockTypedData.domain.chainId) },
+                mockTypedData.types,
+                mockTypedData.message
+            );
+            expect(result).toBe('signedTypedData');
+            expect(onError).not.toHaveBeenCalled();
+        });
+        test('when signTypedData with error', { timeout: 1000 }, async () => {
+            tron.request = () => Promise.resolve(['address']);
+            const onError = vi.fn();
+            tron._setAddress('address');
+            adapter = new TronLinkAdapter();
+            await waitForDesktopDetection();
+            adapter.on('error', onError);
+            const _signTypedData: any = vi.fn(() => Promise.reject('signTypedData error'));
+            (tron.tronWeb as TronWeb).trx._signTypedData = _signTypedData;
+
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow('signTypedData error');
+            await expect(adapter.signTypedData(mockTypedData)).rejects.toThrow(WalletSignTypedDataError);
             expect(onError).toHaveBeenCalled();
         });
     });
@@ -725,7 +843,7 @@ describe('methods should work fine', () => {
             adapter.on('error', onError);
             const res = adapter.switchChain('id');
             vi.advanceTimersByTime(ONE_MINUTE);
-            expect(res).rejects.toThrow(WalletNotFoundError);
+            await expect(res).rejects.toThrow(WalletNotFoundError);
             adapter
                 .switchChain('id')
                 .catch(noop)
@@ -774,7 +892,7 @@ describe('methods should work fine', () => {
             tron._unlock();
             tron.removeListener = vi.fn();
             adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(300);
+            await waitForDesktopDetection();
             expect(adapter.state).toEqual(AdapterState.Connected);
             const _onDisconnect = vi.fn();
             adapter.on('disconnect', _onDisconnect);
@@ -796,7 +914,7 @@ describe('methods should work fine', () => {
             const onError = vi.fn();
             adapter.on('error', onError);
 
-            expect(adapter.network()).rejects.toThrow(WalletDisconnectedError);
+            await expect(adapter.network()).rejects.toThrow(WalletDisconnectedError);
             waitFor(() => {
                 expect(onError).toHaveBeenCalled();
             });
@@ -806,7 +924,7 @@ describe('methods should work fine', () => {
             tron._unlock();
             tron.removeListener = vi.fn();
             adapter = new TronLinkAdapter();
-            vi.advanceTimersByTime(300);
+            await waitForDesktopDetection();
             expect(adapter.state).toEqual(AdapterState.Connected);
             const network = await adapter.network();
             expect(network.chainId).toEqual('0xcd8690dc');

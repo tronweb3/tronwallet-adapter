@@ -1,15 +1,14 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
     WalletSignMessageError,
-    WalletNotFoundError,
     WalletDisconnectedError,
     WalletConnectionError,
     WalletSignTransactionError,
     WalletGetNetworkError,
     WalletError,
+    AddonAdapter,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -18,33 +17,37 @@ import type {
     BaseAdapterConfig,
     Network,
 } from '@tronweb3/tronwallet-abstract-adapter';
-import type {
-    AccountsChangedEventData,
-    TronLinkMessageEvent,
-    TronLinkWallet,
-} from '@tronweb3/tronwallet-adapter-tronlink';
+import type { TronAccountsChangedCallback, TronLinkWallet } from '@tronweb3/tronwallet-adapter-tronlink';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
 import { supportOneKey } from './utils.js';
+
+/**
+ * OneKey injects a TronLink-compatible provider that additionally supports the
+ * TIP-1193 style event emitter (`on`/`removeListener`).
+ *
+ * Note: unlike TronLink's `Tron` provider, OneKey emits `chainChanged` with the
+ * raw chainId string (not a `{ chainId }` object), so the event signatures are
+ * declared explicitly here rather than reused from `Tron`.
+ */
+type OneKeyTronProvider = TronLinkWallet & {
+    on(event: 'accountsChanged', cb: TronAccountsChangedCallback): void;
+    on(event: 'chainChanged', cb: (chainId: string) => void): void;
+    removeListener(event: 'accountsChanged' | 'chainChanged', cb: unknown): void;
+};
 
 declare global {
     interface Window {
         $onekey?: {
-            tron: TronLinkWallet;
+            tron: OneKeyTronProvider;
         };
     }
 }
 
-export interface OneKeyAdapterConfig extends BaseAdapterConfig {
-    /**
-     * Timeout in millisecond for checking if OneKey wallet exists.
-     * Default is 2 * 1000ms
-     */
-    checkTimeout?: number;
-}
+export type OneKeyAdapterConfig = BaseAdapterConfig;
 
 export const OneKeyAdapterName = 'OneKey' as AdapterName<'OneKey'>;
 
-export class OneKeyAdapter extends Adapter {
+export class OneKeyAdapter extends AddonAdapter {
     name = OneKeyAdapterName;
     url = 'https://onekey.so/download';
     icon =
@@ -63,26 +66,25 @@ export class OneKeyAdapter extends Adapter {
             : AdapterState.Loading
         : AdapterState.NotFound;
     private _connecting: boolean;
-    private _wallet: TronLinkWallet | null;
+    private _wallet: OneKeyTronProvider | null;
     private _address: string | null;
 
     constructor(config: OneKeyAdapterConfig = {}) {
-        super();
-        const { checkTimeout = 2 * 1000, openUrlWhenWalletNotFound = true } = config;
-
-        if (typeof checkTimeout !== 'number') {
-            throw new Error('[OneKeyAdapter] config.checkTimeout should be a number');
-        }
+        super(config);
 
         this.config = {
-            checkTimeout,
-            openUrlWhenWalletNotFound,
+            ...this.commonConfig,
+            ...config,
         };
         this._connecting = false;
         this._wallet = null;
         this._address = null;
         if (this.readyState === WalletReadyState.Found) {
-            this._updateWallet();
+            this._updateWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
         } else {
             this._checkWallet().then(() => {
                 if (this.connected) {
@@ -129,20 +131,21 @@ export class OneKeyAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) return;
-            await this._checkWallet();
-            if (this.state === AdapterState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
+            if (!(await this._beforeConnect())) return;
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TronLinkWallet;
             const res = await wallet.request({ method: 'tron_requestAccounts' });
             if (res?.code === 200) {
                 const address = wallet.tronWeb.defaultAddress?.base58 || '';
+                if (!address) {
+                    console.error(
+                        '[OneKeyAdapter] OneKey returned a successful connection (code 200) but no address could be read from the provider. This is likely a OneKey wallet issue. Please retry or restart your OneKey wallet.'
+                    );
+                    throw new WalletConnectionError(
+                        'OneKey returned a successful connection but no address was found. Please retry or restart your OneKey wallet.'
+                    );
+                }
                 this.setAddress(address);
                 this.setState(AdapterState.Connected);
                 this._listenEvent();
@@ -208,50 +211,55 @@ export class OneKeyAdapter extends Adapter {
 
     private _listenEvent() {
         this._stopListenEvent();
-        window.addEventListener('message', this._messageHandler);
+        this._wallet?.on('accountsChanged', this._onAccountsChanged);
+        this._wallet?.on('chainChanged', this._onChainChanged);
     }
 
     private _stopListenEvent() {
-        window.removeEventListener('message', this._messageHandler);
+        this._wallet?.removeListener('accountsChanged', this._onAccountsChanged);
+        this._wallet?.removeListener('chainChanged', this._onChainChanged);
     }
 
-    private _messageHandler = (e: TronLinkMessageEvent) => {
-        const message = e.data?.message;
-        if (!message || !message.action) {
-            return;
+    private _onAccountsChanged: TronAccountsChangedCallback = async () => {
+        const preAddr = this.address || '';
+        const curAddr = (this._wallet?.tronWeb && this._wallet.tronWeb.defaultAddress?.base58) || '';
+        if (curAddr) {
+            // Gate the connect transition with the security check.
+            try {
+                await this.checkSecurity();
+            } catch {
+                this.setAddress(null);
+                this.setState(AdapterState.Disconnect);
+                return;
+            }
+            this.setAddress(curAddr);
+            this.setState(AdapterState.Connected);
+        } else {
+            this.setAddress(null);
+            this.setState(AdapterState.Disconnect);
         }
-        const { action, data } = message;
-        if (action === 'accountsChanged') {
-            // Using a timeout to ensure the wallet's internal state is updated
-            // before we process the event. This is a workaround for potential race conditions.
-            setTimeout(() => {
-                const preAddr = this.address || '';
-                if ((this._wallet as TronLinkWallet)?.ready) {
-                    const address = (data as AccountsChangedEventData).address;
-                    this.setAddress(address);
-                    this.setState(AdapterState.Connected);
-                } else {
-                    this.setAddress(null);
-                    this.setState(AdapterState.Disconnect);
-                }
-                const address = this.address || '';
-                if (address !== preAddr) {
-                    this.emit('accountsChanged', this.address || '', preAddr);
-                }
-                if (!preAddr && this.address) {
-                    this.emit('connect', this.address);
-                } else if (preAddr && !this.address) {
-                    this.emit('disconnect');
-                }
-            }, 200);
+        if (this.address !== preAddr) {
+            this.emit('accountsChanged', this.address || '', preAddr);
         }
+        if (!preAddr && this.address) {
+            this.emit('connect', this.address);
+        } else if (preAddr && !this.address) {
+            this.emit('disconnect');
+        }
+    };
+
+    private _onChainChanged = (chainId: string) => {
+        if (chainId === '0x00') {
+            chainId = '0x94a9059e'; // OneKey's Tron Shasta chain ID, which is not a valid hex number, needs to be converted to a valid hex string before use
+        }
+        this.emit('chainChanged', { chainId });
     };
     private _checkPromise: Promise<boolean> | null = null;
     /**
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
      * @returns if onekeywallet exists
      */
-    private _checkWallet(): Promise<boolean> {
+    protected _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }
@@ -280,7 +288,7 @@ export class OneKeyAdapter extends Adapter {
         return this._checkPromise;
     }
 
-    private _updateWallet = () => {
+    private _updateWallet = async () => {
         let state;
         let address;
         if (supportOneKey()) {
@@ -288,7 +296,19 @@ export class OneKeyAdapter extends Adapter {
             this._wallet = window.$onekey!.tron;
             this._listenEvent();
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;
-            state = this._wallet.ready ? AdapterState.Connected : AdapterState.Disconnect;
+            if (address) {
+                // Only run the security check once the wallet is actually connected.
+                try {
+                    await this.checkSecurity();
+                } catch {
+                    this.setAddress(null);
+                    this.setState(AdapterState.Disconnect);
+                    return;
+                }
+                state = AdapterState.Connected;
+            } else {
+                state = AdapterState.Disconnect;
+            }
         } else {
             this._wallet = null;
             address = null;
@@ -297,6 +317,9 @@ export class OneKeyAdapter extends Adapter {
         this.setAddress(address);
         this.setState(state);
     };
+    protected _openAppByDeepLinkIfNeed() {
+        return false;
+    }
 
     private setAddress(address: string | null) {
         this._address = address;

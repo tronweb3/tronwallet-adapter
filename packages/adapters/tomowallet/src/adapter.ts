@@ -1,15 +1,15 @@
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
     WalletReadyState,
     WalletSignMessageError,
-    WalletNotFoundError,
     WalletDisconnectedError,
     WalletConnectionError,
     WalletSignTransactionError,
     WalletGetNetworkError,
     isInMobileBrowser,
+    AddonAdapter,
+    WalletError,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import type {
     Transaction,
@@ -31,11 +31,6 @@ declare global {
 }
 export interface TomoWalletAdapterConfig extends BaseAdapterConfig {
     /**
-     * Timeout in millisecond for checking if Tomo wallet exists.
-     * Default is 3 * 1000ms
-     */
-    checkTimeout?: number;
-    /**
      * The icon of your dapp. Used when open Tomo app in mobile device browsers.
      */
     dappIcon?: string;
@@ -47,7 +42,7 @@ export interface TomoWalletAdapterConfig extends BaseAdapterConfig {
 
 export const TomoWalletAdapterName = 'Tomo Wallet' as AdapterName<'Tomo Wallet'>;
 
-export class TomoWalletAdapter extends Adapter {
+export class TomoWalletAdapter extends AddonAdapter {
     name = TomoWalletAdapterName;
     url = 'https://tomo.inc/';
     icon =
@@ -61,14 +56,14 @@ export class TomoWalletAdapter extends Adapter {
     private _address: string | null;
 
     constructor(config: TomoWalletAdapterConfig = {}) {
-        super();
-        const { checkTimeout = 3 * 1000, dappIcon = '', dappName = '', openUrlWhenWalletNotFound = true } = config;
+        super(config);
+        const { checkTimeout = 3 * 1000, dappIcon = '', dappName = '' } = config;
         if (typeof checkTimeout !== 'number') {
             throw new Error('[TomoWalletAdapter] config.checkTimeout should be a number');
         }
         this.config = {
+            ...this.commonConfig,
             checkTimeout,
-            openUrlWhenWalletNotFound,
             dappIcon,
             dappName,
         };
@@ -83,7 +78,11 @@ export class TomoWalletAdapter extends Adapter {
         }
         if (isInMobileBrowser() && supportTomowallet()) {
             this._readyState = WalletReadyState.Found;
-            this._updateWallet();
+            this._updateWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
         } else {
             this._checkWallet().then(() => {
                 if (this.connected) {
@@ -131,26 +130,15 @@ export class TomoWalletAdapter extends Adapter {
 
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) return;
-            await this._checkWallet();
-            if (this.state === AdapterState.NotFound) {
-                if (this.config.openUrlWhenWalletNotFound !== false && isInBrowser()) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError();
-            }
+            if (!(await this._beforeConnect())) return;
             if (!this._wallet) return;
             this._connecting = true;
             if (supportTomowallet()) {
                 const wallet = this._wallet;
-                try {
-                    const res = await wallet.request({ method: 'eth_requestAccounts' });
-                    if (!res) {
-                        // 1. wallet is locked
-                        throw new WalletConnectionError('Tomo wallet is locked or no wallet account is avaliable.');
-                    }
-                } catch (error: any) {
-                    throw new WalletConnectionError(error?.message, error);
+                const res = await wallet.request({ method: 'eth_requestAccounts' });
+                if (!res) {
+                    // 1. wallet is locked
+                    throw new WalletConnectionError('Tomo wallet is locked or no wallet account is avaliable.');
                 }
 
                 const address = (wallet.tronWeb && wallet.tronWeb.defaultAddress?.base58) || '';
@@ -161,8 +149,9 @@ export class TomoWalletAdapter extends Adapter {
             }
             this.connected && this.emit('connect', this.address || '');
         } catch (error: any) {
-            this.emit('error', error);
-            throw error;
+            const err = error instanceof WalletError ? error : new WalletConnectionError(error?.message, error);
+            this.emit('error', err);
+            throw err;
         } finally {
             this._connecting = false;
         }
@@ -246,7 +235,7 @@ export class TomoWalletAdapter extends Adapter {
      * check if wallet exists by interval, the promise only resolve when wallet detected or timeout
      * @returns if wallet exists
      */
-    private _checkWallet(): Promise<boolean> {
+    protected _checkWallet(): Promise<boolean> {
         if (this.readyState === WalletReadyState.Found) {
             return Promise.resolve(true);
         }
@@ -304,12 +293,20 @@ export class TomoWalletAdapter extends Adapter {
         }
     };
 
-    private _updateWallet = () => {
+    private _updateWallet = async () => {
         let state = this.state;
         let address = this.address;
         if (isInMobileBrowser()) {
             if (window.tomo_wallet?.tron) {
                 this._wallet = window.tomo_wallet.tron;
+
+                try {
+                    await this.checkSecurity();
+                } catch {
+                    this.setAddress(null);
+                    this.setState(AdapterState.Disconnect);
+                    return;
+                }
                 this.listenToEvents();
             }
             address = (this._wallet?.tronWeb && this._wallet?.tronWeb?.defaultAddress?.base58) || null;
@@ -360,5 +357,9 @@ export class TomoWalletAdapter extends Adapter {
             this._state = state;
             this.emit('stateChanged', state);
         }
+    }
+
+    protected _openAppByDeepLinkIfNeed(): boolean {
+        return false;
     }
 }

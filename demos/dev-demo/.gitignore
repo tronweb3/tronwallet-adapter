@@ -18,6 +18,10 @@ dist-ssr
 .env.test
 .env.production
 
+# Local mock security config files (create your own, see README.md)
+mock-security-config.json
+mock-security-config-partial.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

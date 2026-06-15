@@ -1,5 +1,18 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ImTokenAdapter } from '../../src/adapter.js';
+
+beforeEach(function () {
+    vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({
+            ok: true,
+            json: () => Promise.resolve({}),
+        })
+    );
+});
+afterEach(function () {
+    vi.unstubAllGlobals();
+});
 
 describe('ImTokenAdapter', () => {
     test('should be defined', () => {

@@ -9,9 +9,9 @@ import {
     isMetamaskInstalled,
 } from '@metamask/multichain-api-client';
 import {
-    Adapter,
     AdapterState,
     isInBrowser,
+    AddonAdapter,
     WalletConnectionError,
     WalletDisconnectedError,
     WalletNotFoundError,
@@ -41,7 +41,7 @@ export interface MetaMaskAdapterConfig extends BaseAdapterConfig {
 
 export const MetaMaskAdapterName = 'MetaMask' as AdapterName<'MetaMask'>;
 
-export class MetaMaskAdapter extends Adapter {
+export class MetaMaskAdapter extends AddonAdapter {
     // list of scopes in priority order for resolving selected account
     readonly scopes = [Scope.MAINNET, Scope.SHASTA, Scope.NILE] as const;
     name = MetaMaskAdapterName;
@@ -67,17 +67,29 @@ export class MetaMaskAdapter extends Adapter {
      * @param config - Configuration options for the adapter.
      */
     constructor(config: MetaMaskAdapterConfig = { openAppWithDeeplink: true }) {
-        super();
-        this._config = config;
+        super(config);
+        this._config = {
+            ...this.commonConfig,
+            ...config,
+        };
         this._transport = getDefaultTransport();
         this._client = getMultichainClient({ transport: this._transport });
-        this._checkWalletPromise = this.checkWallet();
+        this._checkWalletPromise = this._doCheckWallet();
+        this._selectedAddressOnPageLoadPromise = this.getInitialSelectedAddress();
         // Auto-restore session on page refresh
         this._checkWalletPromise.then(() => {
             if (this._readyState === WalletReadyState.Found) {
                 this.tryRestoringSession()
-                    .then(() => {
+                    .then(async () => {
                         if (this.address) {
+                            try {
+                                await this.checkSecurity();
+                            } catch {
+                                this.setAddress(null);
+                                this.setState(AdapterState.Disconnect);
+                                return;
+                            }
+                            this.startListeners();
                             this.setState(AdapterState.Connected);
                             this.emit('connect', this.address);
                         }
@@ -118,22 +130,8 @@ export class MetaMaskAdapter extends Adapter {
      */
     async connect(): Promise<void> {
         try {
-            if (this.connected || this.connecting) {
-                return;
-            }
+            if (!(await this._beforeConnect())) return;
             this._connecting = true;
-            // Wait for the wallet check to complete before trying to check readyState
-            await this._checkWalletPromise;
-            if (this._readyState !== WalletReadyState.Found) {
-                if (
-                    isInBrowser() &&
-                    !this.openAppWithDeepLinkIfNeed() &&
-                    this._config.openUrlWhenWalletNotFound !== false
-                ) {
-                    window.open(this.url, '_blank');
-                }
-                throw new WalletNotFoundError('Wallet not found or not ready');
-            }
             try {
                 // Try restoring session
                 await this.tryRestoringSession();
@@ -192,10 +190,10 @@ export class MetaMaskAdapter extends Adapter {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        if (!this._scope) {
+            throw new WalletDisconnectedError('Wallet not connected');
+        }
         try {
-            if (!this._scope) {
-                throw new WalletDisconnectedError('Wallet not connected');
-            }
             const contractType = transaction.raw_data.contract[0]?.type;
             if (!contractType) {
                 throw new WalletSignTransactionError('Transaction contract type is required');
@@ -237,11 +235,10 @@ export class MetaMaskAdapter extends Adapter {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async signMessage(message: string): Promise<string> {
+        if (!this._scope) {
+            throw new WalletDisconnectedError('Wallet not connected');
+        }
         try {
-            if (!this._scope) {
-                throw new WalletDisconnectedError('Wallet not connected');
-            }
-
             const base64Message = Buffer.from(message).toString('base64');
             const result = await this._client.invokeMethod({
                 scope: this._scope,
@@ -337,7 +334,7 @@ export class MetaMaskAdapter extends Adapter {
      * Average time for wallet to be available is around 50ms.
      * @returns A promise that resolves when the wallet check is complete.
      */
-    private async checkWallet(): Promise<void> {
+    private async _doCheckWallet(): Promise<void> {
         if (this._readyState === WalletReadyState.Loading) {
             return;
         }
@@ -351,6 +348,29 @@ export class MetaMaskAdapter extends Adapter {
         }
         this._readyState = WalletReadyState.NotFound;
         this.emit('readyStateChanged', this.readyState);
+    }
+
+    protected async _checkWallet(): Promise<boolean> {
+        if (!this._checkWalletPromise) {
+            this._checkWalletPromise = this._doCheckWallet();
+        }
+        await this._checkWalletPromise;
+        return this._readyState === WalletReadyState.Found;
+    }
+
+    protected async _beforeConnect(): Promise<boolean> {
+        if (this.connected || this.connecting) {
+            return false;
+        }
+        await this._checkWalletPromise;
+        if (this._readyState !== WalletReadyState.Found) {
+            if (isInBrowser() && !this._openAppByDeepLinkIfNeed() && this._config.openUrlWhenWalletNotFound !== false) {
+                window.open(this.url, '_blank');
+            }
+            throw new WalletNotFoundError('Wallet not found or not ready');
+        }
+        await this.checkSecurity();
+        return true;
     }
 
     /**
@@ -528,12 +548,7 @@ export class MetaMaskAdapter extends Adapter {
 
         return scopePriorityOrder.find((scope) => sessionScopes.has(scope));
     }
-
-    /**
-     * Opens the MetaMask app using a deep link if necessary.
-     * @returns True if the app was opened, false otherwise.
-     */
-    private openAppWithDeepLinkIfNeed() {
+    protected _openAppByDeepLinkIfNeed(): boolean {
         if (this._config.openAppWithDeeplink === false) {
             return false;
         }
