@@ -479,10 +479,10 @@ export class BinanceWalletAdapter extends AddonAdapter {
     // detection settles while `connected` is true, which is exactly that case.
     private _listenEvent() {
         this._stopListenEvent();
-        this._provider?.on('accountsChanged', this._onAccountsChanged);
+        this._provider?.on?.('accountsChanged', this._onAccountsChanged);
     }
     private _stopListenEvent() {
-        this._provider?.removeListener('accountsChanged', this._onAccountsChanged);
+        this._provider?.removeListener?.('accountsChanged', this._onAccountsChanged);
     }
 
     private _checkPromise: Promise<boolean> | null = null;

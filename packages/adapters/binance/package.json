@@ -1,6 +1,6 @@
 {
     "name": "@tronweb3/tronwallet-adapter-binance",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Wallet adapter for Binance Wallet",
     "keywords": [
         "TRON",
@@ -53,6 +53,6 @@
     "devDependencies": {
         "@testing-library/dom": "8.20.1",
         "shx": "0.3.4",
-        "vitest": "3.2.4"
+        "vitest": "4.1.12"
     }
 }

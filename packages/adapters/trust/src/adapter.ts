@@ -1,6 +1,7 @@
 import {
     AdapterState,
     isInBrowser,
+    isInMobileBrowser,
     WalletReadyState,
     WalletSignMessageError,
     WalletNotFoundError,
@@ -25,12 +26,13 @@ import type {
     TronLinkWallet,
 } from '@tronweb3/tronwallet-adapter-tronlink';
 import { getNetworkInfoByTronWeb } from '@tronweb3/tronwallet-adapter-tronlink';
-import { openTrustWallet, supportTrust } from './utils.js';
+import { getTrustProvider, openTrustWallet, supportTrust } from './utils.js';
 
 declare global {
     interface Window {
         trustwallet?: {
-            tronLink: TronLinkWallet;
+            tronLink?: TronLinkWallet;
+            tron?: TronLinkWallet;
         };
     }
 }
@@ -68,7 +70,16 @@ export class TrustAdapter extends AddonAdapter {
             this.setState(AdapterState.NotFound);
             return;
         }
-        if (supportTrust()) {
+        if (!isInMobileBrowser()) {
+            // Desktop: poll for the extension to inject.
+            this._checkWallet().then(() => {
+                if (this.connected) {
+                    this.emit('connect', this.address || '');
+                }
+            });
+        } else if (supportTrust()) {
+            // Mobile + wallet already injected (e.g. inside the Trust iOS/Android
+            // app's in-app browser, or after the extension loaded): skip polling.
             this._readyState = WalletReadyState.Found;
             this._updateWallet().then(() => {
                 if (this.connected) {
@@ -76,6 +87,8 @@ export class TrustAdapter extends AddonAdapter {
                 }
             });
         } else {
+            // Mobile + wallet not yet injected: poll so the adapter picks it up
+            // once the user opens the dapp inside the Trust app via the deeplink.
             this._checkWallet().then(() => {
                 if (this.connected) {
                     this.emit('connect', this.address || '');
@@ -127,17 +140,21 @@ export class TrustAdapter extends AddonAdapter {
             if (!this._wallet) return;
             this._connecting = true;
             const wallet = this._wallet as TronLinkWallet;
-            const res = await wallet.request({ method: 'tron_requestAccounts' });
-            if (!res) {
-                throw new WalletConnectionError('Request connect error.');
-            }
-            if (res.code === 4000) {
-                throw new WalletConnectionError(
-                    'The same DApp has already initiated a request to connect to trustwallet, and the pop-up window has not been closed.'
-                );
-            }
-            if (res.code === 4001) {
-                throw new WalletConnectionError('The user rejected connection.');
+            // The Trust mobile app's `window.trustwallet.tron` has no `request` method:
+            // it is already authorized when injected, so read the address directly.
+            if (typeof wallet.request === 'function') {
+                const res = await wallet.request({ method: 'tron_requestAccounts' });
+                if (!res) {
+                    throw new WalletConnectionError('Request connect error.');
+                }
+                if (res.code === 4000) {
+                    throw new WalletConnectionError(
+                        'The same DApp has already initiated a request to connect to trustwallet, and the pop-up window has not been closed.'
+                    );
+                }
+                if (res.code === 4001) {
+                    throw new WalletConnectionError('The user rejected connection.');
+                }
             }
 
             const address = assertConnectAddress(wallet.tronWeb.defaultAddress?.base58);
@@ -164,66 +181,42 @@ export class TrustAdapter extends AddonAdapter {
         this.emit('disconnect');
     }
 
-    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    private async _checkAndSign<T>(
+        action: (wallet: TronLinkWallet) => Promise<T>,
+        ErrorConstructor: typeof WalletSignTransactionError | typeof WalletSignMessageError
+    ): Promise<T> {
         try {
             const wallet = await this.checkAndGetWallet();
-
             try {
-                return await wallet.tronWeb.trx.sign(transaction);
+                return await action(wallet);
             } catch (error: any) {
                 if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
+                    throw new ErrorConstructor(error.message, error);
                 } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
+                    throw new ErrorConstructor(error, new Error(error));
                 } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
+                    throw new ErrorConstructor('Unknown error', error);
                 }
             }
         } catch (error: any) {
             this.emit('error', error);
             throw error;
         }
+    }
+
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign((wallet) => wallet.tronWeb.trx.sign(transaction), WalletSignTransactionError);
     }
 
     async multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<SignedTransaction> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-
-            try {
-                return await wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
-                } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        return this._checkAndSign(
+            (wallet) => wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId),
+            WalletSignTransactionError
+        );
     }
 
     async signMessage(message: string): Promise<string> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-            try {
-                return await wallet.tronWeb.trx.signMessageV2(message);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignMessageError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignMessageError(error, new Error(error));
-                } else {
-                    throw new WalletSignMessageError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        return this._checkAndSign(async (wallet) => wallet.tronWeb.trx.signMessageV2(message), WalletSignMessageError);
     }
 
     private async checkAndGetWallet() {
@@ -394,9 +387,14 @@ export class TrustAdapter extends AddonAdapter {
                 if (isSupport || times > maxTimes) {
                     timer && clearInterval(timer);
                     this._readyState = isSupport ? WalletReadyState.Found : WalletReadyState.NotFound;
-                    this._updateWallet();
+                    const update = this._updateWallet();
                     this.emit('readyStateChanged', this.readyState);
-                    resolve(isSupport);
+                    // Resolve only after `_updateWallet` settles: it awaits `checkSecurity()`, and
+                    // callers read `this.connected` as soon as detection resolves.
+                    update.then(
+                        () => resolve(isSupport),
+                        () => resolve(isSupport)
+                    );
                 }
             };
             timer = setInterval(check, interval);
@@ -418,7 +416,7 @@ export class TrustAdapter extends AddonAdapter {
         let state;
         let address;
         if (supportTrust()) {
-            this._wallet = window.trustwallet!.tronLink;
+            this._wallet = getTrustProvider()!;
             this._listenEvent();
             address = this._wallet.tronWeb?.defaultAddress?.base58 || null;
             if (address) {

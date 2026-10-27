@@ -21,7 +21,7 @@
         "element-plus": "2.13.5",
         "tronweb": "6.2.2",
         "typescript": "5.5.4",
-        "vue": "3.4.34"
+        "vue": "3.5.43"
     },
     "devDependencies": {
         "@vitejs/plugin-legacy": "6.1.1",

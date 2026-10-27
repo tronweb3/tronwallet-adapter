@@ -100,7 +100,7 @@ We welcome contributions! To get started with the codebase:
 
 ### Prerequisites
 
--   **Node.js**: 24.19.0 — pinned in [`.nvmrc`](.nvmrc); `nvm use` in the repo root picks it up
+-   **Node.js**: 24.22.1 — pinned in [`.nvmrc`](.nvmrc); `nvm use` in the repo root picks it up
 -   **pnpm**: 11.21.0 — pinned by `packageManager` in the root `package.json`
 
 ### Local Setup
