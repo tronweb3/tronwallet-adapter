@@ -53,6 +53,8 @@ await tronWeb.trx.sendRawTransaction(signedTransaction);
     }
     ```
 
+-   `signTypedData(typedData: TypedData)` method is supported to sign TIP-712 typed data. It calls `tronWeb.trx._signTypedData()` injected by imToken App and throws `WalletSignTypedDataError` when signing fails.
+
 -   `network()` method is supported to get current network information. The type of returned value is `Network` as follows:
 
     ```typescript

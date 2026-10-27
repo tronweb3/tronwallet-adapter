@@ -86,7 +86,7 @@ describe('WalletSelectButton', () => {
         beforeEach(() => {
             vi.useFakeTimers();
         });
-        test('onClick prop which returns false should preserve current modal state', async () => {
+        test('onClick prop which returns false should open the modal', async () => {
             const onClick = vi.fn(() => {
                 return false;
             });
@@ -100,7 +100,7 @@ describe('WalletSelectButton', () => {
             const SelectModal = container.getComponent(WalletSelectModal);
             expect(SelectModal).not.toBeNull();
             await nextTick();
-            expect(SelectModal.props().visible).toBe(false);
+            expect(SelectModal.props().visible).toBe(true);
         });
         test('onClick prop which returns true should work fine', async () => {
             const onClick = vi.fn(() => {

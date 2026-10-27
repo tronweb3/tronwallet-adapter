@@ -40,7 +40,7 @@ Unit tests for the `LedgerEvmAdapter` class covering:
 
 ### Prerequisites
 
--   Node.js 24.19.0 — pinned in the repo root `.nvmrc`
+-   Node.js 24.22.1 — pinned in the repo root `.nvmrc`
 -   pnpm 11.21.0 — pinned by `packageManager` in the root `package.json`
 
 ### Commands

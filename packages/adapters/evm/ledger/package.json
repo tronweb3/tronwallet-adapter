@@ -62,6 +62,6 @@
         "@testing-library/dom": "8.20.0",
         "@types/w3c-web-hid": "1.0.6",
         "shx": "0.3.4",
-        "vitest": "3.2.4"
+        "vitest": "4.1.12"
     }
 }

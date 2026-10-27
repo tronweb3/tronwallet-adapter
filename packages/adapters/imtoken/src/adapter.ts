@@ -6,6 +6,7 @@ import {
     WalletNotFoundError,
     WalletDisconnectedError,
     WalletSignTransactionError,
+    WalletSignTypedDataError,
     WalletGetNetworkError,
     AddonAdapter,
     WalletError,
@@ -20,6 +21,7 @@ import type {
     AdapterName,
     BaseAdapterConfig,
     Network,
+    TypedData,
 } from '@tronweb3/tronwallet-abstract-adapter';
 import { openImTokenApp, supportImToken } from './utils.js';
 
@@ -132,65 +134,52 @@ export class ImTokenAdapter extends AddonAdapter {
         this.emit('disconnect');
     }
 
-    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+    private async _checkAndSign<T>(
+        action: (wallet: TronLinkWallet) => Promise<T>,
+        ErrorConstructor:
+            | typeof WalletSignTransactionError
+            | typeof WalletSignMessageError
+            | typeof WalletSignTypedDataError
+    ): Promise<T> {
         try {
             const wallet = await this.checkAndGetWallet();
-
             try {
-                return await wallet.tronWeb.trx.sign(transaction);
+                return await action(wallet);
             } catch (error: any) {
                 if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
+                    throw new ErrorConstructor(error.message, error);
                 } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
+                    throw new ErrorConstructor(error, new Error(error));
                 } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
+                    throw new ErrorConstructor('Unknown error', error);
                 }
             }
         } catch (error: any) {
             this.emit('error', error);
             throw error;
         }
+    }
+
+    async signTransaction(transaction: Transaction): Promise<SignedTransaction> {
+        return this._checkAndSign((wallet) => wallet.tronWeb.trx.sign(transaction), WalletSignTransactionError);
     }
 
     async multiSign(transaction: Transaction, options: { permissionId?: number } = {}): Promise<SignedTransaction> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-            try {
-                return await wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignTransactionError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignTransactionError(error, new Error(error));
-                } else {
-                    throw new WalletSignTransactionError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        return this._checkAndSign(
+            (wallet) => wallet.tronWeb.trx.multiSign(transaction, undefined, options.permissionId),
+            WalletSignTransactionError
+        );
     }
 
     async signMessage(message: string): Promise<string> {
-        try {
-            const wallet = await this.checkAndGetWallet();
-            try {
-                return await wallet.tronWeb.trx.signMessageV2(message);
-            } catch (error: any) {
-                if (error instanceof Error || (typeof error === 'object' && error.message)) {
-                    throw new WalletSignMessageError(error.message, error);
-                } else if (typeof error === 'string') {
-                    throw new WalletSignMessageError(error, new Error(error));
-                } else {
-                    throw new WalletSignMessageError('Unknown error', error);
-                }
-            }
-        } catch (error: any) {
-            this.emit('error', error);
-            throw error;
-        }
+        return this._checkAndSign(async (wallet) => wallet.tronWeb.trx.signMessageV2(message), WalletSignMessageError);
+    }
+
+    protected async _signTypedData(typedData: TypedData): Promise<string> {
+        return this._checkAndSign(
+            async (wallet) => wallet.tronWeb.trx._signTypedData(typedData.domain, typedData.types, typedData.message),
+            WalletSignTypedDataError
+        );
     }
 
     private async checkAndGetWallet() {

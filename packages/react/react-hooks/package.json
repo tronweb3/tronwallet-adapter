@@ -53,13 +53,13 @@
         "@types/react": "18.3.3",
         "@types/react-dom": "18.3.0",
         "@vitejs/plugin-react": "5.2.0",
-        "@vitest/browser": "3.2.4",
-        "@vitest/ui": "3.2.4",
+        "@vitest/browser": "4.1.12",
+        "@vitest/ui": "4.1.12",
         "eventemitter3": "5.0.4",
-        "happy-dom": "20.8.9",
+        "happy-dom": "21.0.4",
         "react": "18.3.1",
         "react-dom": "18.3.1",
         "shx": "0.3.4",
-        "vitest": "3.2.4"
+        "vitest": "4.1.12"
     }
 }

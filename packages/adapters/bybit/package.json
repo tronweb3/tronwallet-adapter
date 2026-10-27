@@ -49,6 +49,6 @@
     "devDependencies": {
         "@testing-library/dom": "8.20.1",
         "shx": "0.3.4",
-        "vitest": "3.2.4"
+        "vitest": "4.1.12"
     }
 }

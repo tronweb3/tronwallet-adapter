@@ -1,7 +1,7 @@
 {
     "name": "@tronweb3/tronwallet-adapter-trust",
-    "version": "1.2.0",
-    "description": "Wallet adapter for Trust Extension.",
+    "version": "1.3.0",
+    "description": "Wallet adapter for Trust Extension and Trust Wallet App.",
     "keywords": [
         "TRON",
         "TronWeb",
@@ -49,6 +49,6 @@
     "devDependencies": {
         "@testing-library/dom": "8.20.1",
         "shx": "0.3.4",
-        "vitest": "3.2.4"
+        "vitest": "4.1.12"
     }
 }

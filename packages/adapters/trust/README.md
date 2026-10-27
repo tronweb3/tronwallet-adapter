@@ -1,11 +1,16 @@
 # `@tronweb3/tronwallet-adapter-trust`
 
-This package provides an adapter to enable TRON DApps to connect to the [Trust extension](https://chrome.google.com/webstore/detail/trust-wallet/egjidjbpglichdcondbcbdnbeeppgdph).
+This package provides an adapter to enable TRON DApps to connect to the [Trust extension](https://chrome.google.com/webstore/detail/trust-wallet/egjidjbpglichdcondbcbdnbeeppgdph) and the in-app browser of the [Trust Wallet App](https://trustwallet.com/) on iOS and Android.
 
 ## Demo
 
 ```typescript
 import { TrustAdapter } from '@tronweb3/tronwallet-adapter-trust';
+import TronWeb from 'tronweb';
+const tronWeb = new TronWeb({
+    fullHost: 'https://api.trongrid.io',
+    headers: { 'TRON-PRO-API-KEY': 'your api key' },
+});
 
 const adapter = new TrustAdapter();
 
@@ -16,17 +21,13 @@ await adapter.connect();
 console.log(adapter.address);
 
 // create a send TRX transaction
-const unSignedTransaction = await window.trustwallet.tronLink.tronWeb.transactionBuilder.sendTrx(
-    targetAddress,
-    100,
-    adapter.address
-);
+const unSignedTransaction = await tronWeb.transactionBuilder.sendTrx(targetAddress, 100, adapter.address);
 
 // using adapter to sign the transaction
 const signedTransaction = await adapter.signTransaction(unSignedTransaction);
 
 // broadcast the transaction
-await window.trustwallet.tronLink.tronWeb.trx.sendRawTransaction(signedTransaction);
+await tronWeb.trx.sendRawTransaction(signedTransaction);
 ```
 
 ## Documentation
@@ -123,5 +124,6 @@ For the full `SecurityOptions` API reference, see [walletadapter.org/docs](https
 -   Only wallet that imported by mnemonic can be used on TRON network.
 -   Trust Extension doesn't implement `multiSign()` and `switchChain()` and will throw error when call them.
 -   Trust Extension only support: `accountsChanged`,`connect`,`disconnect` events.
+-   On mobile, when a DApp opened in an external browser jumps to the Trust Wallet App (for example through the deeplink above), the Trust Wallet App currently does not inject the TRON provider (`window.trustwallet.tron`) into the opened page, so connecting and the other wallet features do not work there. Open the DApp directly in the Trust Wallet App's in-app browser instead.
 
 For more information about tronwallet adapters, please refer to [`@tronweb3/tronwallet-adapters`](https://github.com/tronweb3/tronwallet-adapter/tree/main/packages/adapters/adapters)

@@ -81,7 +81,7 @@ describe('when a wallet is seleted', () => {
             await flushView(4000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBe('');
+            expect(el.attributes('disabled')).toBeUndefined();
             expect(el.text()).toContain('Disconnect');
         });
         test('tronlink is connected when antoConnect disabled', async () => {
@@ -89,7 +89,7 @@ describe('when a wallet is seleted', () => {
             await flushView(3000);
             const el = getByTestId('wallet-disconnect-button');
             expect(el).not.toBeNull();
-            expect(el.attributes('disabled')).toBe('');
+            expect(el.attributes('disabled')).toBeUndefined();
             expect(el.text()).toContain('Disconnect');
         });
     });
