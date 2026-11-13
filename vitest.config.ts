@@ -26,6 +26,7 @@ export default defineConfig({
             'packages/adapters/foxwallet',
             'packages/adapters/gatewallet',
             'packages/adapters/guarda',
+            'packages/adapters/locker',
             'packages/adapters/imtoken',
             'packages/adapters/ledger',
             'packages/adapters/metamask-tron',

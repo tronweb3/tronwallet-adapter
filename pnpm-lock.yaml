@@ -578,6 +578,9 @@ importers:
       '@tronweb3/tronwallet-adapter-ledger-evm':
         specifier: workspace:^
         version: link:../evm/ledger
+      '@tronweb3/tronwallet-adapter-locker':
+        specifier: workspace:^
+        version: link:../locker
       '@tronweb3/tronwallet-adapter-metamask-evm':
         specifier: workspace:^
         version: link:../evm/metamask
@@ -986,6 +989,25 @@ importers:
       '@types/testing-library__jest-dom':
         specifier: 5.14.9
         version: 5.14.9
+      shx:
+        specifier: 0.3.4
+        version: 0.3.4
+      vitest:
+        specifier: 4.1.12
+        version: 4.1.12(@types/node@22.9.0)(@vitest/coverage-v8@4.1.12)(@vitest/ui@4.1.12)(happy-dom@21.0.4(bufferutil@4.0.8)(utf-8-validate@6.0.3))(jsdom@28.1.0(@noble/hashes@1.8.0)(supports-color@7.2.0))(msw@2.7.3(@types/node@22.9.0)(typescript@5.8.2))(vite@6.4.4(@types/node@22.9.0)(jiti@2.6.1)(terser@5.31.3)(yaml@2.8.3))
+
+  packages/adapters/locker:
+    dependencies:
+      '@tronweb3/tronwallet-abstract-adapter':
+        specifier: workspace:^
+        version: link:../abstract-adapter
+      '@tronweb3/tronwallet-adapter-tronlink':
+        specifier: workspace:^
+        version: link:../tronlink
+    devDependencies:
+      '@testing-library/dom':
+        specifier: 8.20.1
+        version: 8.20.1
       shx:
         specifier: 0.3.4
         version: 0.3.4
