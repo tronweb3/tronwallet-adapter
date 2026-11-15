@@ -23,6 +23,9 @@
             "path": "./packages/adapters/guarda/tsconfig.all.json"
         },
         {
+            "path": "./packages/adapters/locker/tsconfig.all.json"
+        },
+        {
             "path": "./packages/adapters/bitkeep/tsconfig.all.json"
         },
         {

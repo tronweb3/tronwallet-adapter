@@ -51,6 +51,7 @@
         "@tronweb3/tronwallet-adapter-foxwallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-gatewallet": "workspace:^",
         "@tronweb3/tronwallet-adapter-guarda": "workspace:^",
+        "@tronweb3/tronwallet-adapter-locker": "workspace:^",
         "@tronweb3/tronwallet-adapter-imtoken": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger": "workspace:^",
         "@tronweb3/tronwallet-adapter-ledger-evm": "workspace:^",
